@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using PlakatManager.Entities;
+using System.Runtime.CompilerServices;
 
 namespace PlakatManager.Utilities
 {

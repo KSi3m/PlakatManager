@@ -14,10 +14,11 @@ namespace PlakatManager.Utilities
         public ElectionItemFactoryRegistry(IServiceProvider serviceProvider)
         {
             _factories = new Dictionary<string, IElectionItemFactory>
-            {   {"Billboard", serviceProvider.GetRequiredService<BillboardFactory>() },
+            {   {"Billboard", serviceProvider.GetRequiredService<BillboardFactory>()},
                 {"Poster", serviceProvider.GetRequiredService<PosterFactory>() },
                 {"LED", serviceProvider.GetRequiredService<LEDFactory>()  }
             };
+            
         }
 
         public ElectionItem CreateElectionItem(string type, ElectionItemRequestDTO dto)

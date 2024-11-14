@@ -1,4 +1,5 @@
 ﻿using PlakatManager.Entities;
+using System.ComponentModel;
 
 namespace PlakatManager.Dtos
 {

@@ -5,48 +5,24 @@ using System.Text.Json;
 
 namespace PlakatManager.Utilities
 {
-    public class BillboardFactory : IElectionItemFactory
+    public class BillboardFactory : ElectionItemFactory<Billboard>
     {
-        private readonly IMapper _mapper;
-
-        public BillboardFactory(IMapper mapper)
+        public BillboardFactory(IMapper mapper) : base(mapper)
         {
-            _mapper = mapper;
-        }
-
-        public ElectionItem Create(ElectionItemRequestDTO dto)
-        {
-            return _mapper.Map<Billboard>(dto);
         }
     }
 
-    public class PosterFactory : IElectionItemFactory
+    public class PosterFactory : ElectionItemFactory<Poster>
     {
-        private readonly IMapper _mapper;
-
-        public PosterFactory(IMapper mapper)
+        public PosterFactory(IMapper mapper) : base(mapper)
         {
-            _mapper = mapper;
-        }
-
-        public ElectionItem Create(ElectionItemRequestDTO dto)
-        {
-            return _mapper.Map<Poster>(dto);
         }
     }
 
-    public class LEDFactory : IElectionItemFactory
+    public class LEDFactory : ElectionItemFactory<LED>
     {
-        private readonly IMapper _mapper;
-
-        public LEDFactory(IMapper mapper)
+        public LEDFactory(IMapper mapper) : base(mapper)
         {
-            _mapper = mapper;
-        }
-
-        public ElectionItem Create(ElectionItemRequestDTO dto)
-        {
-            return _mapper.Map<LED>(dto);
         }
     }
 }
