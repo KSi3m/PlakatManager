@@ -13,6 +13,7 @@ namespace PlakatManager.Entities
         public DbSet<LED> Leds { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<ElectionItemTag> ElectionItemTag { get; set; }
 
         public PlakatManagerContext(DbContextOptions<PlakatManagerContext> options):base(options) 
         {
@@ -94,7 +95,7 @@ namespace PlakatManager.Entities
                 eb.HasOne(x => x.Author)
                 .WithMany(x => x.Comments)
                 .HasForeignKey(x => x.AuthorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             modelBuilder.Entity<User>()

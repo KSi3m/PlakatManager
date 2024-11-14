@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlakatManager.Entities;
 
@@ -11,9 +12,11 @@ using PlakatManager.Entities;
 namespace PlakatManager.Migrations
 {
     [DbContext(typeof(PlakatManagerContext))]
-    partial class PlakatManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20240904193717_Cleanup")]
+    partial class Cleanup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
