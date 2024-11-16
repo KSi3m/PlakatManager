@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using PlakatManager.Dtos;
-using PlakatManager.Entities;
+using ElectionMaterialManager.Dtos;
+using ElectionMaterialManager.Entities;
 
-namespace PlakatManager.Mappings
+namespace ElectionMaterialManager.Mappings
 {
     public class MappingProfile : Profile
     {

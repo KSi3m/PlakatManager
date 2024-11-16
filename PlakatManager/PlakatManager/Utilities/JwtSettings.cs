@@ -1,4 +1,4 @@
-﻿namespace PlakatManager.Utilities
+﻿namespace ElectionMaterialManager.Utilities
 {
     public class JwtSettings
     {

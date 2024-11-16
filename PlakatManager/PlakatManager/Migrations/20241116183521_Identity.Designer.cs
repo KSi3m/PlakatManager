@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using PlakatManager.Entities;
+using ElectionMaterialManager.Entities;
 
 #nullable disable
 
-namespace PlakatManager.Migrations
+namespace ElectionMaterialManager.Migrations
 {
-    [DbContext(typeof(PlakatManagerContext))]
+    [DbContext(typeof(ElectionMaterialManagerContext))]
     [Migration("20241116183521_Identity")]
     partial class Identity
     {
@@ -260,7 +260,7 @@ namespace PlakatManager.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Address", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Address", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -297,7 +297,7 @@ namespace PlakatManager.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Comment", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -338,7 +338,7 @@ namespace PlakatManager.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.ElectionItem", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.ElectionItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -399,7 +399,7 @@ namespace PlakatManager.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.ElectionItemTag", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.ElectionItemTag", b =>
                 {
                     b.Property<int>("TagId")
                         .HasColumnType("int")
@@ -422,7 +422,7 @@ namespace PlakatManager.Migrations
                     b.ToTable("ElectionItemTag");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Status", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Status", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -442,7 +442,7 @@ namespace PlakatManager.Migrations
                     b.ToTable("Statuses");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Tag", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -460,7 +460,7 @@ namespace PlakatManager.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.User", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -486,9 +486,9 @@ namespace PlakatManager.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Billboard", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Billboard", b =>
                 {
-                    b.HasBaseType("PlakatManager.Entities.ElectionItem");
+                    b.HasBaseType("ElectionMaterialManager.Entities.ElectionItem");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2")
@@ -501,9 +501,9 @@ namespace PlakatManager.Migrations
                     b.HasDiscriminator().HasValue("Billboard");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.LED", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.LED", b =>
                 {
-                    b.HasBaseType("PlakatManager.Entities.ElectionItem");
+                    b.HasBaseType("ElectionMaterialManager.Entities.ElectionItem");
 
                     b.Property<int>("RefreshRate")
                         .HasColumnType("int")
@@ -516,9 +516,9 @@ namespace PlakatManager.Migrations
                     b.HasDiscriminator().HasValue("LED");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Poster", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Poster", b =>
                 {
-                    b.HasBaseType("PlakatManager.Entities.ElectionItem");
+                    b.HasBaseType("ElectionMaterialManager.Entities.ElectionItem");
 
                     b.Property<string>("PaperType")
                         .HasMaxLength(50)
@@ -579,26 +579,26 @@ namespace PlakatManager.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Address", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Address", b =>
                 {
-                    b.HasOne("PlakatManager.Entities.User", "User")
+                    b.HasOne("ElectionMaterialManager.Entities.User", "User")
                         .WithOne("Address")
-                        .HasForeignKey("PlakatManager.Entities.Address", "UserId")
+                        .HasForeignKey("ElectionMaterialManager.Entities.Address", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Comment", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Comment", b =>
                 {
-                    b.HasOne("PlakatManager.Entities.User", "Author")
+                    b.HasOne("ElectionMaterialManager.Entities.User", "Author")
                         .WithMany("Comments")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
 
-                    b.HasOne("PlakatManager.Entities.ElectionItem", "ElectionItem")
+                    b.HasOne("ElectionMaterialManager.Entities.ElectionItem", "ElectionItem")
                         .WithMany("Comments")
                         .HasForeignKey("ElectionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -609,15 +609,15 @@ namespace PlakatManager.Migrations
                     b.Navigation("ElectionItem");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.ElectionItem", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.ElectionItem", b =>
                 {
-                    b.HasOne("PlakatManager.Entities.User", "Author")
+                    b.HasOne("ElectionMaterialManager.Entities.User", "Author")
                         .WithMany("ElectionItems")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlakatManager.Entities.Status", "Status")
+                    b.HasOne("ElectionMaterialManager.Entities.Status", "Status")
                         .WithMany("ElectionItems")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -628,15 +628,15 @@ namespace PlakatManager.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.ElectionItemTag", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.ElectionItemTag", b =>
                 {
-                    b.HasOne("PlakatManager.Entities.ElectionItem", "ElectionItem")
+                    b.HasOne("ElectionMaterialManager.Entities.ElectionItem", "ElectionItem")
                         .WithMany()
                         .HasForeignKey("ElectionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PlakatManager.Entities.Tag", "Tag")
+                    b.HasOne("ElectionMaterialManager.Entities.Tag", "Tag")
                         .WithMany()
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -647,17 +647,17 @@ namespace PlakatManager.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.ElectionItem", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.ElectionItem", b =>
                 {
                     b.Navigation("Comments");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.Status", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.Status", b =>
                 {
                     b.Navigation("ElectionItems");
                 });
 
-            modelBuilder.Entity("PlakatManager.Entities.User", b =>
+            modelBuilder.Entity("ElectionMaterialManager.Entities.User", b =>
                 {
                     b.Navigation("Address");
 

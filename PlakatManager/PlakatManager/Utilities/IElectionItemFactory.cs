@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using PlakatManager.Dtos;
-using PlakatManager.Entities;
+using ElectionMaterialManager.Dtos;
+using ElectionMaterialManager.Entities;
 using System.Text.Json;
 
-namespace PlakatManager.Utilities
+namespace ElectionMaterialManager.Utilities
 {
     public interface IElectionItemFactory
     {

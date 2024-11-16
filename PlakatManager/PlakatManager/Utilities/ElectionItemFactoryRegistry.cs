@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using PlakatManager.Dtos;
-using PlakatManager.Entities;
+using ElectionMaterialManager.Dtos;
+using ElectionMaterialManager.Entities;
 using System;
 using System.Text.Json;
 
-namespace PlakatManager.Utilities
+namespace ElectionMaterialManager.Utilities
 {
     public class ElectionItemFactoryRegistry
     {

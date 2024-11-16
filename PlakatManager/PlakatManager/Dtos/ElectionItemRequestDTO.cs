@@ -1,7 +1,7 @@
-﻿using PlakatManager.Entities;
+﻿using ElectionMaterialManager.Entities;
 using System.ComponentModel;
 
-namespace PlakatManager.Dtos
+namespace ElectionMaterialManager.Dtos
 {
     public class ElectionItemRequestDTO
     {

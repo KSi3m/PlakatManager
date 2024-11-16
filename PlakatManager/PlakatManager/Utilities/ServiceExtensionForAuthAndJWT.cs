@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using PlakatManager.Entities;
-using PlakatManager.Services;
+using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using System.Text;
 
-namespace PlakatManager.Utilities
+namespace ElectionMaterialManager.Utilities
 {
     public static class ServiceExtensionForAuthAndJWT
     {
@@ -18,7 +18,7 @@ namespace PlakatManager.Utilities
             services.AddTransient<AuthService>();
 
             services.AddIdentity<IdentityUser, IdentityRole>()
-            .AddEntityFrameworkStores<PlakatManagerContext>()
+            .AddEntityFrameworkStores<ElectionMaterialManagerContext>()
             .AddDefaultTokenProviders();
 
             services.AddAuthentication(options =>

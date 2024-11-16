@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace PlakatManager.Entities
+namespace ElectionMaterialManager.Entities
 {
-    public class PlakatManagerContext: IdentityDbContext<IdentityUser>
+    public class ElectionMaterialManagerContext: IdentityDbContext<IdentityUser>
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
@@ -17,7 +17,7 @@ namespace PlakatManager.Entities
         public DbSet<Status> Statuses { get; set; }
         public DbSet<ElectionItemTag> ElectionItemTag { get; set; }
 
-        public PlakatManagerContext(DbContextOptions<PlakatManagerContext> options):base(options) 
+        public ElectionMaterialManagerContext(DbContextOptions<ElectionMaterialManagerContext> options):base(options) 
         {
             
         }

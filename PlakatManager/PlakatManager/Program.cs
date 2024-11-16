@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using PlakatManager.Dtos;
-using PlakatManager.Entities;
-using PlakatManager.Entities.Seeders;
-using PlakatManager.Mappings;
-using PlakatManager.Services;
-using PlakatManager.Utilities;
+using ElectionMaterialManager.Dtos;
+using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Entities.Seeders;
+using ElectionMaterialManager.Mappings;
+using ElectionMaterialManager.Services;
+using ElectionMaterialManager.Utilities;
 using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata.Ecma335;
@@ -21,7 +21,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace PlakatManager
+namespace ElectionMaterialManager
 {
     public class Program
     {
@@ -43,7 +43,7 @@ namespace PlakatManager
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
-            builder.Services.AddDbContext<PlakatManagerContext>(
+            builder.Services.AddDbContext<ElectionMaterialManagerContext>(
                  option => option.UseSqlServer(builder.Configuration.GetConnectionString("pManagerConnectionString"))
             );
 
@@ -76,7 +76,7 @@ namespace PlakatManager
        
             seeder.Seed();
 
-            var dbContext = scope.ServiceProvider.GetService<PlakatManagerContext>();
+            var dbContext = scope.ServiceProvider.GetService<ElectionMaterialManagerContext>();
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();
 
@@ -86,7 +86,7 @@ namespace PlakatManager
             }
 
 
-            app.MapGet("api/v1/election-items", async (PlakatManagerContext db, int indexRangeStart = 1, int indexRangeEnd = 10) =>
+            app.MapGet("api/v1/election-items", async (ElectionMaterialManagerContext db, int indexRangeStart = 1, int indexRangeEnd = 10) =>
             {
                 var electionItems = await db.ElectionItems.Where(x=> x.Id >= indexRangeStart && x.Id <= indexRangeEnd).ToListAsync();
 
@@ -104,7 +104,7 @@ namespace PlakatManager
                 return Results.Ok(electionItems);
             });
 
-            app.MapGet("api/v1/election-item/{id}", async (int id, PlakatManagerContext db) =>
+            app.MapGet("api/v1/election-item/{id}", async (int id, ElectionMaterialManagerContext db) =>
             {
                 var electionItem = await db.ElectionItems.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -123,7 +123,7 @@ namespace PlakatManager
             });
 
 
-            app.MapDelete("api/v1/election-item/{id}", async (int id, PlakatManagerContext db) =>
+            app.MapDelete("api/v1/election-item/{id}", async (int id, ElectionMaterialManagerContext db) =>
             {
                 var electionItem = await db.ElectionItems.FirstAsync(x => x.Id.Equals(id));
 
@@ -145,7 +145,7 @@ namespace PlakatManager
             });
 
 
-            app.MapPatch("api/v1/election-item/{id}", async (int id, PlakatManagerContext db) =>
+            app.MapPatch("api/v1/election-item/{id}", async (int id, ElectionMaterialManagerContext db) =>
             {
                 var electionItem = await db.ElectionItems.FirstAsync(x=>x.Equals(id));
 
@@ -166,7 +166,7 @@ namespace PlakatManager
                 return Results.NoContent();
             });
 
-            app.MapPost("api/v1/election-item/led", async (LEDRequestDTO dto, PlakatManagerContext db) =>
+            app.MapPost("api/v1/election-item/led", async (LEDRequestDTO dto, ElectionMaterialManagerContext db) =>
             {
                 var led = new LED
                 {
@@ -188,7 +188,7 @@ namespace PlakatManager
                 return led.Id;
             });
 
-            app.MapPost("api/v1/election-item/poster", async (PosterRequestDTO dto, PlakatManagerContext db) =>
+            app.MapPost("api/v1/election-item/poster", async (PosterRequestDTO dto, ElectionMaterialManagerContext db) =>
             {
                 var poster = new Poster
                 {
@@ -209,7 +209,7 @@ namespace PlakatManager
                 return poster.Id;
             });
 
-            app.MapPost("api/v1/election-item/billboard", async (BillboardRequestDTO dto, PlakatManagerContext db) =>
+            app.MapPost("api/v1/election-item/billboard", async (BillboardRequestDTO dto, ElectionMaterialManagerContext db) =>
             {
                 var billboard = new Billboard
                 {
@@ -230,7 +230,7 @@ namespace PlakatManager
                 return billboard.Id;
             });
 
-            app.MapPost("api/v1/election-item", async (ElectionItemRequestDTO dto, PlakatManagerContext db, ElectionItemFactoryRegistry factoryRegistry) =>
+            app.MapPost("api/v1/election-item", async (ElectionItemRequestDTO dto, ElectionMaterialManagerContext db, ElectionItemFactoryRegistry factoryRegistry) =>
             {
 
                 var type = dto.Type;
@@ -243,7 +243,7 @@ namespace PlakatManager
             });
 
 
-            app.MapGet("api/v1/user/comments", async (int id, PlakatManagerContext db) =>
+            app.MapGet("api/v1/user/comments", async (int id, ElectionMaterialManagerContext db) =>
             {
                 var user = await db.Users
                 .Where(x=>x.Id == id)
@@ -259,7 +259,7 @@ namespace PlakatManager
             }).RequireAuthorization();
 
 
-            app.MapGet("data2", (PlakatManagerContext db) =>
+            app.MapGet("data2", (ElectionMaterialManagerContext db) =>
             {
 
                 var authorsCommentsCount = db.Comments
@@ -278,11 +278,17 @@ namespace PlakatManager
 
             });
 
-            app.MapPost("/security/createToken",[AllowAnonymous] (IdentityUser user, AuthService service) =>
+            app.MapPost("api/v1/login", [AllowAnonymous] async (LoginRequestDTO request, UserManager<IdentityUser> userManager, AuthService service) =>
             {
+                var user = await userManager.FindByNameAsync(request.Login);
+                if (user == null) return Results.Unauthorized();
+
+                var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
+                if (!passwordValid) return Results.Unauthorized();
+
                 string token = service.CreateToken(user);
 
-                return new { BearerToken = token };
+                return Results.Ok(new { BearerToken = token });
 
 
             });

@@ -1,10 +1,10 @@
-﻿namespace PlakatManager.Entities.Seeders
+﻿namespace ElectionMaterialManager.Entities.Seeders
 {
     public class Seeder
     {
-        private readonly PlakatManagerContext _dbContext;
+        private readonly ElectionMaterialManagerContext _dbContext;
 
-        public Seeder(PlakatManagerContext dbContext)
+        public Seeder(ElectionMaterialManagerContext dbContext)
         {
             _dbContext = dbContext;
         }

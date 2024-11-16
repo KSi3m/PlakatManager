@@ -1,7 +1,7 @@
-﻿using PlakatManager.Entities;
+﻿using ElectionMaterialManager.Entities;
 using System.Runtime.CompilerServices;
 
-namespace PlakatManager.Utilities
+namespace ElectionMaterialManager.Utilities
 {
     public static class ServicesExtensionForFactories
     {

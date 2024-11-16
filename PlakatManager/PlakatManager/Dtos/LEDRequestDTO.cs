@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace PlakatManager.Dtos
+namespace ElectionMaterialManager.Dtos
 {
     public class LEDRequestDTO
     {

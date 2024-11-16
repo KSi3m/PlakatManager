@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace PlakatManager.Migrations
+namespace ElectionMaterialManager.Migrations
 {
     /// <inheritdoc />
     public partial class UserToComment : Migration

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace PlakatManager.Migrations
+namespace ElectionMaterialManager.Migrations
 {
     /// <inheritdoc />
     public partial class Identity : Migration

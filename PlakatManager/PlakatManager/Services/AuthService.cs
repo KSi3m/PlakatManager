@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using PlakatManager.Utilities;
+using ElectionMaterialManager.Dtos;
+using ElectionMaterialManager.Utilities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace PlakatManager.Services
+namespace ElectionMaterialManager.Services
 {
     public class AuthService
     {
@@ -27,7 +28,7 @@ namespace PlakatManager.Services
                     {
                             new Claim("Id", Guid.NewGuid().ToString()),
                             new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                            new Claim(JwtRegisteredClaimNames.Email, user.UserName),
+                            new Claim(JwtRegisteredClaimNames.Email, user.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                         }),
                     Expires = DateTime.UtcNow.AddMinutes(60),
