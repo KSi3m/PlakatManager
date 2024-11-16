@@ -1,15 +1,23 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using PlakatManager.Dtos;
 using PlakatManager.Entities;
 using PlakatManager.Entities.Seeders;
 using PlakatManager.Mappings;
+using PlakatManager.Services;
 using PlakatManager.Utilities;
 using System.Drawing;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -39,9 +47,17 @@ namespace PlakatManager
                  option => option.UseSqlServer(builder.Configuration.GetConnectionString("pManagerConnectionString"))
             );
 
+            builder.Services.ConfigureAuthAndJwt(builder.Configuration);
+
             builder.Services.AddScoped<Seeder>();
 
+            builder.Services.AddAuthorization();
+
             var app = builder.Build();
+
+            // W³¹cz autoryzacjê i uwierzytelnianie
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -70,7 +86,7 @@ namespace PlakatManager
             }
 
 
-            app.MapGet("election-items", async (PlakatManagerContext db, int indexRangeStart = 1, int indexRangeEnd = 10) =>
+            app.MapGet("api/v1/election-items", async (PlakatManagerContext db, int indexRangeStart = 1, int indexRangeEnd = 10) =>
             {
                 var electionItems = await db.ElectionItems.Where(x=> x.Id >= indexRangeStart && x.Id <= indexRangeEnd).ToListAsync();
 
@@ -88,7 +104,7 @@ namespace PlakatManager
                 return Results.Ok(electionItems);
             });
 
-            app.MapGet("election-item/{id}", async (int id, PlakatManagerContext db) =>
+            app.MapGet("api/v1/election-item/{id}", async (int id, PlakatManagerContext db) =>
             {
                 var electionItem = await db.ElectionItems.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -107,7 +123,7 @@ namespace PlakatManager
             });
 
 
-            app.MapDelete("election-item/{id}", async (int id, PlakatManagerContext db) =>
+            app.MapDelete("api/v1/election-item/{id}", async (int id, PlakatManagerContext db) =>
             {
                 var electionItem = await db.ElectionItems.FirstAsync(x => x.Id.Equals(id));
 
@@ -129,7 +145,7 @@ namespace PlakatManager
             });
 
 
-            app.MapPatch("election-item/{id}", async (int id, PlakatManagerContext db) =>
+            app.MapPatch("api/v1/election-item/{id}", async (int id, PlakatManagerContext db) =>
             {
                 var electionItem = await db.ElectionItems.FirstAsync(x=>x.Equals(id));
 
@@ -150,7 +166,7 @@ namespace PlakatManager
                 return Results.NoContent();
             });
 
-            app.MapPost("election-item/led", async (LEDRequestDTO dto, PlakatManagerContext db) =>
+            app.MapPost("api/v1/election-item/led", async (LEDRequestDTO dto, PlakatManagerContext db) =>
             {
                 var led = new LED
                 {
@@ -172,7 +188,7 @@ namespace PlakatManager
                 return led.Id;
             });
 
-            app.MapPost("election-item/poster", async (PosterRequestDTO dto, PlakatManagerContext db) =>
+            app.MapPost("api/v1/election-item/poster", async (PosterRequestDTO dto, PlakatManagerContext db) =>
             {
                 var poster = new Poster
                 {
@@ -193,7 +209,7 @@ namespace PlakatManager
                 return poster.Id;
             });
 
-            app.MapPost("election-item/billboard", async (BillboardRequestDTO dto, PlakatManagerContext db) =>
+            app.MapPost("api/v1/election-item/billboard", async (BillboardRequestDTO dto, PlakatManagerContext db) =>
             {
                 var billboard = new Billboard
                 {
@@ -214,7 +230,7 @@ namespace PlakatManager
                 return billboard.Id;
             });
 
-            app.MapPost("election-item", async (ElectionItemRequestDTO dto, PlakatManagerContext db, ElectionItemFactoryRegistry factoryRegistry) =>
+            app.MapPost("api/v1/election-item", async (ElectionItemRequestDTO dto, PlakatManagerContext db, ElectionItemFactoryRegistry factoryRegistry) =>
             {
 
                 var type = dto.Type;
@@ -225,6 +241,23 @@ namespace PlakatManager
 
                 return electionItem;
             });
+
+
+            app.MapGet("api/v1/user/comments", async (int id, PlakatManagerContext db) =>
+            {
+                var user = await db.Users
+                .Where(x=>x.Id == id)
+                .Include(x => x.Comments)
+                .Select(x => new
+                {
+                    x.FirstName,
+                    x.Comments
+                })
+                .ToListAsync();
+
+                return user;
+            }).RequireAuthorization();
+
 
             app.MapGet("data2", (PlakatManagerContext db) =>
             {
@@ -242,6 +275,15 @@ namespace PlakatManager
                 var userDetails = db.Users.First(x => x.Id == topAuthor.Key);
                 return new { userDetails, commentsCount = topAuthor.Count };
                 //var topAuthor = db.Users.Where(x=>x.Id == topcomments.Key)
+
+            });
+
+            app.MapPost("/security/createToken",[AllowAnonymous] (IdentityUser user, AuthService service) =>
+            {
+                string token = service.CreateToken(user);
+
+                return new { BearerToken = token };
+
 
             });
 

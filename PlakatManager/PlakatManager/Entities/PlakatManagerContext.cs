@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace PlakatManager.Entities
 {
-    public class PlakatManagerContext: DbContext
+    public class PlakatManagerContext: IdentityDbContext<IdentityUser>
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
@@ -22,6 +24,8 @@ namespace PlakatManager.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
