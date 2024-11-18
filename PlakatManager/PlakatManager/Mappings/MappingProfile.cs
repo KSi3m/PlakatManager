@@ -11,6 +11,8 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<ElectionItemRequestDTO, LED>();
             CreateMap<ElectionItemRequestDTO, Poster>();
             CreateMap<ElectionItemRequestDTO, Billboard>();
+
+            CreateMap<TagRequestDTO, Tag>();
         }
     }
 }

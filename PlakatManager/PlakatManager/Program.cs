@@ -22,6 +22,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.OpenApi.Models;
+using Azure;
 
 namespace ElectionMaterialManager
 {
@@ -114,6 +115,8 @@ namespace ElectionMaterialManager
                 dbContext.Database.Migrate();
             }
 
+
+            //create controllers for endpoints, make use of cqrs etc.
 
             app.MapPost("api/v1/authenticate/login", [AllowAnonymous] async (LoginRequestDTO request, UserManager<IdentityUser> userManager, AuthService service) =>
             {
@@ -241,7 +244,7 @@ namespace ElectionMaterialManager
                 db.Add(led);
                 await db.SaveChangesAsync();
 
-                return led.Id;
+                return Results.Created($"/api/v1/election-item/{led.Id}", led);
             });
 
             app.MapPost("api/v1/election-item/poster", async (PosterRequestDTO dto, ElectionMaterialManagerContext db) =>
@@ -262,7 +265,7 @@ namespace ElectionMaterialManager
                 db.Add(poster);
                 await db.SaveChangesAsync();
 
-                return poster.Id;
+                return Results.Created($"/api/v1/election-item/{poster.Id}", poster);
             });
 
             app.MapPost("api/v1/election-item/billboard", async (BillboardRequestDTO dto, ElectionMaterialManagerContext db) =>
@@ -283,7 +286,7 @@ namespace ElectionMaterialManager
                 db.Add(billboard);
                 await db.SaveChangesAsync();
 
-                return billboard.Id;
+               return Results.Created($"/api/v1/election-item/{billboard.Id}", billboard);
             });
 
             app.MapPost("api/v1/election-item", async (ElectionItemRequestDTO dto, ElectionMaterialManagerContext db, ElectionItemFactoryRegistry factoryRegistry) =>
@@ -297,6 +300,53 @@ namespace ElectionMaterialManager
 
                 return electionItem;
             });
+
+            app.MapGet("api/v1/election-items-by-tags", async (string tag, ElectionMaterialManagerContext db) =>
+            {
+                if (tag.IsNullOrEmpty()) return Results.BadRequest();
+
+                var electionItems = await db.ElectionItems
+                .Include(x=>x.Tags)
+                .Where(x=>x.Tags.Any(y=>y.Value == tag))
+                .ToListAsync();
+
+               // if (electionItems.Count == 0) 
+
+                return Results.Ok(electionItems);
+            });
+
+            app.MapGet("api/v1/tags", async (ElectionMaterialManagerContext db) =>
+            {
+                var tags = await db.Tags.ToListAsync();
+
+                return Results.Ok(tags);
+            });
+            app.MapGet("api/v1/tag/{id}", async (int id, ElectionMaterialManagerContext db) =>
+            {
+                var tag = await db.Tags.FirstOrDefaultAsync(x=>x.Id==id);
+
+                return Results.Ok(tag);
+            });
+
+
+            app.MapPost("api/v1/tag", async (TagRequestDTO request, ElectionMaterialManagerContext db) =>
+            {
+
+                var tagFromDb = await db.Tags.FirstOrDefaultAsync(x => x.Value.ToLower() == request.Value.ToLower());
+                if (tagFromDb != null) return Results.Conflict(new { message = "Tag already exists" });
+
+                var tag = new Tag()
+                {
+                    Value = request.Value,
+                };
+
+                db.Tags.Add(tag);
+                await db.SaveChangesAsync();
+
+                return Results.Created($"/api/v1/tag/{tag.Id}", tag);
+            });
+
+
 
 
             app.MapGet("api/v1/user/comments", async (int id, ElectionMaterialManagerContext db) =>
