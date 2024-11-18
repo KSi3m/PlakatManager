@@ -20,6 +20,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.OpenApi.Models;
 
 namespace ElectionMaterialManager
 {
@@ -31,10 +33,37 @@ namespace ElectionMaterialManager
 
             // Add services to the container.
             builder.Services.AddAuthorization();
+            builder.Services.AddControllers();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "ElectionAssetManagerAPI",
+                    Version = "v1"
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                {
+                    new OpenApiSecurityScheme {
+                        Reference = new OpenApiReference {
+                            Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+               });
+            });
             builder.Services.RegisterFactories();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -84,6 +113,33 @@ namespace ElectionMaterialManager
             {
                 dbContext.Database.Migrate();
             }
+
+
+            app.MapPost("api/v1/authenticate/login", [AllowAnonymous] async (LoginRequestDTO request, UserManager<IdentityUser> userManager, AuthService service) =>
+            {
+                var user = await userManager.FindByNameAsync(request.Login);
+                if (user == null) return Results.Unauthorized();
+
+                var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
+                if (!passwordValid) return Results.Unauthorized();
+
+                string token = service.CreateToken(user);
+
+                return Results.Ok(new { BearerToken = token });
+
+            });
+
+            app.MapPost("api/v1/authenticate/register", async (RegisterRequestDTO request, UserManager<IdentityUser> userManager) =>
+            {
+                var userFromDb = await userManager.FindByNameAsync(request.Username);
+                if (userFromDb != null) return Results.Conflict(new { message = "User already exists" });
+
+                var user = new IdentityUser { UserName = request.Username, Email = request.Email };
+                var response = await userManager.CreateAsync(user, request.Password);
+                if (!response.Succeeded) return Results.BadRequest(response.Errors);
+
+                return Results.Created();
+            });
 
 
             app.MapGet("api/v1/election-items", async (ElectionMaterialManagerContext db, int indexRangeStart = 1, int indexRangeEnd = 10) =>
@@ -278,20 +334,7 @@ namespace ElectionMaterialManager
 
             });
 
-            app.MapPost("api/v1/login", [AllowAnonymous] async (LoginRequestDTO request, UserManager<IdentityUser> userManager, AuthService service) =>
-            {
-                var user = await userManager.FindByNameAsync(request.Login);
-                if (user == null) return Results.Unauthorized();
-
-                var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
-                if (!passwordValid) return Results.Unauthorized();
-
-                string token = service.CreateToken(user);
-
-                return Results.Ok(new { BearerToken = token });
-
-
-            });
+          
 
             app.Run();
 
