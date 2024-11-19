@@ -1,32 +1,17 @@
 
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Entities.Seeders;
 using ElectionMaterialManager.Mappings;
-using ElectionMaterialManager.Services;
 using ElectionMaterialManager.Utilities;
-using System.Drawing;
-using System.IdentityModel.Tokens.Jwt;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.OpenApi.Models;
-using Azure;
-using Microsoft.Extensions.DependencyInjection;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
-using MediatR;
+using FluentValidation;
 using System.Reflection;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using FluentValidation.AspNetCore;
 
 namespace ElectionMaterialManager
 {
@@ -86,7 +71,14 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<Seeder>();
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
-  
+
+            builder.Services.AddValidatorsFromAssemblyContaining<EditElectionItemCommand>()
+                .AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
+            /*builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddFluentValidationClientsideAdapters();
+            builder.Services.AddValidatorsFromAssembly(typeof(SignUpRequestModelValidator).Assembly);*/
+
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
@@ -124,9 +116,7 @@ namespace ElectionMaterialManager
             }
 
 
-            //create controllers for endpoints, make use of cqrs etc.
-
-            
+                       
 
 
             
