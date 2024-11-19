@@ -86,8 +86,10 @@ namespace ElectionMaterialManager
             var app = builder.Build();
 
             // W³¹cz autoryzacjê i uwierzytelnianie
+            //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapControllers();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -118,238 +120,13 @@ namespace ElectionMaterialManager
 
             //create controllers for endpoints, make use of cqrs etc.
 
-            app.MapPost("api/v1/authenticate/login", [AllowAnonymous] async (LoginRequestDTO request, UserManager<IdentityUser> userManager, AuthService service) =>
-            {
-                var user = await userManager.FindByNameAsync(request.Login);
-                if (user == null) return Results.Unauthorized();
-
-                var passwordValid = await userManager.CheckPasswordAsync(user, request.Password);
-                if (!passwordValid) return Results.Unauthorized();
-
-                string token = service.CreateToken(user);
-
-                return Results.Ok(new { BearerToken = token });
-
-            });
-
-            app.MapPost("api/v1/authenticate/register", async (RegisterRequestDTO request, UserManager<IdentityUser> userManager) =>
-            {
-                var userFromDb = await userManager.FindByNameAsync(request.Username);
-                if (userFromDb != null) return Results.Conflict(new { message = "User already exists" });
-
-                var user = new IdentityUser { UserName = request.Username, Email = request.Email };
-                var response = await userManager.CreateAsync(user, request.Password);
-                if (!response.Succeeded) return Results.BadRequest(response.Errors);
-
-                return Results.Created();
-            });
+            
 
 
-            app.MapGet("api/v1/election-items", async (ElectionMaterialManagerContext db, int indexRangeStart = 1, int indexRangeEnd = 10) =>
-            {
-                var electionItems = await db.ElectionItems.Where(x=> x.Id >= indexRangeStart && x.Id <= indexRangeEnd).ToListAsync();
-
-                if (electionItems == null)
-                {
-                    var errorResponse = new
-                    {
-                        status = 404,
-                        message = $"Election items withing given range not found.",
-                        details = "The requested items does not exist in the database."
-                    };
-                    return Results.NotFound(errorResponse);
-                }
-
-                return Results.Ok(electionItems);
-            });
-
-            app.MapGet("api/v1/election-item/{id}", async (int id, ElectionMaterialManagerContext db) =>
-            {
-                var electionItem = await db.ElectionItems.FirstOrDefaultAsync(x => x.Id == id);
-
-                if (electionItem == null)
-                {
-                    var errorResponse = new
-                    {
-                        status = 404,
-                        message = $"Election item with id {id} not found.",
-                        details = "The requested item does not exist in the database."
-                    };
-                    return Results.NotFound(errorResponse);
-                }
-
-                return Results.Ok(electionItem);
-            });
+            
 
 
-            app.MapDelete("api/v1/election-item/{id}", async (int id, ElectionMaterialManagerContext db) =>
-            {
-                var electionItem = await db.ElectionItems.FirstAsync(x => x.Id.Equals(id));
-
-                if (electionItem == null)
-                {
-                    var errorResponse = new
-                    {
-                        status = 404,
-                        message = $"Election item with id {id} not found.",
-                        details = "The requested item does not exist in the database."
-                    };
-                    return Results.NotFound(errorResponse);
-                }
-
-                db.Remove(electionItem);
-                await db.SaveChangesAsync();
-
-                return Results.NoContent();
-            });
-
-
-            app.MapPatch("api/v1/election-item/{id}", async (int id, ElectionMaterialManagerContext db) =>
-            {
-                var electionItem = await db.ElectionItems.FirstAsync(x=>x.Equals(id));
-
-                if(electionItem == null)
-                {
-                    var errorResponse = new
-                    {
-                        status = 404,
-                        message = $"Election item with id {id} not found.",
-                        details = "The requested item does not exist in the database."
-                    };
-                    return Results.NotFound(errorResponse);
-                }
-
-                db.Remove(electionItem);
-                await db.SaveChangesAsync();
-
-                return Results.NoContent();
-            });
-
-            app.MapPost("api/v1/election-item/led", async (LEDRequestDTO dto, ElectionMaterialManagerContext db) =>
-            {
-                var led = new LED
-                {
-                    Area = dto.Area,
-
-                    Latitude = (double)dto.Latitude,
-                    Longitude = (double)dto.Longitude,
-                    Priority = (int)dto.Priority,
-                    Size = dto.Size,
-                    Cost = (decimal)dto.Cost,
-                    StatusId = dto.StatusId,
-                    AuthorId = dto.AuthorId,
-                    RefreshRate = (int)dto.RefreshRate,
-                    Resolution = dto.Resolution,
-                };
-                db.Add(led);
-                await db.SaveChangesAsync();
-
-                return Results.Created($"/api/v1/election-item/{led.Id}", led);
-            });
-
-            app.MapPost("api/v1/election-item/poster", async (PosterRequestDTO dto, ElectionMaterialManagerContext db) =>
-            {
-                var poster = new Poster
-                {
-                    Area = dto.Area,
-                    Latitude = (double)dto.Latitude,
-                    Longitude = (double)dto.Longitude,
-                    Priority = (int)dto.Priority,
-                    Size = dto.Size,
-                    Cost = (decimal)dto.Cost,
-                    StatusId = dto.StatusId,
-                    AuthorId = dto.AuthorId,
-                    PaperType = dto.PaperType
-                    
-                };
-                db.Add(poster);
-                await db.SaveChangesAsync();
-
-                return Results.Created($"/api/v1/election-item/{poster.Id}", poster);
-            });
-
-            app.MapPost("api/v1/election-item/billboard", async (BillboardRequestDTO dto, ElectionMaterialManagerContext db) =>
-            {
-                var billboard = new Billboard
-                {
-                    Area = dto.Area,
-                    Latitude = (double)dto.Latitude,
-                    Longitude = (double)dto.Longitude,
-                    Priority = (int)dto.Priority,
-                    Size = dto.Size,
-                    Cost = (decimal)dto.Cost,
-                    StatusId = dto.StatusId,
-                    AuthorId = dto.AuthorId,
-                    StartDate = (DateTime)dto.StartDate,
-                    EndDate = (DateTime)dto.EndDate
-                };
-                db.Add(billboard);
-                await db.SaveChangesAsync();
-
-               return Results.Created($"/api/v1/election-item/{billboard.Id}", billboard);
-            });
-
-            app.MapPost("api/v1/election-item", async (ElectionItemRequestDTO dto, ElectionMaterialManagerContext db, ElectionItemFactoryRegistry factoryRegistry) =>
-            {
-
-                var type = dto.Type;
-                var electionItem = factoryRegistry.CreateElectionItem(type, dto);
-
-                db.Add(electionItem);
-                await db.SaveChangesAsync();
-
-                return electionItem;
-            });
-
-            app.MapGet("api/v1/election-items-by-tags", async (string tag, ElectionMaterialManagerContext db) =>
-            {
-                if (tag.IsNullOrEmpty()) return Results.BadRequest();
-
-                var electionItems = await db.ElectionItems
-                .Include(x=>x.Tags)
-                .Where(x=>x.Tags.Any(y=>y.Value == tag))
-                .ToListAsync();
-
-               // if (electionItems.Count == 0) 
-
-                return Results.Ok(electionItems);
-            });
-
-            app.MapGet("api/v1/tags", async (ElectionMaterialManagerContext db) =>
-            {
-                var tags = await db.Tags.ToListAsync();
-
-                return Results.Ok(tags);
-            });
-            app.MapGet("api/v1/tag/{id}", async (int id, ElectionMaterialManagerContext db) =>
-            {
-                var tag = await db.Tags.FirstOrDefaultAsync(x=>x.Id==id);
-
-                return Results.Ok(tag);
-            });
-
-
-            app.MapPost("api/v1/tag", async (TagRequestDTO request, ElectionMaterialManagerContext db) =>
-            {
-
-                var tagFromDb = await db.Tags.FirstOrDefaultAsync(x => x.Value.ToLower() == request.Value.ToLower());
-                if (tagFromDb != null) return Results.Conflict(new { message = "Tag already exists" });
-
-                var tag = new Tag()
-                {
-                    Value = request.Value,
-                };
-
-                db.Tags.Add(tag);
-                await db.SaveChangesAsync();
-
-                return Results.Created($"/api/v1/tag/{tag.Id}", tag);
-            });
-
-
-
-
-            app.MapGet("api/v1/user/comments", async (int id, ElectionMaterialManagerContext db) =>
+            /*app.MapGet("api/v1/user/comments", async (int id, ElectionMaterialManagerContext db) =>
             {
                 var user = await db.Users
                 .Where(x=>x.Id == id)
@@ -382,7 +159,7 @@ namespace ElectionMaterialManager
                 return new { userDetails, commentsCount = topAuthor.Count };
                 //var topAuthor = db.Users.Where(x=>x.Id == topcomments.Key)
 
-            });
+            });*/
 
           
 
