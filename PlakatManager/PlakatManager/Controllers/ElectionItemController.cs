@@ -1,6 +1,8 @@
-﻿using ElectionMaterialManager.Dtos;
+﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Utilities;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +15,11 @@ namespace ElectionMaterialManager.Controllers
     public class ElectionItemController : ControllerBase
     {
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IMediator _mediator;
 
-       public ElectionItemController(ElectionMaterialManagerContext db) {
+       public ElectionItemController(ElectionMaterialManagerContext db, IMediator mediator) {
             _db = db;
+            _mediator = mediator;
        }
 
         [HttpGet]
@@ -87,23 +91,10 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpPatch]
         [Route("election-item/{id}")]
-        public async Task<IActionResult> UpdateElectionItem(int id)
+        public async Task<IActionResult> UpdateElectionItem(EditElectionItemCommand command, int id)
         {
-            var electionItem = await _db.ElectionItems.FirstAsync(x => x.Equals(id));
-
-            if (electionItem == null)
-            {
-                var errorResponse = new
-                {
-                    status = 404,
-                    message = $"Election item with id {id} not found.",
-                    details = "The requested item does not exist in the database."
-                };
-                return NotFound(errorResponse);
-            }
-
-            _db.Remove(electionItem);
-            await _db.SaveChangesAsync();
+            command.Id = id;
+            await _mediator.Send(command);
 
             return NoContent();
 

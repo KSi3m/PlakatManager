@@ -23,6 +23,10 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.OpenApi.Models;
 using Azure;
+using Microsoft.Extensions.DependencyInjection;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using MediatR;
+using System.Reflection;
 
 namespace ElectionMaterialManager
 {
@@ -81,11 +85,13 @@ namespace ElectionMaterialManager
 
             builder.Services.AddScoped<Seeder>();
 
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+  
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
-            // W³¹cz autoryzacjê i uwierzytelnianie
+        
             //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();

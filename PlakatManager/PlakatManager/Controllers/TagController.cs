@@ -54,5 +54,24 @@ namespace ElectionMaterialManager.Controllers
             return Created($"/api/v1/tag/{tag.Id}", tag);
         }
 
+        [HttpPatch]
+        [Route("tag/{id}")]
+        public async Task<IActionResult> UpdateTag(TagRequestDTO request)
+        {
+            var tagFromDb = await _db.Tags
+                .FirstOrDefaultAsync(x => x.Value.ToLower() == request.Value.ToLower());
+            if (tagFromDb != null) return Conflict(new { message = "Tag already exists" });
+
+            var tag = new Tag()
+            {
+                Value = request.Value,
+            };
+
+            _db.Tags.Add(tag);
+            await _db.SaveChangesAsync();
+
+            return Created($"/api/v1/tag/{tag.Id}", tag);
+        }
+
     }
 }
