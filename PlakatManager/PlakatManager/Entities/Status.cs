@@ -1,4 +1,4 @@
-﻿namespace PlakatManager.Entities
+﻿namespace ElectionMaterialManager.Entities
 {
     public class Status
     {

@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace PlakatManager.Entities
+namespace ElectionMaterialManager.Entities
 {
-    public class PlakatManagerContext: DbContext
+    public class ElectionMaterialManagerContext: IdentityDbContext<IdentityUser>
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
@@ -13,14 +15,17 @@ namespace PlakatManager.Entities
         public DbSet<LED> Leds { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<ElectionItemTag> ElectionItemTag { get; set; }
 
-        public PlakatManagerContext(DbContextOptions<PlakatManagerContext> options):base(options) 
+        public ElectionMaterialManagerContext(DbContextOptions<ElectionMaterialManagerContext> options):base(options) 
         {
             
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            base.OnModelCreating(modelBuilder);
 
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
@@ -94,7 +99,7 @@ namespace PlakatManager.Entities
                 eb.HasOne(x => x.Author)
                 .WithMany(x => x.Comments)
                 .HasForeignKey(x => x.AuthorId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.ClientCascade);
             });
 
             modelBuilder.Entity<User>()

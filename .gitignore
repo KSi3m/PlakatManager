@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+/PlakatManager/PlakatManager/appsettings.json
+/PlakatManager/PlakatManager/appsettings.Development.json

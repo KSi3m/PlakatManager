@@ -12,8 +12,8 @@ using ElectionMaterialManager.Entities;
 namespace ElectionMaterialManager.Migrations
 {
     [DbContext(typeof(ElectionMaterialManagerContext))]
-    [Migration("20240903182624_Init")]
-    partial class Init
+    [Migration("20240904193717_Cleanup")]
+    partial class Cleanup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,9 +71,9 @@ namespace ElectionMaterialManager.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Author")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("author");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int")
+                        .HasColumnName("authorid");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -95,6 +95,8 @@ namespace ElectionMaterialManager.Migrations
                         .HasColumnName("updatedat");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("ElectionItemId");
 
@@ -302,11 +304,19 @@ namespace ElectionMaterialManager.Migrations
 
             modelBuilder.Entity("ElectionMaterialManager.Entities.Comment", b =>
                 {
+                    b.HasOne("ElectionMaterialManager.Entities.User", "Author")
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("ElectionMaterialManager.Entities.ElectionItem", "ElectionItem")
                         .WithMany("Comments")
                         .HasForeignKey("ElectionItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
 
                     b.Navigation("ElectionItem");
                 });
@@ -362,6 +372,8 @@ namespace ElectionMaterialManager.Migrations
             modelBuilder.Entity("ElectionMaterialManager.Entities.User", b =>
                 {
                     b.Navigation("Address");
+
+                    b.Navigation("Comments");
 
                     b.Navigation("ElectionItems");
                 });
