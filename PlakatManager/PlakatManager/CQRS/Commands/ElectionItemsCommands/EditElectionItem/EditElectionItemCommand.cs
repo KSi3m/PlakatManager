@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
 {
-    public class EditElectionItemCommand: IRequest
+    public class EditElectionItemCommand: IRequest<Response>
     {
         [JsonIgnore]
         public int Id { get; set; }

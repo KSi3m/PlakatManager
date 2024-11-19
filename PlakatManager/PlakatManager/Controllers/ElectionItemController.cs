@@ -1,4 +1,5 @@
-﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Utilities;
@@ -68,41 +69,28 @@ namespace ElectionMaterialManager.Controllers
         [Route("election-item/{id}")]
         public async Task<IActionResult> DeleteElectionItem(int id)
         {
-            var electionItem = await _db.ElectionItems.FirstAsync(x => x.Id.Equals(id));
-
-            if (electionItem == null)
-            {
-                var errorResponse = new
-                {
-                    status = 404,
-                    message = $"Election item with id {id} not found.",
-                    details = "The requested item does not exist in the database."
-                };
-                return NotFound(errorResponse);
-            }
-
-            _db.Remove(electionItem);
-            await _db.SaveChangesAsync();
-
-            return NoContent();
-
-
+            var response = await _mediator.Send(new DeleteElectionItemCommand() { Id = id });
+            if(response.Success)
+                return NoContent();
+            return BadRequest();
         }
 
         [HttpPatch]
         [Route("election-item/{id}")]
         public async Task<IActionResult> UpdateElectionItem(EditElectionItemCommand command, int id)
         {
+         
             command.Id = id;
-            await _mediator.Send(command);
-
-            return NoContent();
+            var response = await _mediator.Send(command);
+            if(response.Success)
+                return NoContent();
+            return BadRequest();
 
         }
 
         [HttpPost]
         [Route("election-item/led")]
-        public async Task<IActionResult> CreateLed(LEDRequestDTO dto,int id)
+        public async Task<IActionResult> CreateLed(LEDRequestDTO dto)
         {
             var led = new LED
             {
@@ -127,7 +115,7 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpPost]
         [Route("election-item/poster")]
-        public async Task<IActionResult> CreatePoster(PosterRequestDTO dto, int id)
+        public async Task<IActionResult> CreatePoster(PosterRequestDTO dto)
         {
             var poster = new Poster
             {
@@ -151,7 +139,7 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpPost]
         [Route("election-item/billboard")]
-        public async Task<IActionResult> CreateBillboard(BillboardRequestDTO dto, int id)
+        public async Task<IActionResult> CreateBillboard(BillboardRequestDTO dto)
         {
             var billboard = new Billboard
             {
@@ -175,7 +163,7 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpPost]
         [Route("election-item")]
-        public async Task<IActionResult> CreateElectionItem(ElectionItemRequestDTO dto, int id, ElectionItemFactoryRegistry factoryRegistry)
+        public async Task<IActionResult> CreateElectionItem(ElectionItemRequestDTO dto,  ElectionItemFactoryRegistry factoryRegistry)
         {
             var type = dto.Type;
             var electionItem = factoryRegistry.CreateElectionItem(type, dto);

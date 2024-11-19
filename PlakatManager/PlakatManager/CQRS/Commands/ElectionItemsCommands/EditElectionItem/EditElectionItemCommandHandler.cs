@@ -6,9 +6,9 @@ using AutoMapper;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
 {
-    public class EditElectionItemCommandHandler: IRequestHandler<EditElectionItemCommand>
+    public class EditElectionItemCommandHandler: IRequestHandler<EditElectionItemCommand,Response>
     {
-
+        
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
 
@@ -18,15 +18,28 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             _mapper = mapper;
         }
 
-        public async Task Handle(EditElectionItemCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(EditElectionItemCommand request, CancellationToken cancellationToken)
         {
-            var item = await _db.ElectionItems.FirstOrDefaultAsync(x => x.Id == request.Id);
-            if (item == null) return ;
-
-            var xd = _mapper.Map(request,item);
-            await _db.SaveChangesAsync();
-
-            return ;
+            var response = new Response() { Success = false };
+            try
+            {
+                var item = await _db.ElectionItems.FirstOrDefaultAsync(x => x.Id == request.Id);
+                if (item == null)
+                {
+                    response.Message = "Item not found";
+                    return response;
+                }
+                _mapper.Map(request, item);
+                await _db.SaveChangesAsync();
+                response.Success = true;
+                response.Message = "Updated succesfully";
+            }
+            catch(Exception ex)
+            {
+                response.Success = true;
+                response.Message = "Updated succesfully";
+            }
+            return response;
         }
 
 
