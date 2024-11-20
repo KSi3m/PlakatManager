@@ -1,5 +1,8 @@
 ﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElectionItem;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByTag;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Utilities;
@@ -27,43 +30,27 @@ namespace ElectionMaterialManager.Controllers
         [Route("election-items")]
         public async Task<IActionResult> GetElectionItems(int indexRangeStart = 1, int indexRangeEnd = 10)
         {
-            var electionItems = await _db.ElectionItems
-                .Where(x => x.Id >= indexRangeStart && x.Id <= indexRangeEnd)
-                .ToListAsync();
 
-            if (electionItems == null)
-            {
-                var errorResponse = new
-                {
-                    status = 404,
-                    message = $"Election items withing given range not found.",
-                    details = "The requested items does not exist in the database."
-                };
-                return NotFound(errorResponse);
-            }
-
-            return Ok(electionItems);
-
+            var query = new GetElectionItemsQuery()
+            { IndexRangeStart = indexRangeStart, IndexRangeEnd = indexRangeEnd };
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest();
         }
 
         [HttpGet]
         [Route("election-item/{id}")]
         public async Task<IActionResult> GetElectionItem(int id)
         {
-            var electionItem = await _db.ElectionItems.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (electionItem == null)
+            var query = new GetElectionItemByIdQuery() { Id = id };
+            var response = await _mediator.Send(query);
+            if (response.Success)
             {
-                var errorResponse = new
-                {
-                    status = 404,
-                    message = $"Election item with id {id} not found.",
-                    details = "The requested item does not exist in the database."
-                };
-                return NotFound(errorResponse);
+                return Ok(response);
             }
-
-            return Ok(electionItem);
+            return BadRequest();
+        
         }
         [HttpDelete]
         [Route("election-item/{id}")]
@@ -181,14 +168,12 @@ namespace ElectionMaterialManager.Controllers
         {
             if (tag.IsNullOrEmpty()) return BadRequest();
 
-            var electionItems = await _db.ElectionItems
-            .Include(x => x.Tags)
-            .Where(x => x.Tags.Any(y => y.Value == tag))
-            .ToListAsync();
+            var query = new GetElectionItemsByTagQuery() { TagName = tag };
+            var response = await _mediator.Send(query);
 
-            // if (electionItems.Count == 0) 
-
-            return Ok(electionItems);
+            if(response.Success)
+                return Ok(response);
+            return BadRequest(response.Message);
         }
 
 

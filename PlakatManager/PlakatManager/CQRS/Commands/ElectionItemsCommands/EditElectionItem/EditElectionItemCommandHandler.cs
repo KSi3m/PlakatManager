@@ -36,8 +36,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             }
             catch(Exception ex)
             {
-                response.Success = true;
-                response.Message = "Updated succesfully";
+                response.Message = ex.Message;
             }
             return response;
         }
