@@ -1,4 +1,4 @@
-﻿namespace ElectionMaterialManager.CQRS
+﻿namespace ElectionMaterialManager.CQRS.Responses
 {
     public class GenericResponseWithList<T> : Response
     {

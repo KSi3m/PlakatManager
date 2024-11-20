@@ -4,6 +4,7 @@ using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using System;
 using System.Text.Json;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
 
 namespace ElectionMaterialManager.Utilities
 {
@@ -21,10 +22,10 @@ namespace ElectionMaterialManager.Utilities
             
         }
 
-        public ElectionItem CreateElectionItem(string type, ElectionItemRequestDTO dto)
+        public ElectionItem CreateElectionItem(string type, CreateElectionItemCommand command)
         {
             if(_factories.TryGetValue(type, out IElectionItemFactory value)) {
-                return value.Create(dto);
+                return value.Create(command);
             }
 
             throw new Exception("Type not found");

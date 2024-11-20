@@ -1,4 +1,5 @@
-﻿using ElectionMaterialManager.Entities;
+﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static System.Collections.Specialized.BitVector32;

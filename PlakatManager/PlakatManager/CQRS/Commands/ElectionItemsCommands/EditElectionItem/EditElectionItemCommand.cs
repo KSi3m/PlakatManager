@@ -1,4 +1,5 @@
-﻿using ElectionMaterialManager.Dtos;
+﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;

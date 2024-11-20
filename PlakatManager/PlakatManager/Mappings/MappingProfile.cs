@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
@@ -9,9 +10,9 @@ namespace ElectionMaterialManager.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<ElectionItemRequestDTO, LED>();
-            CreateMap<ElectionItemRequestDTO, Poster>();
-            CreateMap<ElectionItemRequestDTO, Billboard>();
+            CreateMap<CreateElectionItemCommand, LED>();
+            CreateMap<CreateElectionItemCommand, Poster>();
+            CreateMap<CreateElectionItemCommand, Billboard>();
 
             CreateMap<TagRequestDTO, Tag>();
 

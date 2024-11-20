@@ -1,4 +1,8 @@
-﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElectionItem;
+﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElectionItem;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
@@ -11,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -18,11 +23,9 @@ namespace ElectionMaterialManager.Controllers
     [ApiController]
     public class ElectionItemController : ControllerBase
     {
-        private readonly ElectionMaterialManagerContext _db;
-        private readonly IMediator _mediator;
+       private readonly IMediator _mediator;
 
-       public ElectionItemController(ElectionMaterialManagerContext db, IMediator mediator) {
-            _db = db;
+       public ElectionItemController(IMediator mediator) {
             _mediator = mediator;
        }
 
@@ -77,88 +80,47 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpPost]
         [Route("election-item/led")]
-        public async Task<IActionResult> CreateLed(LEDRequestDTO dto)
+        public async Task<IActionResult> CreateLed(CreateLEDCommand command)
         {
-            var led = new LED
-            {
-                Area = dto.Area,
+            var response = await _mediator.Send(command);
+            if(response.Success)
+                return Created(response.Message,response.Data);
+            return BadRequest(response.Message);
 
-                Latitude = (double)dto.Latitude,
-                Longitude = (double)dto.Longitude,
-                Priority = (int)dto.Priority,
-                Size = dto.Size,
-                Cost = (decimal)dto.Cost,
-                StatusId = dto.StatusId,
-                AuthorId = dto.AuthorId,
-                RefreshRate = (int)dto.RefreshRate,
-                Resolution = dto.Resolution,
-            };
-            _db.Add(led);
-            await _db.SaveChangesAsync();
-
-            return Created($"/api/v1/election-item/{led.Id}", led);
 
         }
 
         [HttpPost]
         [Route("election-item/poster")]
-        public async Task<IActionResult> CreatePoster(PosterRequestDTO dto)
+        public async Task<IActionResult> CreatePoster(CreatePosterCommand command)
         {
-            var poster = new Poster
-            {
-                Area = dto.Area,
-                Latitude = (double)dto.Latitude,
-                Longitude = (double)dto.Longitude,
-                Priority = (int)dto.Priority,
-                Size = dto.Size,
-                Cost = (decimal)dto.Cost,
-                StatusId = dto.StatusId,
-                AuthorId = dto.AuthorId,
-                PaperType = dto.PaperType
-
-            };
-            _db.Add(poster);
-            await _db.SaveChangesAsync();
-
-            return Created($"/api/v1/election-item/{poster.Id}", poster);
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Created(response.Message, response.Data);
+            return BadRequest(response.Message);
 
         }
 
         [HttpPost]
         [Route("election-item/billboard")]
-        public async Task<IActionResult> CreateBillboard(BillboardRequestDTO dto)
+        public async Task<IActionResult> CreateBillboard(CreateBillboardCommand command)
         {
-            var billboard = new Billboard
-            {
-                Area = dto.Area,
-                Latitude = (double)dto.Latitude,
-                Longitude = (double)dto.Longitude,
-                Priority = (int)dto.Priority,
-                Size = dto.Size,
-                Cost = (decimal)dto.Cost,
-                StatusId = dto.StatusId,
-                AuthorId = dto.AuthorId,
-                StartDate = (DateTime)dto.StartDate,
-                EndDate = (DateTime)dto.EndDate
-            };
-            _db.Add(billboard);
-            await _db.SaveChangesAsync();
-
-            return Created($"/api/v1/election-item/{billboard.Id}", billboard);
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Created(response.Message, response.Data);
+            return BadRequest(response.Message);
 
         }
 
         [HttpPost]
         [Route("election-item")]
-        public async Task<IActionResult> CreateElectionItem(ElectionItemRequestDTO dto,  ElectionItemFactoryRegistry factoryRegistry)
+        public async Task<IActionResult> CreateElectionItem(CreateElectionItemCommand command)
         {
-            var type = dto.Type;
-            var electionItem = factoryRegistry.CreateElectionItem(type, dto);
 
-            _db.Add(electionItem);
-            await _db.SaveChangesAsync();
-
-            return Created($"/api/v1/election-item/{electionItem.Id}", electionItem); 
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Created(response.Message, response.Data);
+            return BadRequest(response.Message);
 
         }
 
