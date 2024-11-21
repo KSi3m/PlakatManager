@@ -1,8 +1,17 @@
 ﻿using Azure.Core;
+using ElectionMaterialManager.CQRS.Commands.TagCommands.CreateTag;
+using ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag;
+using ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+using ElectionMaterialManager.CQRS.Queries.TagQueries.GetAllTags;
+using ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -11,66 +20,70 @@ namespace ElectionMaterialManager.Controllers
     [ApiController]
     public class TagController: ControllerBase
     {
-        private readonly ElectionMaterialManagerContext _db;
+        private readonly IMediator _mediator;
 
-        public TagController(ElectionMaterialManagerContext db)
+        public TagController(IMediator mediator)
         {
-            _db = db;
+            _mediator = mediator;
         }
 
         [HttpGet]
         [Route("tags")]
         public async Task<IActionResult> GetAllTags()
         {
-            var tags = await _db.Tags.ToListAsync();
-
-            return Ok(tags);
+            var response = await _mediator.Send(new GetAllTagsQuery());
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
         }
 
         [HttpGet]
         [Route("tag/{id}")]
         public async Task<IActionResult> GetTag(int id)
         {
-            var tag = await _db.Tags.FirstOrDefaultAsync(x => x.Id == id);
-
-            return Ok(tag);
+            var query = new GetTagByIdQuery() { Id = id };
+            var response = await _mediator.Send(query);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(new { response.Message });
         }
+
+        [HttpDelete]
+        [Route("tag/{id}")]
+        public async Task<IActionResult> DeleteTag(int id)
+        {
+            var command = new DeleteTagCommand() { Id = id };
+            var response = await _mediator.Send(command);
+            if (response.Success)
+            {
+                return NoContent();
+            }
+            return BadRequest(new { response.Message });
+        }
+
+
         [HttpPost]
         [Route("tag")]
-        public async Task<IActionResult> CreateTag(TagRequestDTO request)
+        public async Task<IActionResult> CreateTag(CreateTagCommand command)
         {
-            var tagFromDb = await _db.Tags
-                .FirstOrDefaultAsync(x => x.Value.ToLower() == request.Value.ToLower());
-            if (tagFromDb != null) return Conflict(new { message = "Tag already exists" });
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Created(response.Message, response.Data);
+            return BadRequest(new { response.Message });
 
-            var tag = new Tag()
-            {
-                Value = request.Value,
-            };
-
-            _db.Tags.Add(tag);
-            await _db.SaveChangesAsync();
-
-            return Created($"/api/v1/tag/{tag.Id}", tag);
         }
 
         [HttpPatch]
         [Route("tag/{id}")]
-        public async Task<IActionResult> UpdateTag(TagRequestDTO request)
+        public async Task<IActionResult> UpdateTag(UpdateTagCommand command)
         {
-            var tagFromDb = await _db.Tags
-                .FirstOrDefaultAsync(x => x.Value.ToLower() == request.Value.ToLower());
-            if (tagFromDb != null) return Conflict(new { message = "Tag already exists" });
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return NoContent();
+            return BadRequest(new { response.Message });
 
-            var tag = new Tag()
-            {
-                Value = request.Value,
-            };
-
-            _db.Tags.Add(tag);
-            await _db.SaveChangesAsync();
-
-            return Created($"/api/v1/tag/{tag.Id}", tag);
         }
 
     }

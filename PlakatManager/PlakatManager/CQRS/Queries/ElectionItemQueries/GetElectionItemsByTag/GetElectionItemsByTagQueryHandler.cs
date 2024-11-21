@@ -22,9 +22,8 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             var response = new GenericResponseWithList<ElectionItem>() { Data = [], Success = false };
             try
             {
-                var electionItems = await _db.ElectionItems
-                    .Include(x => x.Tags)
-                    .Where(x => x.Tags.Any(y => y.Value == query.TagName))
+                var electionItems = await _db.Tags.Include(x => x.ElectionItems)
+                    .SelectMany(x=>x.ElectionItems)
                     .ToListAsync();
 
                 if (electionItems == null || electionItems.Any())

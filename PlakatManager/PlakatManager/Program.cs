@@ -12,6 +12,7 @@ using FluentValidation;
 using System.Reflection;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using FluentValidation.AspNetCore;
+using ElectionMaterialManager.Services;
 
 namespace ElectionMaterialManager
 {
@@ -67,6 +68,7 @@ namespace ElectionMaterialManager
             );
 
             builder.Services.ConfigureAuthAndJwt(builder.Configuration);
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<Seeder>();
 

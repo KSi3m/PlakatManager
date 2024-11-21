@@ -1,10 +1,14 @@
 ﻿using Azure.Core;
+using ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login;
+using ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Register;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -12,47 +16,32 @@ namespace ElectionMaterialManager.Controllers
     [ApiController]
     public class AuthenticationController: ControllerBase
     {
-        private readonly ElectionMaterialManagerContext _db;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly AuthService _authService;
-
-
-        public AuthenticationController(ElectionMaterialManagerContext db,
-            UserManager<IdentityUser> userManager, AuthService authService)
+        private readonly IMediator _mediator;
+       
+        public AuthenticationController(IMediator mediator)
         {
-            _db = db;
-            _userManager = userManager;
-            _authService = authService;
-
+            _mediator = mediator;
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginRequestDTO request)
+        public async Task<IActionResult> Login(LoginCommand command)
         {
-            var user = await _userManager.FindByNameAsync(request.Login);
-            if (user == null) return Unauthorized();
-
-            var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
-            if (!passwordValid) return Unauthorized();
-
-            string token = _authService.CreateToken(user);
-
-            return Ok(new {BearerToken = token});        
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Ok(new { BearerToken = response.Token }); 
+            return BadRequest(new { response.Message });
+     
         }
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(RegisterRequestDTO request)
+        public async Task<IActionResult> Register(RegisterCommand command)
         {
-            var userFromDb = await _userManager.FindByNameAsync(request.Username);
-            if (userFromDb != null) return Conflict(new { message = "User already exists" });
-
-            var user = new IdentityUser { UserName = request.Username, Email = request.Email };
-            var response = await _userManager.CreateAsync(user, request.Password);
-            if (!response.Succeeded) return BadRequest(response.Errors);
-
-            return Created();
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Ok(new { response.Message });
+            return Conflict(new { response.Message });
         }
 
     }

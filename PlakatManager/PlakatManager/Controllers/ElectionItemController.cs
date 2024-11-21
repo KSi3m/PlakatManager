@@ -39,7 +39,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(query);
             if (response.Success)
                 return Ok(response);
-            return BadRequest();
+            return BadRequest(new { response.Message });
         }
 
         [HttpGet]
@@ -52,7 +52,7 @@ namespace ElectionMaterialManager.Controllers
             {
                 return Ok(response);
             }
-            return BadRequest();
+            return BadRequest(new { response.Message });
         
         }
         [HttpDelete]
@@ -62,7 +62,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(new DeleteElectionItemCommand() { Id = id });
             if(response.Success)
                 return NoContent();
-            return BadRequest();
+            return BadRequest(new { response.Message });
         }
 
         [HttpPatch]
@@ -74,7 +74,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if(response.Success)
                 return NoContent();
-            return BadRequest();
+            return BadRequest(new { response.Message });
 
         }
 
@@ -85,7 +85,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if(response.Success)
                 return Created(response.Message,response.Data);
-            return BadRequest(response.Message);
+            return BadRequest(new { response.Message });
 
 
         }
@@ -97,7 +97,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if (response.Success)
                 return Created(response.Message, response.Data);
-            return BadRequest(response.Message);
+            return BadRequest(new { response.Message });
 
         }
 
@@ -108,7 +108,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if (response.Success)
                 return Created(response.Message, response.Data);
-            return BadRequest(response.Message);
+            return BadRequest(new { response.Message });
 
         }
 
@@ -120,12 +120,12 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if (response.Success)
                 return Created(response.Message, response.Data);
-            return BadRequest(response.Message);
+            return BadRequest(new { response.Message });
 
         }
 
         [HttpGet]
-        [Route("/election-items-by-tag")]
+        [Route("election-items-by-tag")]
         public async Task<IActionResult> GetElectionItemsByTag(string tag)
         {
             if (tag.IsNullOrEmpty()) return BadRequest();
@@ -135,8 +135,9 @@ namespace ElectionMaterialManager.Controllers
 
             if(response.Success)
                 return Ok(response);
-            return BadRequest(response.Message);
+            return BadRequest(new { response.Message });
         }
+       
 
 
 
