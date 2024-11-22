@@ -21,11 +21,13 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             var response = new GenericResponse<ElectionItem>() { Success  = false };
             try
             {
-                var electionItem = await _db.ElectionItems.FirstOrDefaultAsync(x => x.Id == query.Id);
+                var electionItem = await _db.ElectionItems
+                    .Include(x=>x.Tags)
+                    .Include(x=>x.Status)
+                    .FirstOrDefaultAsync(x => x.Id == query.Id);
 
                 if (electionItem == null)
                 {
-
                     response.Message = $"Election item with id {query.Id} not found";
                     return response;
                 }

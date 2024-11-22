@@ -134,7 +134,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(query);
 
             if(response.Success)
-                return Ok(response);
+                return Ok(new { tag, electionItems = response.Data });
             return BadRequest(new { response.Message });
         }
        

@@ -23,15 +23,15 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById
             var response = new GenericResponse<Tag>() { Success = false };
             try
             {
-                var tag = await _db.Tags.FirstOrDefaultAsync(x => x.Id == request.Id);
-                if (tag == null)
+                var tags = await _db.Tags.Include(x=>x.ElectionItems).FirstOrDefaultAsync(x => x.Id == request.Id);
+                if (tags == null)
                 {
                     response.Message = $"Tag not found";
                     return response;
                 }
                 response.Message = $"Tag found";
                 response.Success = true;
-                response.Data = tag;
+                response.Data = tags;
             }
             catch (Exception ex)
             {

@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
@@ -13,6 +16,18 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<CreateElectionItemCommand, LED>();
             CreateMap<CreateElectionItemCommand, Poster>();
             CreateMap<CreateElectionItemCommand, Billboard>();
+
+            CreateMap<CreateBillboardCommand, Billboard>()
+                .ForMember(x=>x.Tags,opt=>opt.Ignore());
+            CreateMap<CreatePosterCommand, Poster>();
+            CreateMap<CreateLEDCommand, LED>();
+
+            CreateMap<ElectionItem, ElectionItemDto>();
+
+            CreateMap<Billboard, BillboardDto>();
+            CreateMap<Poster, ElectionItemDto>();
+            CreateMap<LED, ElectionItemDto>();
+            CreateMap<Tag, TagDto>();
 
             CreateMap<TagRequestDTO, Tag>();
 

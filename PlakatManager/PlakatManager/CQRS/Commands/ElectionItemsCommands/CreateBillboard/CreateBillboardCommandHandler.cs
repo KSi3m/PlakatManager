@@ -1,42 +1,50 @@
-﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
+﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
 using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard
 {
-    public class CreateBillboardCommandHandler: IRequestHandler<CreateBillboardCommand, GenericResponse<Billboard>>
+    public class CreateBillboardCommandHandler: IRequestHandler<CreateBillboardCommand, GenericResponse<BillboardDto>>
     {
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IMapper _mapper;
 
-        public CreateBillboardCommandHandler(ElectionMaterialManagerContext db)
+        public CreateBillboardCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<GenericResponse<Billboard>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<BillboardDto>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<Billboard>() { Success = false };
+            var response = new GenericResponse<BillboardDto>() { Success = false };
             try
-            {
-                var billboard = new Billboard
+            { 
+                var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
+                if(!tags.Any() || tags.Count() != request.Tags.Count())
                 {
-                    Area = request.Area,
+                    response.Message = "Tags not specified/wrong ids. Process aborted";
+                    return response;
+                }
 
-                    Latitude = (double)request.Latitude,
-                    Longitude = (double)request.Longitude,
-                    Priority = (int)request.Priority,
-                    Size = request.Size,
-                    Cost = (decimal)request.Cost,
-                    StatusId = request.StatusId,
-                    AuthorId = request.AuthorId,
-                    StartDate = (DateTime)request.StartDate,
-                    EndDate = (DateTime)request.EndDate
-                };
-                _db.Add(billboard);
+                var billboard = _mapper.Map<Billboard>(request);
+  
+
+                var electionItemTags = tags.Select(tag => new ElectionItemTag
+                {
+                    ElectionItem = billboard,
+                    Tag = tag,
+                    DateOfPublication = DateTime.UtcNow
+                }); ;
+
+                await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Data = billboard;
+                response.Data = _mapper.Map<BillboardDto>(billboard);
                 response.Message = $"/api/v1/election-item/{billboard.Id}";
             }
             catch (Exception ex)

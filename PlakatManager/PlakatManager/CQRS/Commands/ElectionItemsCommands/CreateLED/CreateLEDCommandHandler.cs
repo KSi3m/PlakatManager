@@ -1,42 +1,52 @@
-﻿using ElectionMaterialManager.CQRS.Responses;
+﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 {
-    public class CreateLEDCommandHandler : IRequestHandler<CreateLEDCommand, GenericResponse<LED>>
+    public class CreateLEDCommandHandler : IRequestHandler<CreateLEDCommand, GenericResponse<ElectionItemDto>>
     {
 
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IMapper _mapper;
 
-        public CreateLEDCommandHandler(ElectionMaterialManagerContext db)
+
+        public CreateLEDCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
+
         }
 
-        public async Task<GenericResponse<LED>> Handle(CreateLEDCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<ElectionItemDto>> Handle(CreateLEDCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<LED>() { Success = false };
+            var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var led = new LED
+                var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
+                if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
-                    Area = request.Area,
+                    response.Message = "Tags not specified/wrong ids. Process aborted";
+                    return response;
+                }
 
-                    Latitude = (double)request.Latitude,
-                    Longitude = (double)request.Longitude,
-                    Priority = (int)request.Priority,
-                    Size = request.Size,
-                    Cost = (decimal)request.Cost,
-                    StatusId = request.StatusId,
-                    AuthorId = request.AuthorId,
-                    RefreshRate = (int)request.RefreshRate,
-                    Resolution = request.Resolution,
-                };
-                _db.Add(led);
+                var led = _mapper.Map<LED>(request);
+
+
+                var electionItemTags = tags.Select(tag => new ElectionItemTag
+                {
+                    ElectionItem = led,
+                    Tag = tag,
+                    DateOfPublication = DateTime.UtcNow
+                }); ;
+
+                await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Data = led;
+                response.Data = _mapper.Map<ElectionItemDto>(led);
                 response.Message = $"/api/v1/election-item/{led.Id}";
             }
             catch(Exception ex)

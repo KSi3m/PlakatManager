@@ -1,11 +1,12 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard
 {
-    public class CreateBillboardCommand: IRequest<GenericResponse<Billboard>>
+    public class CreateBillboardCommand: IRequest<GenericResponse<BillboardDto>>
     {
         public string? Area { get; set; }
         public double? Latitude { get; set; }
@@ -16,6 +17,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
         public decimal? Cost { get; set; }
         [DefaultValue(1)]
         public int StatusId { get; set; }
+        public IEnumerable<int> Tags {  get; set; }
 
         public int AuthorId { get; set; }
 

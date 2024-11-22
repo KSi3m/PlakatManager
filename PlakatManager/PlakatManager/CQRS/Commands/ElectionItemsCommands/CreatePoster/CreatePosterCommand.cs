@@ -1,11 +1,12 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster
 {
-    public class CreatePosterCommand: IRequest<GenericResponse<Poster>>
+    public class CreatePosterCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string? Area { get; set; }
         public double? Latitude { get; set; }
@@ -17,6 +18,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
 
         [DefaultValue(1)]
         public int StatusId { get; set; }
+        public IEnumerable<int> Tags { get; set; }
 
         public int AuthorId { get; set; }
 

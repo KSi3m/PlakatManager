@@ -1,40 +1,50 @@
-﻿using ElectionMaterialManager.CQRS.Responses;
+﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster
 {
-    public class CreatePosterCommandHandler : IRequestHandler<CreatePosterCommand, GenericResponse<Poster>>
+    public class CreatePosterCommandHandler : IRequestHandler<CreatePosterCommand, GenericResponse<ElectionItemDto>>
     {
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IMapper _mapper;
 
-        public CreatePosterCommandHandler(ElectionMaterialManagerContext db)
+
+        public CreatePosterCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<GenericResponse<Poster>> Handle(CreatePosterCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<ElectionItemDto>> Handle(CreatePosterCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<Poster>() { Success = false };
+            var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var poster = new Poster
+                var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
+                if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
-                    Area = request.Area,
+                    response.Message = "Tags not specified/wrong ids. Process aborted";
+                    return response;
+                }
 
-                    Latitude = (double)request.Latitude,
-                    Longitude = (double)request.Longitude,
-                    Priority = (int)request.Priority,
-                    Size = request.Size,
-                    Cost = (decimal)request.Cost,
-                    StatusId = request.StatusId,
-                    AuthorId = request.AuthorId,
-                    PaperType = request.PaperType
-                };
-                _db.Add(poster);
+                var poster = _mapper.Map<Poster>(request);
+
+
+                var electionItemTags = tags.Select(tag => new ElectionItemTag
+                {
+                    ElectionItem = poster,
+                    Tag = tag,
+                    DateOfPublication = DateTime.UtcNow
+                }); ;
+
+                await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Data = poster;
+                response.Data = _mapper.Map<ElectionItemDto>(poster);
                 response.Message = $"/api/v1/election-item/{poster.Id}";
             }
             catch (Exception ex)

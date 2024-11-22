@@ -1,11 +1,12 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 {
-    public class CreateLEDCommand: IRequest<GenericResponse<LED>>
+    public class CreateLEDCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string? Area { get; set; }
         public double? Latitude { get; set; }
@@ -17,10 +18,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 
         [DefaultValue(1)]
         public int StatusId { get; set; }
+        public IEnumerable<int> Tags { get; set; }
 
         public int AuthorId { get; set; }
 
         public int? RefreshRate { get; set; }
         public string? Resolution { get; set; }
+
     }
 }
