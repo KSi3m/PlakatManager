@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard
 {
-    public class CreateBillboardCommandHandler: IRequestHandler<CreateBillboardCommand, GenericResponse<BillboardDto>>
+    public class CreateBillboardCommandHandler: IRequestHandler<CreateBillboardCommand, GenericResponse<ElectionItemDto>>
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
@@ -19,9 +19,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<BillboardDto>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<ElectionItemDto>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<BillboardDto>() { Success = false };
+            var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             { 
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
@@ -44,7 +44,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Data = _mapper.Map<BillboardDto>(billboard);
+                response.Data = _mapper.Map<ElectionItemDto>(billboard);
                 response.Message = $"/api/v1/election-item/{billboard.Id}";
             }
             catch (Exception ex)

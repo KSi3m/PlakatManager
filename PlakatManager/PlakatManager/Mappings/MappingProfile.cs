@@ -19,14 +19,22 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<CreateBillboardCommand, Billboard>()
                 .ForMember(x=>x.Tags,opt=>opt.Ignore());
-            CreateMap<CreatePosterCommand, Poster>();
-            CreateMap<CreateLEDCommand, LED>();
+            CreateMap<CreatePosterCommand, Poster>()
+                 .ForMember(x => x.Tags, opt => opt.Ignore());
+            CreateMap<CreateLEDCommand, LED>()
+                 .ForMember(x => x.Tags, opt => opt.Ignore());
 
-            CreateMap<ElectionItem, ElectionItemDto>();
+            CreateMap<ElectionItem, ElectionItemDto>().Include<ElectionItem, ElectionItemDetailDto>(); ;
+            CreateMap<ElectionItem, ElectionItemDetailDto>();
+            CreateMap<Billboard, ElectionItemDto>().Include<Billboard, ElectionItemDetailDto>();
+            CreateMap<Poster, ElectionItemDto>().Include<Poster, ElectionItemDetailDto>();
+            CreateMap<LED, ElectionItemDto>().Include<LED, ElectionItemDetailDto>();
 
-            CreateMap<Billboard, BillboardDto>();
-            CreateMap<Poster, ElectionItemDto>();
-            CreateMap<LED, ElectionItemDto>();
+            CreateMap<Poster, ElectionItemDetailDto>();
+            CreateMap<LED, ElectionItemDetailDto>();
+            CreateMap<Billboard, ElectionItemDetailDto>();
+
+          
             CreateMap<Tag, TagDto>();
 
             CreateMap<TagRequestDTO, Tag>();

@@ -46,14 +46,30 @@ namespace ElectionMaterialManager.Controllers
         [Route("election-item/{id}")]
         public async Task<IActionResult> GetElectionItem(int id)
         {
+
             var query = new GetElectionItemByIdQuery() { Id = id };
             var response = await _mediator.Send(query);
             if (response.Success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
             return BadRequest(new { response.Message });
         
+        }
+
+        [HttpGet]
+        [Route("election-item/{id}/detail")]
+        public async Task<IActionResult> GetElectionItemWithDetails(int id)
+        {
+
+            var query = new GetElectionItemByIdQuery() { Id = id, Detailed = true };
+            var response = await _mediator.Send(query);
+            if (response.Success)
+            {
+                return Ok(response.Data);
+            }
+            return BadRequest(new { response.Message });
+
         }
         [HttpDelete]
         [Route("election-item/{id}")]
