@@ -54,6 +54,7 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<Tag, TagDto>();
             CreateMap<User, AuthorDto>();
+            CreateMap<Comment, CommentDto>();
 
             MapsForEditElectionItemCommand();
 

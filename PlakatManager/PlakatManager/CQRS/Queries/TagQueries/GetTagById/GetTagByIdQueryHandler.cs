@@ -1,4 +1,6 @@
-﻿using ElectionMaterialManager.CQRS.Responses;
+﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,30 +10,32 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById
 {
 
 
-    public class GetTagByIdQueryHandler: IRequestHandler<GetTagByIdQuery,GenericResponse<Tag>>
+    public class GetTagByIdQueryHandler: IRequestHandler<GetTagByIdQuery,GenericResponse<TagDto>>
     {
 
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IMapper _mapper;
 
-        public GetTagByIdQueryHandler(ElectionMaterialManagerContext db)
+        public GetTagByIdQueryHandler(ElectionMaterialManagerContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<GenericResponse<Tag>> Handle(GetTagByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<TagDto>> Handle(GetTagByIdQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<Tag>() { Success = false };
+            var response = new GenericResponse<TagDto>() { Success = false };
             try
             {
-                var tags = await _db.Tags.Include(x=>x.ElectionItems).FirstOrDefaultAsync(x => x.Id == request.Id);
-                if (tags == null)
+                var tag = await _db.Tags.Include(x=>x.ElectionItems).FirstOrDefaultAsync(x => x.Id == request.Id);
+                if (tag == null)
                 {
                     response.Message = $"Tag not found";
                     return response;
                 }
                 response.Message = $"Tag found";
                 response.Success = true;
-                response.Data = tags;
+                response.Data = _mapper.Map<TagDto>(tag);
             }
             catch (Exception ex)
             {

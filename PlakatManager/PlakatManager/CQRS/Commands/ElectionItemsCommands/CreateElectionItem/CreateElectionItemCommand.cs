@@ -1,11 +1,12 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem
 {
-    public class CreateElectionItemCommand: IRequest<GenericResponse<ElectionItem>>
+    public class CreateElectionItemCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string Type { get; set; }
         public string? Area { get; set; }

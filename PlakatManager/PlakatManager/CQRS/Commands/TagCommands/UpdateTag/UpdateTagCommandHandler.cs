@@ -1,22 +1,26 @@
-﻿using ElectionMaterialManager.CQRS.Responses;
+﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
 {
-    public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand,GenericResponse<Tag>>
+    public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand,GenericResponse<TagDto>>
     {
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IMapper _mapper;
 
-        public UpdateTagCommandHandler(ElectionMaterialManagerContext db)
+        public UpdateTagCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<GenericResponse<Tag>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<TagDto>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<Tag>() { Success = false };
+            var response = new GenericResponse<TagDto>() { Success = false };
             try
             {
                 var tagFromDb = await _db.Tags
@@ -30,7 +34,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                 await _db.SaveChangesAsync();
 
                 response.Success = true;
-                response.Data = tagFromDb;
+                response.Data = _mapper.Map<TagDto>(tagFromDb);
                 response.Message = $"/api/v1/tag/{tagFromDb.Id}";
             }
             catch (Exception ex)

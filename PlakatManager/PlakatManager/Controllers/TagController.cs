@@ -33,7 +33,7 @@ namespace ElectionMaterialManager.Controllers
         {
             var response = await _mediator.Send(new GetAllTagsQuery());
             if (response.Success)
-                return Ok(response);
+                return Ok(response.Data);
             return BadRequest(new { response.Message });
         }
 
@@ -45,7 +45,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(query);
             if (response.Success)
             {
-                return Ok(response);
+                return Ok(response.Data);
             }
             return BadRequest(new { response.Message });
         }

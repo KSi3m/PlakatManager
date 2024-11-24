@@ -5,6 +5,7 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElectionItem;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemComments;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByTag;
 using ElectionMaterialManager.Dtos;
@@ -153,7 +154,20 @@ namespace ElectionMaterialManager.Controllers
                 return Ok(new { tag, electionItems = response.Data });
             return BadRequest(new { response.Message });
         }
-       
+
+        [HttpGet]
+        [Route("election-item/{id}/comments")]
+        public async Task<IActionResult> GetElectionItemsComments(int id)
+        {
+            var query = new GetElectionItemCommentsQuery() { Id = id };
+            var response = await _mediator.Send(query);
+            if (response.Success)
+            {
+                return Ok(new { ElectionItemId = id, Comments = response.Data }) ;
+            }
+            return BadRequest(new { response.Message });
+        }
+
 
 
 
