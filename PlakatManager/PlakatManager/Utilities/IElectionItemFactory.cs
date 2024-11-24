@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using System.Text.Json;
@@ -7,7 +8,7 @@ namespace ElectionMaterialManager.Utilities
 {
     public interface IElectionItemFactory
     {
-        ElectionItem Create(ElectionItemRequestDTO dto);
+        ElectionItem Create(CreateElectionItemCommand dto);
     }
 
     public abstract class ElectionItemFactory<T>: IElectionItemFactory where T: ElectionItem
@@ -19,9 +20,9 @@ namespace ElectionMaterialManager.Utilities
             _mapper = mapper;
         }
 
-        public virtual ElectionItem Create(ElectionItemRequestDTO dto)
+        public virtual ElectionItem Create(CreateElectionItemCommand command)
         {
-            return _mapper.Map<T>(dto);
+            return _mapper.Map<T>(command);
         }
     }
 }

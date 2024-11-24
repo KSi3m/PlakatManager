@@ -9,7 +9,7 @@ using System.Text;
 
 namespace ElectionMaterialManager.Services
 {
-    public class AuthService
+    public class AuthService: IAuthService
     {
         public readonly JwtSettings _jwtSettings;
 

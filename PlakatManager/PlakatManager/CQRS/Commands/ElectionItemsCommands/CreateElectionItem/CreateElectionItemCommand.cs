@@ -1,9 +1,12 @@
-﻿using ElectionMaterialManager.Entities;
+﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
+using ElectionMaterialManager.Entities;
+using MediatR;
 using System.ComponentModel;
 
-namespace ElectionMaterialManager.Dtos
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem
 {
-    public class ElectionItemRequestDTO
+    public class CreateElectionItemCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string Type { get; set; }
         public string? Area { get; set; }
@@ -24,8 +27,5 @@ namespace ElectionMaterialManager.Dtos
         public string? Resolution { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-
-
-
     }
 }

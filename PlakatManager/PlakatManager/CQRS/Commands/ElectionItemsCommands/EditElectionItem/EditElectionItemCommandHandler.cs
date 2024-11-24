@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using ElectionMaterialManager.CQRS.Responses;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
 {
@@ -36,8 +37,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             }
             catch(Exception ex)
             {
-                response.Success = true;
-                response.Message = "Updated succesfully";
+                response.Message = ex.Message;
             }
             return response;
         }
