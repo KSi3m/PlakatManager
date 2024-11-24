@@ -24,20 +24,36 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<CreateLEDCommand, LED>()
                  .ForMember(x => x.Tags, opt => opt.Ignore());
 
-            CreateMap<ElectionItem, ElectionItemDto>().Include<ElectionItem, ElectionItemDetailDto>(); ;
-            CreateMap<ElectionItem, ElectionItemDetailDto>();
-            CreateMap<Billboard, ElectionItemDto>().Include<Billboard, ElectionItemDetailDto>();
-            CreateMap<Poster, ElectionItemDto>().Include<Poster, ElectionItemDetailDto>();
-            CreateMap<LED, ElectionItemDto>().Include<LED, ElectionItemDetailDto>();
+            CreateMap<ElectionItem, ElectionItemDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (string)src.Status.Name));
+                
+            CreateMap<ElectionItem, ElectionItemDetailDto>()
+                    .IncludeBase<ElectionItem, ElectionItemDto>();
 
-            CreateMap<Poster, ElectionItemDetailDto>();
-            CreateMap<LED, ElectionItemDetailDto>();
-            CreateMap<Billboard, ElectionItemDetailDto>();
+            CreateMap<Billboard, ElectionItemDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (string)src.Status.Name));
+            CreateMap<Billboard, ElectionItemDetailDto>()
+                .IncludeBase<Billboard, ElectionItemDto>();
+
+            CreateMap<Poster, ElectionItemDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
+
+            CreateMap<Poster, ElectionItemDetailDto>()
+                .IncludeBase<Poster, ElectionItemDto>();
+
+            CreateMap<LED, ElectionItemDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (string)src.Status.Name));
+
+            CreateMap<LED, ElectionItemDetailDto>()
+                .IncludeBase<LED, ElectionItemDto>();
+
 
           
-            CreateMap<Tag, TagDto>();
+       
 
-            CreateMap<TagRequestDTO, Tag>();
+
+            CreateMap<Tag, TagDto>();
+            CreateMap<User, AuthorDto>();
 
             MapsForEditElectionItemCommand();
 

@@ -27,6 +27,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             try
             {
                 var electionItems = await _db.Tags.Include(x => x.ElectionItems)
+                    .ThenInclude(x=>x.Status)
                     .Where(x=>x.Value == query.TagName)
                     .SelectMany(x=>x.ElectionItems)
                     .ToListAsync();

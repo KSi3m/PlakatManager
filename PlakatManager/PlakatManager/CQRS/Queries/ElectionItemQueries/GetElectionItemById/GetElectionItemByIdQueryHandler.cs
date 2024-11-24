@@ -23,12 +23,12 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             var response = new GenericResponse<ElectionItemDto>() { Success  = false };
             try
             {
-                var query =  _db.ElectionItems.AsQueryable();
+                var query =  _db.ElectionItems.Include(x => x.Status).AsQueryable();
                 if (request.Detailed)
                 {
                     query = query.Include(x => x.Tags)
-                    .Include(x => x.Status)
-                    .Include(x => x.Comments);
+                    .Include(x => x.Author);
+                    //.Include(x => x.Comments);
                 }
 
                 var electionItem = await query.FirstOrDefaultAsync(x => x.Id == request.Id);
