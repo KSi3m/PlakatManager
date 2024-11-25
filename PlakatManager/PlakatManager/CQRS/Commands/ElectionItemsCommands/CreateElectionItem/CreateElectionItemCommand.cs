@@ -17,7 +17,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
 
         public decimal? Cost { get; set; }
 
-        [DefaultValue(1)]
+        public IEnumerable<int>? Tags { get; set; }
         public int StatusId { get; set; }
 
         public int AuthorId { get; set; }

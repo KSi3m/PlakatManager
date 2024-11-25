@@ -1,25 +1,23 @@
 ﻿using FluentValidation;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard
 {
-    public class EditElectionItemCommandValidator : AbstractValidator<EditElectionItemCommand>
+    public class CreateBillboardCommandValidator : AbstractValidator<CreateBillboardCommand>
     {
-        public EditElectionItemCommandValidator()
+        public CreateBillboardCommandValidator()
         {
-
-
 
             RuleFor(command => command.Area)
             .NotEmpty();
 
-
+  
             RuleFor(command => command.Latitude)
                 .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 
             RuleFor(command => command.Longitude)
                 .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
 
-
+  
             RuleFor(command => command.Priority)
                 .InclusiveBetween(1, 10).WithMessage("Priority must be between 1 and 10.")
                 .When(command => command.Priority.HasValue);
@@ -48,8 +46,11 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             RuleFor(command => command.EndDate)
                 .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.")
                 .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
-
-
         }
+
+
+
+
+    
     }
 }

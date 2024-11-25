@@ -8,14 +8,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
 {
     public class CreateBillboardCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
-        public string? Area { get; set; }
+        public string Area { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public int? Priority { get; set; }
-        public string? Size { get; set; }
+        public string Size { get; set; }
 
         public decimal? Cost { get; set; }
-        [DefaultValue(1)]
+
         public int StatusId { get; set; }
         public IEnumerable<int> Tags {  get; set; }
 

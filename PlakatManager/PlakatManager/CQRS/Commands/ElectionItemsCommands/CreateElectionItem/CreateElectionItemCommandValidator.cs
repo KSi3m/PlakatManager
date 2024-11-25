@@ -1,16 +1,17 @@
 ﻿using FluentValidation;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem
 {
-    public class EditElectionItemCommandValidator : AbstractValidator<EditElectionItemCommand>
+    public class CreateElectionItemCommandValidator : AbstractValidator<CreateElectionItemCommand>
     {
-        public EditElectionItemCommandValidator()
+        public CreateElectionItemCommandValidator()
         {
 
-
+            RuleFor(command => command.Type)
+                .NotEmpty().Must(type => new[] { "Poster", "Led", "Billboard" }.Contains(type));
 
             RuleFor(command => command.Area)
-            .NotEmpty();
+           .NotEmpty();
 
 
             RuleFor(command => command.Latitude)
@@ -41,9 +42,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             RuleFor(command => command.AuthorId)
                 .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");
 
+            RuleFor(command => command.RefreshRate).GreaterThan(24);
+
             RuleFor(command => command.StartDate)
                 .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.")
                 .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
+
 
             RuleFor(command => command.EndDate)
                 .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.")
