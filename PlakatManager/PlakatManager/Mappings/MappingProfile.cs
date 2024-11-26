@@ -13,9 +13,12 @@ namespace ElectionMaterialManager.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<CreateElectionItemCommand, LED>();
-            CreateMap<CreateElectionItemCommand, Poster>();
-            CreateMap<CreateElectionItemCommand, Billboard>();
+            CreateMap<CreateElectionItemCommand, LED>()
+                 .ForMember(x => x.Tags, opt => opt.Ignore());
+            CreateMap<CreateElectionItemCommand, Poster>()
+                 .ForMember(x => x.Tags, opt => opt.Ignore());
+            CreateMap<CreateElectionItemCommand, Billboard>()
+                 .ForMember(x => x.Tags, opt => opt.Ignore());
 
             CreateMap<CreateBillboardCommand, Billboard>()
                 .ForMember(x=>x.Tags,opt=>opt.Ignore());

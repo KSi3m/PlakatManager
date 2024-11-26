@@ -27,6 +27,13 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Register
                     response.Message = "User already exists";
                     return response;
                 }
+                var emailUnique = await _userManager.FindByEmailAsync(request.Email);
+                if (emailUnique!=null)
+                {
+                    response.Message = "Email already used";
+                    return response;
+          
+                }
                 var user = new IdentityUser { UserName = request.Username, Email = request.Email };
                 var created = await _userManager.CreateAsync(user, request.Password);
                 if (!created.Succeeded)

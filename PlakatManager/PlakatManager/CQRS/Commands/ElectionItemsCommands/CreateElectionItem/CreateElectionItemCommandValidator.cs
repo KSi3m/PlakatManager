@@ -11,7 +11,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 .NotEmpty().Must(type => new[] { "Poster", "Led", "Billboard" }.Contains(type));
 
             RuleFor(command => command.Area)
-           .NotEmpty();
+                .NotEmpty();
 
 
             RuleFor(command => command.Latitude)
@@ -37,21 +37,26 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
 
             RuleFor(command => command.Tags)
                 .NotNull().WithMessage("Tags are required.")
-                .Must(tags => tags.Any()).WithMessage("At least one tag must be specified.");
+                .Must(tags => tags.Any()).WithMessage("At least one tag must be specified.")
+                .Must(tags => tags.Distinct().Count() == tags.Count()).WithMessage("Tags must be distinct.")
+                .Must(tags => tags.All(tag => tag != 0)).WithMessage("Tags must not contain zero.");
 
             RuleFor(command => command.AuthorId)
                 .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");
 
-            RuleFor(command => command.RefreshRate).GreaterThan(24);
+            RuleFor(command => command.RefreshRate).GreaterThan(24)
+                .When(x => x.Type == "Poster");
 
             RuleFor(command => command.StartDate)
                 .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.")
-                .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
+                .When(command => command.StartDate.HasValue && command.EndDate.HasValue)
+                .When(x => x.Type == "Billboard"); ;
 
 
             RuleFor(command => command.EndDate)
                 .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.")
-                .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
+                .When(command => command.StartDate.HasValue && command.EndDate.HasValue)
+                .When(x => x.Type == "Billboard");
 
 
         }

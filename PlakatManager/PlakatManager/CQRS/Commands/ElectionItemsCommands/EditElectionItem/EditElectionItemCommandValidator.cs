@@ -48,7 +48,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             RuleFor(command => command.EndDate)
                 .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.")
                 .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
-
+            
 
         }
     }

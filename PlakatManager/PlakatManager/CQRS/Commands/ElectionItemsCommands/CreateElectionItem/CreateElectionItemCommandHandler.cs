@@ -5,6 +5,7 @@ using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Utilities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem
 {
@@ -28,10 +29,26 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
+
+                var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
+
+                if (!tags.Any() || tags.Count() != request.Tags.Count())
+                {
+                    response.Message = "Tags not specified/wrong ids. Process aborted";
+                    return response;
+                }
+
                 var type = request.Type;
                 var electionItem = _factoryRegistry.CreateElectionItem(type, request);
 
-                _db.Add(electionItem);
+                var electionItemTags = tags.Select(tag => new ElectionItemTag
+                {
+                    ElectionItem = electionItem,
+                    Tag = tag,
+                    DateOfPublication = DateTime.UtcNow
+                }); ;
+
+                await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
 
                 response.Success = true;

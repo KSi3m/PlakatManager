@@ -7,7 +7,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
         public CreatePosterCommandValidator()
         {
             RuleFor(command => command.Area)
-          .NotEmpty();
+                .NotEmpty();
 
 
             RuleFor(command => command.Latitude)
@@ -32,8 +32,11 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                 .GreaterThan(0).WithMessage("StatusId must be greater than 0.");
 
             RuleFor(command => command.Tags)
-                .NotNull().WithMessage("Tags are required.")
-                .Must(tags => tags.Any()).WithMessage("At least one tag must be specified.");
+                   .NotNull().WithMessage("Tags are required.")
+                   .Must(tags => tags.Any()).WithMessage("At least one tag must be specified.")
+                   .Must(tags => tags.Distinct().Count() == tags.Count()).WithMessage("Tags must be distinct.")
+                   .Must(tags => tags.All(tag => tag != 0)).WithMessage("Tags must not contain zero.");
+
 
             RuleFor(command => command.AuthorId)
                 .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");
