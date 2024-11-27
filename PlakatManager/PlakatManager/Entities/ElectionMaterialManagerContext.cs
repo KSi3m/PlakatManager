@@ -7,7 +7,6 @@ namespace ElectionMaterialManager.Entities
     public class ElectionMaterialManagerContext: IdentityDbContext<IdentityUser>
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<LegacyUser> LegacyUsers { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ElectionItem> ElectionItems { get; set; }
@@ -36,7 +35,6 @@ namespace ElectionMaterialManager.Entities
                 }
             }
 
-            modelBuilder.Entity<LegacyUser>().ToTable("Users");
 
             modelBuilder.Entity<Billboard>(eb => {
                 eb.Property(x => x.StartDate).HasColumnName("start_date");

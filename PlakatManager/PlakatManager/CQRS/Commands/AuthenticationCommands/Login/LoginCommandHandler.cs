@@ -25,7 +25,7 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login
                 var user = await _userManager.FindByNameAsync(request.Login);
                 if (user == null)
                 {
-                    response.Message = "Wrong login or password";
+                    response.Message = "Wrong login or password ";
                     return response;
                 }
                 var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);

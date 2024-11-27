@@ -88,14 +88,5 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
-
-        [HttpGet]
-        [Route("test")]
-        public async Task<IActionResult> Test()
-        {
-            return Ok(await _db.LegacyUsers.ToListAsync());
-
-        }
-
     }
 }

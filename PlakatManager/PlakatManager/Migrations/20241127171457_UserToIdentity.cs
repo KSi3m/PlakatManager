@@ -20,10 +20,7 @@ namespace ElectionMaterialManager.Migrations
 
             migrationBuilder.DropForeignKey(
                 name: "FK_ElectionItems_Users_authorid",
-                table: "ElectionItems");
-
-            /*migrationBuilder.DropTable(
-                name: "Users");*/
+                table: "ElectionItems"); 
 
             migrationBuilder.DropIndex(
                 name: "IX_Addresses_userid",
@@ -80,43 +77,13 @@ namespace ElectionMaterialManager.Migrations
                 unique: true,
                 filter: "[userid] IS NOT NULL");
 
-           /* migrationBuilder.AddForeignKey(
-                name: "FK_Addresses_AspNetUsers_userid",
-                table: "Addresses",
-                column: "userid",
-                principalTable: "AspNetUsers",
-                principalColumn: "id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Comments_AspNetUsers_authorid",
-                table: "Comments",
-                column: "authorid",
-                principalTable: "AspNetUsers",
-                principalColumn: "id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ElectionItems_AspNetUsers_authorid",
-                table: "ElectionItems",
-                column: "authorid",
-                principalTable: "AspNetUsers",
-                principalColumn: "id");*/
+           
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            /*migrationBuilder.DropForeignKey(
-                name: "FK_Addresses_AspNetUsers_userid",
-                table: "Addresses");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Comments_AspNetUsers_authorid",
-                table: "Comments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ElectionItems_AspNetUsers_authorid",
-                table: "ElectionItems");*/
-
+   
             migrationBuilder.DropIndex(
                 name: "IX_Addresses_userid",
                 table: "Addresses");
@@ -163,20 +130,6 @@ namespace ElectionMaterialManager.Migrations
                 oldType: "nvarchar(450)",
                 oldNullable: true);
 
-           /* migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    firstname = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    lastname = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.id);
-                });*/
 
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_userid",

@@ -8,7 +8,7 @@ namespace ElectionMaterialManager.Utilities
     {
 
         public async Task Migrate(ElectionMaterialManagerContext dbContext, IServiceProvider services)
-        {
+        {/*
             var userManager = services.GetRequiredService<UserManager<User>>();
 
             var users = await dbContext.LegacyUsers.ToListAsync();
@@ -34,10 +34,10 @@ namespace ElectionMaterialManager.Utilities
                     LastName = user.LastName
 
                  };
-                var tempPassword = appUser.FirstName.Take(1).ToString() + appUser.LastName.Take(1).ToString() + appUser.NormalizedEmail.Take(1) + "123!";
+                var tempPassword = $"{user.FirstName[0]}{user.LastName[0]}{user.NormalizedEmail[^1]}123!a";
                 await userManager.CreateAsync(appUser, tempPassword);
-               
-            }
+
+            }*/
 
         }
 
