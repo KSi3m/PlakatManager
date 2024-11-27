@@ -18,7 +18,7 @@ namespace ElectionMaterialManager
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -71,6 +71,8 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<Seeder>();
+            builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
+         
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
@@ -109,6 +111,10 @@ namespace ElectionMaterialManager
             seeder.Seed();
 
             var dbContext = scope.ServiceProvider.GetService<ElectionMaterialManagerContext>();
+           
+            var userMigration = scope.ServiceProvider.GetRequiredService<UserToAspUsersMigrationUtility>();
+            //await userMigration.Migrate(dbContext, scope.ServiceProvider); //!!!!
+
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();
 

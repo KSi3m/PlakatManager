@@ -1,5 +1,6 @@
 ﻿using ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login;
 using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -9,9 +10,9 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Register
 {
     public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Response>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public RegisterCommandHandler(UserManager<IdentityUser> userManager)
+        public RegisterCommandHandler(UserManager<User> userManager)
         {
             _userManager = userManager;
         }
@@ -34,7 +35,7 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Register
                     return response;
           
                 }
-                var user = new IdentityUser { UserName = request.Username, Email = request.Email };
+                var user = new User { UserName = request.Username, Email = request.Email };
                 var created = await _userManager.CreateAsync(user, request.Password);
                 if (!created.Succeeded)
                 {

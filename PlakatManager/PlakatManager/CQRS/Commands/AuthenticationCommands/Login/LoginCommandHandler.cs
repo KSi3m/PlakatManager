@@ -1,4 +1,5 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -7,10 +8,10 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login
 {
     public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly IAuthService _authService;
 
-        public LoginCommandHandler(UserManager<IdentityUser> userManager, IAuthService authService)
+        public LoginCommandHandler(UserManager<User> userManager, IAuthService authService)
         {
             _userManager = userManager;
             _authService = authService;
