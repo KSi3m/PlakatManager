@@ -19,8 +19,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
         public int StatusId { get; set; }
         public IEnumerable<int> Tags {  get; set; }
 
-        public int AuthorId { get; set; }
-
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
     }

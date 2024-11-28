@@ -19,7 +19,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
         public int StatusId { get; set; }
         public IEnumerable<int> Tags { get; set; }
 
-        public int AuthorId { get; set; }
 
         public int? RefreshRate { get; set; }
         public string? Resolution { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
@@ -11,12 +12,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
+        private readonly IUserContext _userContext;
 
 
-        public CreatePosterCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
+        public CreatePosterCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
+            IUserContext userContext)
         {
             _db = db;
             _mapper = mapper;
+            _userContext = userContext;
         }
 
         public async Task<GenericResponse<ElectionItemDto>> Handle(CreatePosterCommand request, CancellationToken cancellationToken)
@@ -24,6 +28,13 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
+                var currentUser = await _userContext.GetCurrentIdentityUser();
+                bool isEditable = currentUser != null;
+                if (!isEditable)
+                {
+                    response.Message = "NOT AUTHORIZED";
+                    return response;
+                }
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
                 if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
@@ -32,7 +43,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                 }
 
                 var poster = _mapper.Map<Poster>(request);
-
+                poster.Author = currentUser;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

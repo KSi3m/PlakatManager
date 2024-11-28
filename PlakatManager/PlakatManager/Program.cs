@@ -13,6 +13,7 @@ using System.Reflection;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
 using FluentValidation.AspNetCore;
 using ElectionMaterialManager.Services;
+using ElectionMaterialManager.AppUserContext;
 
 namespace ElectionMaterialManager
 {
@@ -71,6 +72,7 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<Seeder>();
+            builder.Services.AddScoped<IUserContext, UserContext>();
             //builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
          
 

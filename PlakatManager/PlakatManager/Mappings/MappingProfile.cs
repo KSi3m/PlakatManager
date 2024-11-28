@@ -21,20 +21,24 @@ namespace ElectionMaterialManager.Mappings
                  .ForMember(x => x.Tags, opt => opt.Ignore());
 
             CreateMap<CreateBillboardCommand, Billboard>()
-                .ForMember(x=>x.Tags,opt=>opt.Ignore());
+                .ForMember(x => x.Tags, opt => opt.Ignore());
+                //.ForMember(x => x.Author, opt => opt.Ignore());
             CreateMap<CreatePosterCommand, Poster>()
                  .ForMember(x => x.Tags, opt => opt.Ignore());
             CreateMap<CreateLEDCommand, LED>()
                  .ForMember(x => x.Tags, opt => opt.Ignore());
 
             CreateMap<ElectionItem, ElectionItemDto>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (string)src.Status.Name));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
                 
             CreateMap<ElectionItem, ElectionItemDetailDto>()
                     .IncludeBase<ElectionItem, ElectionItemDto>();
 
             CreateMap<Billboard, ElectionItemDto>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (string)src.Status.Name));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name))
+                //.ForSourceMember(src => src.Author, opt => opt.DoNotValidate());
+            ;
+             
             CreateMap<Billboard, ElectionItemDetailDto>()
                 .IncludeBase<Billboard, ElectionItemDto>();
 
@@ -45,7 +49,7 @@ namespace ElectionMaterialManager.Mappings
                 .IncludeBase<Poster, ElectionItemDto>();
 
             CreateMap<LED, ElectionItemDto>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => (string)src.Status.Name));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
 
             CreateMap<LED, ElectionItemDetailDto>()
                 .IncludeBase<LED, ElectionItemDto>();
@@ -75,7 +79,7 @@ namespace ElectionMaterialManager.Mappings
            .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
            .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
            .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
-           .ForMember(dest => dest.AuthorId, opt => opt.Condition(src => src.AuthorId != null))
+    
            .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
            .ForMember(dest => dest.Latitude, opt => opt.Condition(src => src.Longitude != null));
 
@@ -86,7 +90,7 @@ namespace ElectionMaterialManager.Mappings
                 .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
                 .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
                 .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
-                .ForMember(dest => dest.AuthorId, opt => opt.Condition(src => src.AuthorId != null))
+              
                 .ForMember(dest => dest.PaperType, opt => opt.Condition(src => src.PaperType != null))
                 .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
                 .ForMember(dest => dest.Latitude, opt => opt.Condition(src => src.Longitude != null));
@@ -97,7 +101,6 @@ namespace ElectionMaterialManager.Mappings
             .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
             .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
             .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
-            .ForMember(dest => dest.AuthorId, opt => opt.Condition(src => src.AuthorId != null))
             .ForMember(dest => dest.RefreshRate, opt => opt.Condition(src => src.RefreshRate != null))
             .ForMember(dest => dest.Resolution, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
@@ -109,7 +112,6 @@ namespace ElectionMaterialManager.Mappings
             .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
             .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
             .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
-            .ForMember(dest => dest.AuthorId, opt => opt.Condition(src => src.AuthorId != null))
             .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))

@@ -12,6 +12,7 @@ using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Utilities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -73,6 +74,7 @@ namespace ElectionMaterialManager.Controllers
 
         }
         [HttpDelete]
+        [Authorize]
         [Route("election-item/{id}")]
         public async Task<IActionResult> DeleteElectionItem(int id)
         {
@@ -83,6 +85,7 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         [Route("election-item/{id}")]
         public async Task<IActionResult> UpdateElectionItem(EditElectionItemCommand command, int id)
         {
@@ -96,6 +99,7 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("election-item/led")]
         public async Task<IActionResult> CreateLed(CreateLEDCommand command)
         {
@@ -108,6 +112,7 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("election-item/poster")]
         public async Task<IActionResult> CreatePoster(CreatePosterCommand command)
         {
@@ -119,6 +124,7 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("election-item/billboard")]
         public async Task<IActionResult> CreateBillboard(CreateBillboardCommand command)
         {
@@ -130,6 +136,7 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("election-item")]
         public async Task<IActionResult> CreateElectionItem(CreateElectionItemCommand command)
         {
@@ -156,6 +163,7 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpGet]
+      
         [Route("election-item/{id}/comments")]
         public async Task<IActionResult> GetElectionItemsComments(int id)
         {

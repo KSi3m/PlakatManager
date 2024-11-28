@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.AppUserContext;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
 {
@@ -12,11 +13,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
         
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
+        private readonly IUserContext _userContext;
 
-        public EditElectionItemCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
+        public EditElectionItemCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
+            IUserContext userContext)
         {
             _db = db;
             _mapper = mapper;
+            _userContext = userContext;
         }
 
         public async Task<Response> Handle(EditElectionItemCommand request, CancellationToken cancellationToken)
@@ -30,6 +34,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
                     response.Message = "Item not found";
                     return response;
                 }
+
+                var currentUser = await _userContext.GetCurrentIdentityUser();
+                bool isEditable = currentUser != null && item.AuthorId == currentUser.Id;
+                if (!isEditable)
+                {
+                    response.Message = "NOT AUTHORIZED";
+                    return response;
+                }
+
                 _mapper.Map(request, item);
                 await _db.SaveChangesAsync();
                 response.Success = true;

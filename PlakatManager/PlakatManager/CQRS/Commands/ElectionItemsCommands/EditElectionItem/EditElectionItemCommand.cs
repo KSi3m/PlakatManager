@@ -26,8 +26,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
 
         public IEnumerable<int>? Tags { get; set; }
         public int? StatusId { get; set; }
-       
-        public int? AuthorId { get; set; }
+      
       
         public string? PaperType { get; set; }
       

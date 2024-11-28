@@ -41,8 +41,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 .Must(tags => tags.Distinct().Count() == tags.Count()).WithMessage("Tags must be distinct.")
                 .Must(tags => tags.All(tag => tag != 0)).WithMessage("Tags must not contain zero.");
 
-            RuleFor(command => command.AuthorId)
-                .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");
 
             RuleFor(command => command.RefreshRate).GreaterThan(24)
                 .When(x => x.Type == "Poster");

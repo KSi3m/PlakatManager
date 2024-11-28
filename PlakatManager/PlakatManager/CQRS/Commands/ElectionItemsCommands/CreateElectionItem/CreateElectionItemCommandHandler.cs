@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
@@ -15,13 +16,16 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
         private readonly ElectionMaterialManagerContext _db;
         private readonly ElectionItemFactoryRegistry _factoryRegistry;
         private readonly IMapper _mapper;
+        private readonly IUserContext _userContext;
+
 
         public CreateElectionItemCommandHandler(ElectionMaterialManagerContext db, 
-            ElectionItemFactoryRegistry factoryRegistry, IMapper mapper)
+            ElectionItemFactoryRegistry factoryRegistry, IMapper mapper, IUserContext userContext)
         {
             _db = db;
             _factoryRegistry = factoryRegistry;
             _mapper = mapper;
+            _userContext = userContext;
         }
 
         public async Task<GenericResponse<ElectionItemDto>> Handle(CreateElectionItemCommand request, CancellationToken cancellationToken)
@@ -29,7 +33,13 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-
+                var currentUser = await _userContext.GetCurrentIdentityUser();
+                bool isEditable = currentUser != null;
+                if (!isEditable)
+                {
+                    response.Message = "NOT AUTHORIZED";
+                    return response;
+                }
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
 
                 if (!tags.Any() || tags.Count() != request.Tags.Count())
@@ -40,7 +50,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
 
                 var type = request.Type;
                 var electionItem = _factoryRegistry.CreateElectionItem(type, request);
-
+                electionItem.Author = currentUser;
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = electionItem,

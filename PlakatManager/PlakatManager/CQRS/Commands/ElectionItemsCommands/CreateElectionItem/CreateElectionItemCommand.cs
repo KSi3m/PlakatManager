@@ -20,8 +20,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
         public IEnumerable<int>? Tags { get; set; }
         public int StatusId { get; set; }
 
-        public int AuthorId { get; set; }
-
         public string? PaperType { get; set; }
         public int? RefreshRate { get; set; }
         public string? Resolution { get; set; }

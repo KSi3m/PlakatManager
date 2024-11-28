@@ -38,8 +38,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                    .Must(tags => tags.All(tag => tag != 0)).WithMessage("Tags must not contain zero.");
 
 
-            RuleFor(command => command.AuthorId)
-                .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");
 
 
 
