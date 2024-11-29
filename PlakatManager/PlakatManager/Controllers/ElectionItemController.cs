@@ -3,7 +3,8 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElection
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElectionItem;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemComments;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
@@ -87,12 +88,26 @@ namespace ElectionMaterialManager.Controllers
         [HttpPatch]
         [Authorize]
         [Route("election-item/{id}")]
-        public async Task<IActionResult> UpdateElectionItem(EditElectionItemCommand command, int id)
+        public async Task<IActionResult> UpdateElectionItemPartially(UpdateElectionItemPartiallyCommand command, int id)
         {
          
             command.Id = id;
             var response = await _mediator.Send(command);
             if(response.Success)
+                return NoContent();
+            return BadRequest(new { response.Message });
+
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("election-item/{id}")]
+        public async Task<IActionResult> UpdateElectionItemFully(UpdateElectionItemFullyCommand command, int id)
+        {
+
+            command.Id = id;
+            var response = await _mediator.Send(command);
+            if (response.Success)
                 return NoContent();
             return BadRequest(new { response.Message });
 

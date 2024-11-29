@@ -6,16 +6,16 @@ using AutoMapper;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.AppUserContext;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially
 {
-    public class EditElectionItemCommandHandler: IRequestHandler<EditElectionItemCommand,Response>
+    public class UpdateElectionItemPartiallyCommandHandler: IRequestHandler<UpdateElectionItemPartiallyCommand,Response>
     {
         
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
 
-        public EditElectionItemCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
+        public UpdateElectionItemPartiallyCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
             IUserContext userContext)
         {
             _db = db;
@@ -23,7 +23,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
             _userContext = userContext;
         }
 
-        public async Task<Response> Handle(EditElectionItemCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(UpdateElectionItemPartiallyCommand request, CancellationToken cancellationToken)
         {
             var response = new Response() { Success = false };
             try
@@ -42,8 +42,29 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
                     response.Message = "NOT AUTHORIZED";
                     return response;
                 }
-
                 _mapper.Map(request, item);
+                if (request.Tags != null && request.Tags.Any())
+                {
+                    var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
+                    if (!tags.Any() || tags.Count != request.Tags.Count())
+                    {
+                        response.Message = "Tags not specified/wrong ids. Process aborted";
+                        return response;
+                    }
+
+                    var existingTags = _db.ElectionItemTag.Where(et => et.ElectionItemId == item.Id);
+                    _db.ElectionItemTag.RemoveRange(existingTags);
+
+                    var newElectionItemTags = tags.Select(tag => new ElectionItemTag
+                    {
+                        ElectionItem = item,
+                        Tag = tag,
+                        DateOfPublication = DateTime.UtcNow
+                    });
+                    await _db.AddRangeAsync(newElectionItemTags);
+
+                }
+                _db.ElectionItems.Update(item);
                 await _db.SaveChangesAsync();
                 response.Success = true;
                 response.Message = "Updated succesfully";

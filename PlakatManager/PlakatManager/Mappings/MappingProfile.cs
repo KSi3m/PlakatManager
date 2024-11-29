@@ -3,7 +3,8 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboar
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 
@@ -22,7 +23,6 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<CreateBillboardCommand, Billboard>()
                 .ForMember(x => x.Tags, opt => opt.Ignore());
-                //.ForMember(x => x.Author, opt => opt.Ignore());
             CreateMap<CreatePosterCommand, Poster>()
                  .ForMember(x => x.Tags, opt => opt.Ignore());
             CreateMap<CreateLEDCommand, LED>()
@@ -36,7 +36,6 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<Billboard, ElectionItemDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name))
-                //.ForSourceMember(src => src.Author, opt => opt.DoNotValidate());
             ;
              
             CreateMap<Billboard, ElectionItemDetailDto>()
@@ -63,6 +62,14 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<User, AuthorDto>();
             CreateMap<Comment, CommentDto>();
 
+
+            CreateMap<UpdateElectionItemFullyCommand, Poster>()
+                .ForMember(dest => dest.Tags, opt => opt.Ignore());
+            CreateMap<UpdateElectionItemFullyCommand, LED>()
+                .ForMember(dest => dest.Tags, opt => opt.Ignore());
+            CreateMap<UpdateElectionItemFullyCommand, Billboard>()
+                .ForMember(dest => dest.Tags, opt => opt.Ignore());
+
             MapsForEditElectionItemCommand();
 
         }
@@ -70,7 +77,7 @@ namespace ElectionMaterialManager.Mappings
 
         public void MapsForEditElectionItemCommand()
         {
-            CreateMap<EditElectionItemCommand, ElectionItem>()
+            CreateMap<UpdateElectionItemPartiallyCommand, ElectionItem>()
            /*.ForAllMembers(opts => {
              * opts.Condition((src, dest, srcMember) => srcMember != null);
             });// nie działa z jakiegos powodu */
@@ -79,39 +86,45 @@ namespace ElectionMaterialManager.Mappings
            .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
            .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
            .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
-    
+           .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+           .ForMember(dest => dest.Tags, opt => opt.Ignore())
            .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
            .ForMember(dest => dest.Latitude, opt => opt.Condition(src => src.Longitude != null));
 
 
-            CreateMap<EditElectionItemCommand, Poster>()
+            CreateMap<UpdateElectionItemPartiallyCommand, Poster>()
                 .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
                 .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
                 .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
                 .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
                 .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
-              
+                .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+                .ForMember(dest => dest.Tags, opt => opt.Ignore())
                 .ForMember(dest => dest.PaperType, opt => opt.Condition(src => src.PaperType != null))
                 .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
                 .ForMember(dest => dest.Latitude, opt => opt.Condition(src => src.Longitude != null));
 
-            CreateMap<EditElectionItemCommand, LED>()
+            CreateMap<UpdateElectionItemPartiallyCommand, LED>()
              .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
             .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
             .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
             .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
+             .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+            .ForMember(dest => dest.Tags, opt => opt.Ignore())
             .ForMember(dest => dest.RefreshRate, opt => opt.Condition(src => src.RefreshRate != null))
             .ForMember(dest => dest.Resolution, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))
             .ForMember(dest => dest.Latitude, opt => opt.Condition(src => src.Longitude != null));
 
-            CreateMap<EditElectionItemCommand, Billboard>()
-              .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
+            CreateMap<UpdateElectionItemPartiallyCommand, Billboard>()
+             .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
             .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
             .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
             .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
+            .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
+            .ForMember(dest => dest.Tags, opt => opt.Ignore())
             .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.Area != null))
             .ForMember(dest => dest.Longitude, opt => opt.Condition(src => src.Longitude != null))

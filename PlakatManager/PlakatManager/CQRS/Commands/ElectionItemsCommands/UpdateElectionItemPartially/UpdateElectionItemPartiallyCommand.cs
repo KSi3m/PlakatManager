@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially
 {
-    public class EditElectionItemCommand: IRequest<Response>
+    public class UpdateElectionItemPartiallyCommand: IRequest<Response>
     {
         [JsonIgnore]
         public int Id { get; set; }

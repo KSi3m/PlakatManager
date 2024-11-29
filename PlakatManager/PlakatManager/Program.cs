@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using System.Reflection;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially;
 using FluentValidation.AspNetCore;
 using ElectionMaterialManager.Services;
 using ElectionMaterialManager.AppUserContext;
@@ -78,7 +78,7 @@ namespace ElectionMaterialManager
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-            builder.Services.AddValidatorsFromAssemblyContaining<EditElectionItemCommand>()
+            builder.Services.AddValidatorsFromAssemblyContaining<UpdateElectionItemPartiallyCommand>()
                 .AddFluentValidationAutoValidation()
                 .AddFluentValidationClientsideAdapters();
             /*builder.Services.AddFluentValidationAutoValidation();

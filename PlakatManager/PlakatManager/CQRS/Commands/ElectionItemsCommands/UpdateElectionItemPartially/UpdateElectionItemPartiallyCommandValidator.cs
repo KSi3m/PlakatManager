@@ -1,16 +1,16 @@
 ﻿using FluentValidation;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially
 {
-    public class EditElectionItemCommandValidator : AbstractValidator<EditElectionItemCommand>
+    public class UpdateElectionItemPartiallyCommandValidator : AbstractValidator<UpdateElectionItemPartiallyCommand>
     {
-        public EditElectionItemCommandValidator()
+        public UpdateElectionItemPartiallyCommandValidator()
         {
 
 
 
-            RuleFor(command => command.Area)
-            .NotEmpty();
+            /*RuleFor(command => command.Area)
+            .NotEmpty();*/
 
 
             RuleFor(command => command.Latitude)
@@ -25,9 +25,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
                 .When(command => command.Priority.HasValue);
 
 
-            RuleFor(command => command.Size)
-                .NotEmpty();
-
+            /*RuleFor(command => command.Size)
+                .NotEmpty();*/
+            
             RuleFor(command => command.Cost)
                 .GreaterThanOrEqualTo(0);
 
@@ -35,8 +35,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElecti
                 .GreaterThan(0).WithMessage("StatusId must be greater than 0.");
 
             RuleFor(command => command.Tags)
-                .NotNull().WithMessage("Tags are required.")
-                .Must(tags => tags.Any()).WithMessage("At least one tag must be specified.");
+                //.NotNull().WithMessage("Tags are required.")
+                .Must(tags => tags == null || tags.Any())
+                .WithMessage("If specified, at least one tag must be provided");
 
 
             RuleFor(command => command.StartDate)
