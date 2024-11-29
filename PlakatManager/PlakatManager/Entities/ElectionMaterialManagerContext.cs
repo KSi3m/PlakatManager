@@ -35,6 +35,7 @@ namespace ElectionMaterialManager.Entities
                 }
             }
 
+
             modelBuilder.Entity<Billboard>(eb => {
                 eb.Property(x => x.StartDate).HasColumnName("start_date");
                 eb.Property(x => x.EndDate).HasColumnName("end_date");

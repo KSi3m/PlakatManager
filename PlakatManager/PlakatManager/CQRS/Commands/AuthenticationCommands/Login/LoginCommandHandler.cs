@@ -1,4 +1,5 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -7,10 +8,10 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login
 {
     public class LoginCommandHandler : IRequestHandler<LoginCommand, TokenResponse>
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly IAuthService _authService;
 
-        public LoginCommandHandler(UserManager<IdentityUser> userManager, IAuthService authService)
+        public LoginCommandHandler(UserManager<User> userManager, IAuthService authService)
         {
             _userManager = userManager;
             _authService = authService;
@@ -24,7 +25,7 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login
                 var user = await _userManager.FindByNameAsync(request.Login);
                 if (user == null)
                 {
-                    response.Message = "Wrong login or password";
+                    response.Message = "Wrong login or password ";
                     return response;
                 }
                 var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);

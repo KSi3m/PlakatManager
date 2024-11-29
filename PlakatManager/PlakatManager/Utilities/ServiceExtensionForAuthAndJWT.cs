@@ -17,7 +17,7 @@ namespace ElectionMaterialManager.Utilities
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
             services.AddTransient<AuthService>();
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<ElectionMaterialManagerContext>()
             .AddDefaultTokenProviders();
 

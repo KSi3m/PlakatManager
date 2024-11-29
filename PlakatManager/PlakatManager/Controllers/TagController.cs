@@ -21,10 +21,12 @@ namespace ElectionMaterialManager.Controllers
     public class TagController: ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ElectionMaterialManagerContext _db;
 
-        public TagController(IMediator mediator)
+        public TagController(IMediator mediator, ElectionMaterialManagerContext db)
         {
             _mediator = mediator;
+            _db = db;
         }
 
         [HttpGet]

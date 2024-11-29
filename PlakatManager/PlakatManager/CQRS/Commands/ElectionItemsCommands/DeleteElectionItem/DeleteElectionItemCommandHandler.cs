@@ -1,4 +1,5 @@
-﻿using ElectionMaterialManager.CQRS.Responses;
+﻿using ElectionMaterialManager.AppUserContext;
+using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
     public class DeleteElectionItemCommandHandler: IRequestHandler<DeleteElectionItemCommand,Response>
     {
         private readonly ElectionMaterialManagerContext _db;
+        private readonly IUserContext _userContext;
 
-        public DeleteElectionItemCommandHandler(ElectionMaterialManagerContext db)
+        public DeleteElectionItemCommandHandler(ElectionMaterialManagerContext db, IUserContext userContext)
         {
             _db = db;
+            _userContext = userContext;
         }
 
         public async Task<Response> Handle(DeleteElectionItemCommand request, CancellationToken cancellationToken)
@@ -20,6 +23,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
             var response = new Response() { Success = false };
             try
             {
+
                 var electionItem = await _db.ElectionItems.FirstAsync(x => x.Id.Equals(request.Id));
 
                 if (electionItem == null)
@@ -27,6 +31,16 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
                     response.Message = "Election item with given id not found.";
                     return response;
                 }
+
+                var currentUser = await _userContext.GetCurrentIdentityUser();
+                bool isEditable = currentUser != null && electionItem.AuthorId == currentUser.Id;
+                if (!isEditable)
+                {
+                    response.Message = "NOT AUTHORIZED";
+                    return response;
+                }
+
+
                 _db.Remove(electionItem);
                 await _db.SaveChangesAsync();
                 response.Success = true;

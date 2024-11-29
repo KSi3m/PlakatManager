@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+
+using AutoMapper.Execution;
+using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
@@ -12,27 +15,39 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
+        private readonly IUserContext _userContext;
 
-        public CreateBillboardCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
+        public CreateBillboardCommandHandler(ElectionMaterialManagerContext db,
+            IMapper mapper, IUserContext userContext)
         {
             _db = db;
             _mapper = mapper;
+            _userContext = userContext;
         }
 
         public async Task<GenericResponse<ElectionItemDto>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
         {
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
-            { 
+            {
+                var currentUser = await _userContext.GetCurrentIdentityUser();
+                bool isEditable = currentUser != null;
+                if (!isEditable)
+                {
+                    response.Message = "NOT AUTHORIZED";
+                    return response;
+                }
+
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
                 if(!tags.Any() || tags.Count() != request.Tags.Count())
                 {
                     response.Message = "Tags not specified/wrong ids. Process aborted";
                     return response;
                 }
-
+   
                 var billboard = _mapper.Map<Billboard>(request);
-  
+                billboard.Author = currentUser;
+
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
@@ -43,7 +58,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
 
                 await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
-                response.Success = true;
+                response.Success = true;    
                 response.Data = _mapper.Map<ElectionItemDto>(billboard);
                 response.Message = $"/api/v1/election-item/{billboard.Id}";
             }

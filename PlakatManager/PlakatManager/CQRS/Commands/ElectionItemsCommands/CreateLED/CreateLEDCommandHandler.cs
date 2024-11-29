@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
@@ -12,12 +13,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
+        private readonly IUserContext _userContext;
 
 
-        public CreateLEDCommandHandler(ElectionMaterialManagerContext db, IMapper mapper)
+        public CreateLEDCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
+            IUserContext userContext)
         {
             _db = db;
             _mapper = mapper;
+            _userContext = userContext;
 
         }
 
@@ -26,6 +30,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
+                var currentUser = await _userContext.GetCurrentIdentityUser();
+                bool isEditable = currentUser != null;
+                if (!isEditable)
+                {
+                    response.Message = "NOT AUTHORIZED";
+                    return response;
+                }
+
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
                 if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
@@ -34,7 +46,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                 }
 
                 var led = _mapper.Map<LED>(request);
-
+                led.Author = currentUser;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

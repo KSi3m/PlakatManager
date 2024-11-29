@@ -10,15 +10,16 @@ using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using System.Reflection;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.EditElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially;
 using FluentValidation.AspNetCore;
 using ElectionMaterialManager.Services;
+using ElectionMaterialManager.AppUserContext;
 
 namespace ElectionMaterialManager
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -71,10 +72,13 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddScoped<Seeder>();
+            builder.Services.AddScoped<IUserContext, UserContext>();
+            //builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
+         
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
-            builder.Services.AddValidatorsFromAssemblyContaining<EditElectionItemCommand>()
+            builder.Services.AddValidatorsFromAssemblyContaining<UpdateElectionItemPartiallyCommand>()
                 .AddFluentValidationAutoValidation()
                 .AddFluentValidationClientsideAdapters();
             /*builder.Services.AddFluentValidationAutoValidation();
@@ -109,6 +113,11 @@ namespace ElectionMaterialManager
             seeder.Seed();
 
             var dbContext = scope.ServiceProvider.GetService<ElectionMaterialManagerContext>();
+           
+           // var userMigration = scope.ServiceProvider.GetRequiredService<UserToAspUsersMigrationUtility>();
+           //await userMigration.Migrate(dbContext, scope.ServiceProvider); //!!!!
+           
+
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();
 
