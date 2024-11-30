@@ -30,17 +30,28 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                     .ThenInclude(x=>x.Status)
                     .Where(x=>x.Value == query.TagName)
                     .SelectMany(x=>x.ElectionItems)
+                    .Select(x=> new ElectionItemDto()
+                    {
+                        Id = x.Id,
+                        Area = x.Area,
+                        Status = x.Status.Name,
+                        Latitude = x.Latitude,
+                        Longitude = x.Longitude,
+                        Priority = x.Priority,
+                        Type = EF.Property<string>(x, "Discriminator"),
+                    })
                     .ToListAsync();
 
-                if (electionItems == null || !electionItems.Any())
+               /* if (electionItems == null || !electionItems.Any())
                 {
                     response.Message = "Election items with given tag not found.";
                     return response;
-                }
+                }*/
                 response.Message = "Election items with given tag found";
                 response.Success = true;
               
-                response.Data = _mapper.Map<IEnumerable<ElectionItemDto>>(electionItems);
+                //response.Data = _mapper.Map<IEnumerable<ElectionItemDto>>(electionItems);
+                response.Data = electionItems;
             }
             catch(Exception ex)
             {

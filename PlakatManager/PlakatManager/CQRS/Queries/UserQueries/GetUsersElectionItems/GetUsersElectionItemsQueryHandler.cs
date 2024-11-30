@@ -28,8 +28,8 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
             try
             {
                 var currentUser = await _userContext.GetCurrentIdentityUser();
-                bool isEditable = currentUser != null;
-                if (!isEditable)
+                bool isEnterable= currentUser != null;
+                if (!isEnterable)
                 {
                     response.Message = "NOT AUTHORIZED";
                     return response;
@@ -45,17 +45,12 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
                        Status = x.Status.Name,
                        Latitude = x.Latitude,
                        Longitude = x.Longitude,
-                       Priority = x.Priority 
-                      })
+                       Priority = x.Priority,
+                       Type = EF.Property<string>(x, "Discriminator"),
+                    })
                     .ToListAsync();
 
-                /*if (electionItems == null)
-                {
-                    response.Message = "Items not found.";
-                    return response;
-                }*/
                 response.Success = true;
-                //response.Data = _mapper.Map<IEnumerable<ElectionItemDto>>(electionItems);
                 response.Data = electionItems;
             }
             catch (Exception ex)

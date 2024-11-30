@@ -28,6 +28,12 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<CreateLEDCommand, LED>()
                  .ForMember(x => x.Tags, opt => opt.Ignore());
 
+
+            /*CreateMap<ElectionItem, ElectionItemDto>()
+                 .Include<Poster, PosterDto>();
+
+            CreateMap<Poster, PosterDto>();*/
+
             CreateMap<ElectionItem, ElectionItemDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
                 
@@ -53,7 +59,7 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<LED, ElectionItemDetailDto>()
                 .IncludeBase<LED, ElectionItemDto>();
 
-
+            CreateMap<Comment, UserCommentDto>();
           
        
 

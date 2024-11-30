@@ -12,7 +12,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                 .NotEmpty().Must(type => new[] { "Poster", "Led", "Billboard" }.Contains(type));*/
 
             RuleFor(command => command.Area)
-                .NotEmpty();
+           .NotEmpty().WithMessage("You must specify Area")
+           .MaximumLength(200);
 
 
             RuleFor(command => command.Latitude)
@@ -24,14 +25,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
             RuleFor(command => command.Priority)
                 .InclusiveBetween(1, 10).WithMessage("Priority must be between 1 and 10.");
-                //.When(command => command.Priority.HasValue);
+            //.When(command => command.Priority.HasValue);
 
 
             RuleFor(command => command.Size)
-                .NotEmpty();
+             .NotEmpty().MaximumLength(20);
 
             RuleFor(command => command.Cost)
-                .GreaterThanOrEqualTo(0);
+                .InclusiveBetween(0, 999999.9999m);
 
             RuleFor(command => command.StatusId)
                 .GreaterThan(0).WithMessage("StatusId must be greater than 0.");

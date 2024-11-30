@@ -9,8 +9,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
 
 
-            /*RuleFor(command => command.Area)
-            .NotEmpty();*/
+
+            RuleFor(command => command.Area)
+                 .MaximumLength(200);
 
 
             RuleFor(command => command.Latitude)
@@ -25,11 +26,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                 .When(command => command.Priority.HasValue);
 
 
-            /*RuleFor(command => command.Size)
-                .NotEmpty();*/
-            
+
+            RuleFor(command => command.Size)
+               .MaximumLength(20);
+
             RuleFor(command => command.Cost)
-                .GreaterThanOrEqualTo(0);
+                .InclusiveBetween(0, 999999.9999m);
 
             RuleFor(command => command.StatusId)
                 .GreaterThan(0).WithMessage("StatusId must be greater than 0.");

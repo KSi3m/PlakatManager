@@ -17,9 +17,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
         public int Priority { get; set; }
 
-        public string Size { get; set; }
+        public string? Size { get; set; }
 
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
 
         public IEnumerable<int> Tags { get; set; }
         public int StatusId { get; set; }

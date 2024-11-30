@@ -1,4 +1,5 @@
 ﻿using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,19 @@ namespace ElectionMaterialManager.Controllers
             var query = new GetUsersElectionItemsQuery();
             var response = await _mediator.Send(query);
             if (response.Success)
-                return Ok(response);
+                return Ok(new { MyElectionItems = response.Data });
+            return BadRequest(new { response.Message });
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("user/comments")]
+        public async Task<IActionResult> GetMyComments()
+        {
+            var query = new GetUserCommentsQuery();
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(new { MyComments = response.Data });
             return BadRequest(new { response.Message });
         }
     }

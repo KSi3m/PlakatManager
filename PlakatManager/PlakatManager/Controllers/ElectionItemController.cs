@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddCommentToElectionItem;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -191,7 +192,19 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("election-item/{id}/comment")]
+        public async Task<IActionResult> AddCommentToElectionItem(AddCommentToElectionItemCommand command, int id)
+        {
 
+            command.Id = id;
+            var response = await _mediator.Send(command);
+            if (response.Success)
+                return Created(response.Message, response.Data);
+            return BadRequest(new { response.Message });
+
+        }
 
 
     }
