@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using ElectionMaterialManager.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace ElectionMaterialManager.Services
 {
     public interface IAuthService
     {
-        string CreateToken(IdentityUser user);
+        Task<string> CreateToken(User user);
     }
 }

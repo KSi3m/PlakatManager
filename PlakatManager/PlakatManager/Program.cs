@@ -74,6 +74,7 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<Seeder>();
             builder.Services.AddScoped<IUserContext, UserContext>();
             //builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
+           // builder.Services.AddScoped<AddRolesUtility>();
          
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
@@ -110,12 +111,15 @@ namespace ElectionMaterialManager
            
             var seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
        
-            seeder.Seed();
+            await seeder.Seed(scope.ServiceProvider);
 
             var dbContext = scope.ServiceProvider.GetService<ElectionMaterialManagerContext>();
-           
+
            // var userMigration = scope.ServiceProvider.GetRequiredService<UserToAspUsersMigrationUtility>();
            //await userMigration.Migrate(dbContext, scope.ServiceProvider); //!!!!
+
+            //var rolesUtil = scope.ServiceProvider.GetRequiredService<AddRolesUtility>();
+            //await rolesUtil.AddRoles(dbContext, scope.ServiceProvider); //!!!!
            
 
 

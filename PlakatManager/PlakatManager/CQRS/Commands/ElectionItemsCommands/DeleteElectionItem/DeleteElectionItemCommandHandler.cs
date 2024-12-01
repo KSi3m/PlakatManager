@@ -31,9 +31,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
                     response.Message = "Election item with given id not found.";
                     return response;
                 }
-
-                var currentUser = await _userContext.GetCurrentIdentityUser();
-                bool isEditable = currentUser != null && electionItem.AuthorId == currentUser.Id;
+         
+                var currentUser = await _userContext.GetCurrentUser();
+                bool isEditable = currentUser != null && 
+                    (electionItem.AuthorId == currentUser.Id || currentUser.Roles.Contains("Admin"));
                 if (!isEditable)
                 {
                     response.Message = "NOT AUTHORIZED";
