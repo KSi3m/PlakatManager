@@ -67,6 +67,7 @@ namespace ElectionMaterialManager.Mappings
             CreateMap<Tag, TagDto>();
             CreateMap<User, AuthorDto>();
             CreateMap<Comment, CommentDto>();
+            CreateMap<Status, StatusDto>();
 
 
             CreateMap<UpdateElectionItemFullyCommand, Poster>()

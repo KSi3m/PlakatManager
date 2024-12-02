@@ -24,7 +24,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
             try
             {
 
-                var electionItem = await _db.ElectionItems.FirstAsync(x => x.Id.Equals(request.Id));
+                var electionItem = await _db.ElectionItems
+                    .FirstOrDefaultAsync(x => x.Id.Equals(request.Id));
 
                 if (electionItem == null)
                 {

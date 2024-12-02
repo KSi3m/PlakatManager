@@ -33,8 +33,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     return response;
                 }
 
-                var currentUser = await _userContext.GetCurrentIdentityUser();
-                bool isEditable = currentUser != null && item.AuthorId == currentUser.Id;
+
+                var currentUser = await _userContext.GetCurrentUser();
+                bool isEditable = currentUser != null && 
+                    (item.AuthorId == currentUser.Id || currentUser.Roles.Contains("Admin"));
                 if (!isEditable)
                 {
                     response.Message = "NOT AUTHORIZED";

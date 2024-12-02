@@ -6,15 +6,15 @@ using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
+namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.UpdateStatus
 {
-    public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand,GenericResponse<TagDto>>
+    public class UpdateStatusCommandHandler: IRequestHandler<UpdateStatusCommand,GenericResponse<StatusDto>>
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
 
-        public UpdateTagCommandHandler(ElectionMaterialManagerContext db, 
+        public UpdateStatusCommandHandler(ElectionMaterialManagerContext db, 
             IMapper mapper, IUserContext userContext)
         {
             _db = db;
@@ -22,9 +22,9 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
             _userContext = userContext;
         }
 
-        public async Task<GenericResponse<TagDto>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<StatusDto>> Handle(UpdateStatusCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<TagDto>() { Success = false };
+            var response = new GenericResponse<StatusDto>() { Success = false };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
@@ -35,29 +35,27 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                     return response;
                 }
 
-                var tags = await _db.Tags.ToListAsync();
- 
-                var tagFromDb = tags.FirstOrDefault(x => x.Id == request.Id);
-                if (tagFromDb == null)
+                var statuses = await _db.Statuses.ToListAsync();
+
+                var statusFromDb = statuses
+                .FirstOrDefault(x => x.Id == request.Id);
+                if (statusFromDb == null)
                 {
-                    response.Message = "Tag was not found";
+                    response.Message = "Status was not found!";
                     return response;
                 }
-
-                var check = tags.Find(x => x.Value == request.NewTagName);
+                var check = statuses.Find(x => x.Name == request.NewStatusName);
                 if (check != null)
                 {
-                    response.Message = "Tag with the same name already exist!";
+                    response.Message = "Status with the same name already exist!";
                     return response;
                 }
-
-
-                tagFromDb.Value = request.NewTagName;
+                statusFromDb.Name = request.NewStatusName;
                 await _db.SaveChangesAsync();
 
                 response.Success = true;
-                response.Data = _mapper.Map<TagDto>(tagFromDb);
-                response.Message = $"/api/v1/tag/{tagFromDb.Id}";
+                response.Data = _mapper.Map<StatusDto>(statusFromDb);
+                response.Message = $"/api/v1/status/{statusFromDb.Id}";
             }
             catch (Exception ex)
             {

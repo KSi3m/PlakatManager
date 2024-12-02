@@ -4,19 +4,20 @@ using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag
+namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.DeleteStatus
 {
-    public class DeleteTagCommandHandler: IRequestHandler<DeleteTagCommand,Response>
+    public class DeleteStatusCommandHandler: IRequestHandler<DeleteStatusCommand,Response>
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IUserContext _userContext;
-        public DeleteTagCommandHandler(ElectionMaterialManagerContext db, IUserContext userContext)
+
+        public DeleteStatusCommandHandler(ElectionMaterialManagerContext db, IUserContext userContext)
         {
             _db = db;
             _userContext = userContext;
         }
 
-        public async Task<Response> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(DeleteStatusCommand request, CancellationToken cancellationToken)
         {
             var response = new Response() { Success = false };
             try
@@ -29,17 +30,20 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag
                     return response;
                 }
 
-                var tag = await _db.Tags.FirstAsync(x => x.Id.Equals(request.Id));
+                var status = await _db.Statuses
+                    .FirstOrDefaultAsync(x => x.Id.Equals(request.Id));
 
-                if (tag == null)
+                if (status == null)
                 {
-                    response.Message = "Tag with given id not found.";
+                    response.Message = "Status with given id not found.";
                     return response;
                 }
-                _db.Remove(tag);
+
+                _db.Remove(status);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Message = "Tag deleted.";
+                response.Message = "Status deleted.";
+
             }
             catch (Exception ex)
             {

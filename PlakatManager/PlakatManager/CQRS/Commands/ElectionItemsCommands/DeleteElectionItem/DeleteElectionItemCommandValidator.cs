@@ -7,7 +7,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
         public DeleteElectionItemCommandValidator()
         {
 
-            RuleFor(command => command.Id).GreaterThan(0).NotNull().NotEmpty();
+            RuleFor(command => command.Id).GreaterThan(0).WithMessage("Id must be larger than 1")
+                .NotNull().NotEmpty();
         }
     }
 }
