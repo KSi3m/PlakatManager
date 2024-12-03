@@ -7,6 +7,7 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElection
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.Mappings
 {
@@ -36,12 +37,14 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<ElectionItem, ElectionItemDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
+
                 
             CreateMap<ElectionItem, ElectionItemDetailDto>()
                     .IncludeBase<ElectionItem, ElectionItemDto>();
 
             CreateMap<Billboard, ElectionItemDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name))
+               
             ;
              
             CreateMap<Billboard, ElectionItemDetailDto>()
@@ -49,12 +52,15 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<Poster, ElectionItemDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
+            ;
 
             CreateMap<Poster, ElectionItemDetailDto>()
                 .IncludeBase<Poster, ElectionItemDto>();
 
             CreateMap<LED, ElectionItemDto>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name))
+               ;
+
 
             CreateMap<LED, ElectionItemDetailDto>()
                 .IncludeBase<LED, ElectionItemDto>();

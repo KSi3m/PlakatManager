@@ -9,6 +9,7 @@ using ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -39,9 +40,8 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpGet]
         [Route("tag/{id}")]
-        public async Task<IActionResult> GetTag(int id)
+        public async Task<IActionResult> GetTag([FromRoute] GetTagByIdQuery query, int id)
         {
-            var query = new GetTagByIdQuery() { Id = id };
             var response = await _mediator.Send(query);
             if (response.Success)
             {
@@ -51,10 +51,11 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("tag/{id}")]
-        public async Task<IActionResult> DeleteTag(int id)
+        public async Task<IActionResult> DeleteTag([FromRoute] DeleteTagCommand command, int id)
         {
-            var command = new DeleteTagCommand() { Id = id };
+        
             var response = await _mediator.Send(command);
             if (response.Success)
             {
@@ -65,6 +66,7 @@ namespace ElectionMaterialManager.Controllers
 
 
         [HttpPost]
+        [Authorize]
         [Route("tag")]
         public async Task<IActionResult> CreateTag(CreateTagCommand command)
         {
@@ -76,9 +78,11 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("tag/{id}")]
         public async Task<IActionResult> UpdateTag(UpdateTagCommand command, int id)
         {
+            if(id<=0) return BadRequest(new { Message="BAD ID" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)

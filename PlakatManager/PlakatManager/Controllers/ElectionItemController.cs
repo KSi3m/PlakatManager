@@ -35,11 +35,8 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpGet]
         [Route("election-items")]
-        public async Task<IActionResult> GetElectionItems(int indexRangeStart = 1, int indexRangeEnd = 10)
+        public async Task<IActionResult> GetElectionItems([FromQuery] GetElectionItemsQuery query)
         {
-
-            var query = new GetElectionItemsQuery()
-            { IndexRangeStart = indexRangeStart, IndexRangeEnd = indexRangeEnd };
             var response = await _mediator.Send(query);
             if (response.Success)
                 return Ok(response);
@@ -48,10 +45,10 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpGet]
         [Route("election-item/{id}")]
-        public async Task<IActionResult> GetElectionItem(int id)
+        public async Task<IActionResult> GetElectionItem([FromRoute] GetElectionItemByIdQuery query, int id)
         {
 
-            var query = new GetElectionItemByIdQuery() { Id = id };
+           // var query = new GetElectionItemByIdQuery() { Id = id };
             var response = await _mediator.Send(query);
             if (response.Success)
             {
@@ -63,10 +60,8 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpGet]
         [Route("election-item/{id}/detail")]
-        public async Task<IActionResult> GetElectionItemWithDetails(int id)
+        public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdQuery query,  int id)
         {
-
-            var query = new GetElectionItemByIdQuery() { Id = id, Detailed = true };
             var response = await _mediator.Send(query);
             if (response.Success)
             {
@@ -78,9 +73,9 @@ namespace ElectionMaterialManager.Controllers
         [HttpDelete]
         [Authorize]
         [Route("election-item/{id}")]
-        public async Task<IActionResult> DeleteElectionItem(int id)
+        public async Task<IActionResult> DeleteElectionItem([FromRoute] DeleteElectionItemCommand command, int id)
         {
-            var response = await _mediator.Send(new DeleteElectionItemCommand() { Id = id });
+            var response = await _mediator.Send(command);
             if(response.Success)
                 return NoContent();
             return BadRequest(new { response.Message });
@@ -91,7 +86,7 @@ namespace ElectionMaterialManager.Controllers
         [Route("election-item/{id}")]
         public async Task<IActionResult> UpdateElectionItemPartially(UpdateElectionItemPartiallyCommand command, int id)
         {
-         
+            if (id <= 0) return BadRequest(new { Message = "BAD ID" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if(response.Success)
@@ -105,7 +100,7 @@ namespace ElectionMaterialManager.Controllers
         [Route("election-item/{id}")]
         public async Task<IActionResult> UpdateElectionItemFully(UpdateElectionItemFullyCommand command, int id)
         {
-
+            if (id <= 0) return BadRequest(new { Message = "BAD ID" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -181,9 +176,8 @@ namespace ElectionMaterialManager.Controllers
         [HttpGet]
       
         [Route("election-item/{id}/comments")]
-        public async Task<IActionResult> GetElectionItemsComments(int id)
+        public async Task<IActionResult> GetElectionItemsComments([FromRoute] GetElectionItemCommentsQuery query,int id)
         {
-            var query = new GetElectionItemCommentsQuery() { Id = id };
             var response = await _mediator.Send(query);
             if (response.Success)
             {
@@ -197,7 +191,7 @@ namespace ElectionMaterialManager.Controllers
         [Route("election-item/{id}/comment")]
         public async Task<IActionResult> AddCommentToElectionItem(AddCommentToElectionItemCommand command, int id)
         {
-
+            if (id <= 0) return BadRequest(new { Message = "BAD ID" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)

@@ -14,6 +14,7 @@ using ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -57,6 +58,7 @@ namespace ElectionMaterialManager.Controllers
      
 
         [HttpPost]
+        [Authorize]
         [Route("status")]
         public async Task<IActionResult> CreateStatus(CreateStatusCommand command)
         {
@@ -68,9 +70,11 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("status/{id}")]
         public async Task<IActionResult> UpdateStatus(UpdateStatusCommand command, int id)
         {
+            if (id <= 0) return BadRequest(new { Message = "BAD ID" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -80,10 +84,11 @@ namespace ElectionMaterialManager.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("status/{id}")]
         public async Task<IActionResult> DeleteStatus([FromRoute] DeleteStatusCommand command, int id)
         {
-            //var command = new DeleteStatusCommand() { Id = id };
+       
             var response = await _mediator.Send(command);
             if (response.Success)
             {

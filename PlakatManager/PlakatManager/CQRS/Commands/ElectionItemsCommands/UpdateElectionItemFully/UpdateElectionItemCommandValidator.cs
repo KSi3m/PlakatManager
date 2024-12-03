@@ -8,8 +8,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         public UpdateElectionItemCommandValidator()
         {
 
-            /*RuleFor(command => command.Type)
-                .NotEmpty().Must(type => new[] { "Poster", "Led", "Billboard" }.Contains(type));*/
 
             RuleFor(command => command.Area)
            .NotEmpty().WithMessage("You must specify Area")

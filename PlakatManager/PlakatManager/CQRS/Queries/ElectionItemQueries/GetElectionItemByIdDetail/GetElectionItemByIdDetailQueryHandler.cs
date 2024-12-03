@@ -1,29 +1,33 @@
 ﻿using AutoMapper;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemById
+namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemByIdDetail
 {
-    public class GetElectionItemByIdQueryHandler : IRequestHandler<GetElectionItemByIdQuery, GenericResponse<ElectionItemDto>>
+    public class GetElectionItemByIdDetailQueryHandler : IRequestHandler<GetElectionItemByIdDetailQuery, GenericResponse<ElectionItemDetailDto>>
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
 
-        public GetElectionItemByIdQueryHandler(ElectionMaterialManagerContext db, IMapper mapper)
+        public GetElectionItemByIdDetailQueryHandler(ElectionMaterialManagerContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
         }
 
-        public async Task<GenericResponse<ElectionItemDto>> Handle(GetElectionItemByIdQuery request, CancellationToken cancellationToken)
+        public async Task<GenericResponse<ElectionItemDetailDto>> Handle(GetElectionItemByIdDetailQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<ElectionItemDto>() { Success  = false };
+            var response = new GenericResponse<ElectionItemDetailDto>() { Success = false };
             try
             {
-                var electionItem =  await _db.ElectionItems.Include(x => x.Status)
+                var electionItem = await _db.ElectionItems
+                    .Include(x => x.Status)
+                    .Include(x => x.Tags)
+                    .Include(x => x.Author)
                     .FirstOrDefaultAsync(x => x.Id == request.Id);
 
                 if (electionItem == null)
@@ -33,7 +37,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                 }
                 response.Message = $"Election item with id {request.Id} found";
                 response.Success = true;
-                response.Data = _mapper.Map<ElectionItemDto>(electionItem);
+                response.Data = _mapper.Map<ElectionItemDetailDto>(electionItem);
                 response.Data.Type = electionItem.GetType().Name;
 
             }
@@ -43,5 +47,6 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             }
             return response;
         }
+    
     }
 }
