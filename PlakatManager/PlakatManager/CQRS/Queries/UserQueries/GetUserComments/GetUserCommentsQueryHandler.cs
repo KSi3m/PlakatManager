@@ -26,7 +26,7 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments
             var response = new GenericResponseWithList<UserCommentDto>() { Data = [], Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEnterable = currentUser != null;
                 if (!isEnterable)
                 {

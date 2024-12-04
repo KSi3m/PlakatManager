@@ -30,7 +30,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -46,7 +46,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                 }
 
                 var led = _mapper.Map<LED>(request);
-                led.Author = currentUser;
+                led.AuthorId = currentUser.Id;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

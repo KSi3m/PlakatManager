@@ -30,7 +30,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -46,7 +46,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 }
    
                 var billboard = _mapper.Map<Billboard>(request);
-                billboard.Author = currentUser;
+                billboard.AuthorId = currentUser.Id;
 
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag

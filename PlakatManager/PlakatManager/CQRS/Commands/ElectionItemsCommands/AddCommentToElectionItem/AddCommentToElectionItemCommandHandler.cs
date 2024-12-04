@@ -27,7 +27,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddComment
             var response = new GenericResponse<UserCommentDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {

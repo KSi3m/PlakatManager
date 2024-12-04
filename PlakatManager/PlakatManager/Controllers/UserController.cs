@@ -1,4 +1,5 @@
 ﻿using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+using ElectionMaterialManager.CQRS.Queries.UserQueries.GetElectionItemsByPriority;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems;
 using MediatR;
@@ -43,5 +44,17 @@ namespace ElectionMaterialManager.Controllers
                 return Ok(new { MyComments = response.Data });
             return BadRequest(new { response.Message });
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("user/election-items/{minPriority}-{maxPriority}")]
+        public async Task<IActionResult> GetMyElectionItemsWithTopPriority([FromRoute] GetElectionItemsByPriorityQuery query, int minPriority, int maxPriority)
+        {
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(new { MyElectionItems = response.Data });
+            return BadRequest(new { response.Message });
+        }
+
     }
 }

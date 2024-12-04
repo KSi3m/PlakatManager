@@ -33,7 +33,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -50,7 +50,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
 
                 var type = request.Type;
                 var electionItem = _factoryRegistry.CreateElectionItem(type, request);
-                electionItem.Author = currentUser;
+                electionItem.AuthorId = currentUser.Id;
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = electionItem,

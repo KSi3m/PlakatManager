@@ -28,7 +28,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -43,7 +43,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                 }
 
                 var poster = _mapper.Map<Poster>(request);
-                poster.Author = currentUser;
+                poster.AuthorId = currentUser.Id;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
