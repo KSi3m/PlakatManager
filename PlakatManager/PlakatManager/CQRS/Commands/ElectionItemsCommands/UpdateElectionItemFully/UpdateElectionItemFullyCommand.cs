@@ -1,4 +1,5 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
@@ -11,6 +12,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         public int Id { get; set; }
 
         public string Area { get; set; }
+
+        public LocationDto Location { get; set; }
 
         public double Latitude { get; set; }
 

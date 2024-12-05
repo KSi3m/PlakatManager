@@ -73,6 +73,7 @@ namespace ElectionMaterialManager
 
             builder.Services.AddScoped<Seeder>();
             builder.Services.AddScoped<IUserContext, UserContext>();
+            builder.Services.AddScoped<IDistrictLocalizationService, DistrictLocalizationService>();
             //builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
            // builder.Services.AddScoped<AddRolesUtility>();
          

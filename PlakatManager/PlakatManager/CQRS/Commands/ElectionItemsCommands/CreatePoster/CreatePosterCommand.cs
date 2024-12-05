@@ -9,6 +9,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
     public class CreatePosterCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string Area { get; set; }
+        public LocationDto Location { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int Priority { get; set; }

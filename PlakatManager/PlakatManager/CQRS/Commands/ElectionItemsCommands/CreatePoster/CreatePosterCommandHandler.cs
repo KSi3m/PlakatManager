@@ -45,6 +45,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                 var poster = _mapper.Map<Poster>(request);
                 poster.AuthorId = currentUser.Id;
 
+                var location = _mapper.Map<Location>(request.Location);
+                poster.Location = location;
+
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = poster,

@@ -51,6 +51,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 var type = request.Type;
                 var electionItem = _factoryRegistry.CreateElectionItem(type, request);
                 electionItem.AuthorId = currentUser.Id;
+
+
+
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = electionItem,

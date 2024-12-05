@@ -2,6 +2,7 @@
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetElectionItemsByPriority;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems;
+using ElectionMaterialManager.NWM;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,5 +57,22 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+
+       /* [HttpGet]
+        [Route("test/{longitude}-{latitude}")]
+        public async Task<IActionResult> Testing(double longitude, double latitude)
+        {
+
+            var helper = new Helper(longitude, latitude);
+           
+            if(helper.help(out string name))
+            {
+                return Ok(new { District = name } );
+            }
+            return Ok( new {Message = "District not found"});
+
+        }*/
+
+        
     }
 }

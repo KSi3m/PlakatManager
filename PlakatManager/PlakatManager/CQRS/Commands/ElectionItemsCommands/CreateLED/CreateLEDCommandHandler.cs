@@ -48,6 +48,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                 var led = _mapper.Map<LED>(request);
                 led.AuthorId = currentUser.Id;
 
+                var location = _mapper.Map<Location>(request.Location);
+                led.Location = location;
+
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = led,
