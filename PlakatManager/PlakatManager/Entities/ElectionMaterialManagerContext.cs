@@ -56,6 +56,13 @@ namespace ElectionMaterialManager.Entities
                 eb.Property(x => x.Size).HasColumnType("nvarchar(20)");
                 eb.Property(x => x.Cost).HasPrecision(10,4);
 
+                eb.OwnsOne(x => x.Location, cmb =>
+                {
+                    cmb.Property(x=>x.Latitude_2).HasPrecision(10,5);
+                    cmb.Property(x=>x.Longitude_2).HasPrecision(10,5);
+      
+                });
+
 
                 eb.HasOne(e => e.Status)
                 .WithMany(s => s.ElectionItems)
@@ -88,6 +95,8 @@ namespace ElectionMaterialManager.Entities
                            .HasDefaultValueSql("getutcdate()")
                            .HasColumnName("date_of_publication");
                      });
+
+                    
             });
 
             modelBuilder.Entity<Status>().Property(x => x.Name).IsRequired().HasMaxLength(30);
