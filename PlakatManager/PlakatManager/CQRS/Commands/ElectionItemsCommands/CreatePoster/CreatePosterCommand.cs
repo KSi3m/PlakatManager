@@ -10,8 +10,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
     {
         public string Area { get; set; }
         public LocationDto Location { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
         public int Priority { get; set; }
         public string? Size { get; set; }
 

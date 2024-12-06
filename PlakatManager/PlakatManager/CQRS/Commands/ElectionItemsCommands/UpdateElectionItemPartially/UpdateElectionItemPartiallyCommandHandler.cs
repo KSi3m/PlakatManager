@@ -55,18 +55,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                 }
 
                 _mapper.Map(request, item);
-               /* if (request.Location != null)
-                {
-                    var location = _mapper.Map<Location>(request.Location);
-                    if (location.District == null)
-                    {
-                        if (_districtLocalizationService.GetDistrict(out string name, location.Longitude_2, location.Latitude_2))
-                            location.District = name;
-                    }
-
-                    item.Location = location;
-                }
-               */
+               
                 if (request.Tags != null && request.Tags.Any())
                 {
                     var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();

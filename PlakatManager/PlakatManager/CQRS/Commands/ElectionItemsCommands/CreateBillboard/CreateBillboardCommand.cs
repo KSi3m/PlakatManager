@@ -9,8 +9,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
     public class CreateBillboardCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string Area { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
         public LocationDto Location { get; set; }
         public int Priority { get; set; }
         public string? Size { get; set; }
