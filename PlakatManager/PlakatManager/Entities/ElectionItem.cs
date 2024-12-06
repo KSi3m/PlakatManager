@@ -24,8 +24,8 @@
         public Location Location { get; set; }
 
         public string Area { get; set; }
-        public double Latitude   { get; set; }
-        public double Longitude { get; set; }
+        //public double Latitude   { get; set; }
+       // public double Longitude { get; set; }
         public int Priority { get; set; }
         public string Size { get; set; }
 

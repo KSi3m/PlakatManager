@@ -3,6 +3,7 @@ using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +14,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
-        public UpdateElectionItemFullyCommandHandler(ElectionMaterialManagerContext db, IMapper mapper, IUserContext userContext)
+        public UpdateElectionItemFullyCommandHandler(ElectionMaterialManagerContext db, 
+            IMapper mapper, IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
         }
 
         public async Task<Response> Handle(UpdateElectionItemFullyCommand request, CancellationToken cancellationToken)
@@ -42,6 +46,13 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     response.Message = "NOT AUTHORIZED";
                     return response;
                 }
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, request.Location.Longitude2, request.Location.Latitude2))
+                        request.Location.District = name;
+                }
+
                 _mapper.Map(request, item);
                 if (request.Tags != null && request.Tags.Any())
                 {

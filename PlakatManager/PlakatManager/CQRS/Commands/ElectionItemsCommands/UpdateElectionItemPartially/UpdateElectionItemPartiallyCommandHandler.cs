@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.AppUserContext;
+using ElectionMaterialManager.Services;
+using NetTopologySuite.Geometries;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially
 {
@@ -14,13 +16,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
         public UpdateElectionItemPartiallyCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
-            IUserContext userContext)
+            IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
         }
 
         public async Task<Response> Handle(UpdateElectionItemPartiallyCommand request, CancellationToken cancellationToken)
@@ -43,7 +47,26 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     response.Message = "NOT AUTHORIZED";
                     return response;
                 }
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, request.Location.Longitude2, request.Location.Latitude2))
+                        request.Location.District = name;
+                }
+
                 _mapper.Map(request, item);
+               /* if (request.Location != null)
+                {
+                    var location = _mapper.Map<Location>(request.Location);
+                    if (location.District == null)
+                    {
+                        if (_districtLocalizationService.GetDistrict(out string name, location.Longitude_2, location.Latitude_2))
+                            location.District = name;
+                    }
+
+                    item.Location = location;
+                }
+               */
                 if (request.Tags != null && request.Tags.Any())
                 {
                     var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();

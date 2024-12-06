@@ -14,12 +14,11 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 .NotEmpty().WithMessage("You must specify Area")
                 .MaximumLength(200);
 
-            RuleFor(command => command.Latitude)
-                .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
+            RuleFor(command => command.Location.Latitude2)
+                 .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 
-            RuleFor(command => command.Longitude)
+            RuleFor(command => command.Location.Longitude2)
                 .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
-
 
             RuleFor(command => command.Priority)
                 .InclusiveBetween(1, 10).WithMessage("Priority must be between 1 and 10.");
@@ -43,7 +42,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
 
 
             RuleFor(command => command.RefreshRate).GreaterThan(24)
-                .When(x => x.Type == "Poster");
+                .When(x => x.Type == "Led");
 
             RuleFor(command => command.StartDate)
                 .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.")

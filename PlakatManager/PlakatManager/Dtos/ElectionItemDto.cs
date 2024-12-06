@@ -8,8 +8,8 @@
 
         public string Area { get; set; }
         public string Status { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+       // public double Latitude { get; set; }
+       // public double Longitude { get; set; }
         public LocationDto Location { get; set; }
         public int Priority { get; set; }
 

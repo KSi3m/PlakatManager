@@ -4,6 +4,7 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboar
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using ElectionMaterialManager.Utilities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,15 +18,18 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
         private readonly ElectionItemFactoryRegistry _factoryRegistry;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
 
         public CreateElectionItemCommandHandler(ElectionMaterialManagerContext db, 
-            ElectionItemFactoryRegistry factoryRegistry, IMapper mapper, IUserContext userContext)
+            ElectionItemFactoryRegistry factoryRegistry, IMapper mapper, IUserContext userContext,
+            IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _factoryRegistry = factoryRegistry;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
         }
 
         public async Task<GenericResponse<ElectionItemDto>> Handle(CreateElectionItemCommand request, CancellationToken cancellationToken)
@@ -49,6 +53,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 }
 
                 var type = request.Type;
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, request.Location.Longitude2, request.Location.Latitude2))
+                        request.Location.District = name;
+                }
+
                 var electionItem = _factoryRegistry.CreateElectionItem(type, request);
                 electionItem.AuthorId = currentUser.Id;
 

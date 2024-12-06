@@ -3,6 +3,7 @@ using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,14 +15,16 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
 
         public CreateLEDCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
-            IUserContext userContext)
+            IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
 
         }
 
@@ -49,6 +52,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                 led.AuthorId = currentUser.Id;
 
                 var location = _mapper.Map<Location>(request.Location);
+                if (location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, location.Longitude_2, location.Latitude_2))
+                        location.District = name;
+                }
+
                 led.Location = location;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag

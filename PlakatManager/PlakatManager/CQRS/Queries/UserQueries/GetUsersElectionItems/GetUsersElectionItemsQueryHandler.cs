@@ -43,9 +43,15 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
                        Id = x.Id,
                        Area = x.Area,
                        Status = x.Status.Name,
-                       Latitude = x.Latitude,
-                       Longitude = x.Longitude,
-                       Priority = x.Priority,
+                       Location =
+                       {
+                           Latitude2 = x.Location.Latitude_2,
+                           Longitude2 = x.Location.Longitude_2,
+                           District = x.Location.District,
+                           Street = x.Location.Street,
+                           Description = x.Location.Description
+                       },
+                        Priority = x.Priority,
                        Type = EF.Property<string>(x, "Discriminator"),
                     })
                     .ToListAsync();

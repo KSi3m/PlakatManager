@@ -11,11 +11,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
             .NotEmpty().WithMessage("You must specify Area")
             .MaximumLength(200);
 
-  
-            RuleFor(command => command.Latitude)
-                .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
+            RuleFor(command => command.Location.Latitude2)
+                         .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 
-            RuleFor(command => command.Longitude)
+            RuleFor(command => command.Location.Longitude2)
                 .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
 
 
