@@ -45,17 +45,17 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                     return response;
                 }
 
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
+                }
+
                 var poster = _mapper.Map<Poster>(request);
                 poster.AuthorId = currentUser.Id;
 
-                var location = _mapper.Map<Location>(request.Location);
-                if (location.District == null)
-                {
-                    if (_districtLocalizationService.GetDistrict(out string name, location.Longitude_2, location.Latitude_2))
-                        location.District = name;
-                }
-
-                poster.Location = location;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

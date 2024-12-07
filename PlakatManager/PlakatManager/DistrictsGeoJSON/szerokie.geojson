@@ -765,5 +765,8 @@
                 ]
             ]
         ]
-    ]
+    ],
+    "city": "Lublin",
+    "category": "boundary",
+    "district": "Szerokie"
 }

@@ -445,5 +445,8 @@
                 ]
             ]
         ]
-    ]
+    ],
+    "city": "Lublin",
+    "category": "boundary",
+    "district": "Tatary"
 }

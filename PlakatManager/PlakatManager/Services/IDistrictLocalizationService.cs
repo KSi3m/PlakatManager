@@ -3,6 +3,6 @@
     public interface IDistrictLocalizationService
     {
 
-        bool GetDistrict(out string name, double Longitude, double Latitude);
+        bool GetDistrict(out string district, out string city, double Longitude, double Latitude);
     }
 }

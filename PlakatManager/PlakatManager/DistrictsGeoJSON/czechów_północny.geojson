@@ -545,5 +545,8 @@
                 ]
             ]
         ]
-    ]
+    ],
+    "city": "Lublin",
+    "category": "boundary",
+    "district": "Czechów Północny"
 }

@@ -1493,5 +1493,8 @@
                 ]
             ]
         ]
-    ]
+    ],
+    "city": "Lublin",
+    "category": "boundary",
+    "district": "Abramowice"
 }

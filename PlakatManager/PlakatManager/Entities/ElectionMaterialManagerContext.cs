@@ -58,8 +58,8 @@ namespace ElectionMaterialManager.Entities
 
                 eb.OwnsOne(x => x.Location, cmb =>
                 {
-                    cmb.Property(x=>x.Latitude_2).HasPrecision(10,5);
-                    cmb.Property(x=>x.Longitude_2).HasPrecision(10,5);
+                    cmb.Property(x=>x.Latitude).HasPrecision(10,5);
+                    cmb.Property(x=>x.Longitude).HasPrecision(10,5);
       
                 });
 

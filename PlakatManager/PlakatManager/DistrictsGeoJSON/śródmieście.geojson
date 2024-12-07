@@ -557,5 +557,8 @@
                 ]
             ]
         ]
-    ]
+    ],
+    "city": "Lublin",
+    "category": "boundary",
+    "district": "Śródmieście"
 }

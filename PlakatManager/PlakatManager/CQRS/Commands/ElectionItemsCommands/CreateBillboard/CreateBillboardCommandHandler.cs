@@ -47,17 +47,18 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                     response.Message = "Tags not specified/wrong ids. Process aborted";
                     return response;
                 }
-   
+
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
+                }
+
                 var billboard = _mapper.Map<Billboard>(request);
                 billboard.AuthorId = currentUser.Id;
-                var location = _mapper.Map<Location>(request.Location);
-                if(location.District ==  null)
-                {
-                    if (_districtLocalizationService.GetDistrict(out string name, location.Longitude_2, location.Latitude_2))
-                        location.District = name;
-                }
-                    
-                billboard.Location = location;
+          
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = billboard,

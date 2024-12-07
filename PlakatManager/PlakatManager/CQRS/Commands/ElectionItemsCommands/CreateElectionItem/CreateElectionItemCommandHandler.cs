@@ -55,8 +55,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 var type = request.Type;
                 if (request.Location.District == null)
                 {
-                    if (_districtLocalizationService.GetDistrict(out string name, request.Location.Longitude2, request.Location.Latitude2))
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
                         request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
                 }
 
                 var electionItem = _factoryRegistry.CreateElectionItem(type, request);

@@ -6,6 +6,7 @@ using ElectionMaterialManager.Entities;
 using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully
 {
@@ -49,8 +50,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
                 if (request.Location.District == null)
                 {
-                    if (_districtLocalizationService.GetDistrict(out string name, request.Location.Longitude2, request.Location.Latitude2))
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
                         request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
                 }
 
                 _mapper.Map(request, item);

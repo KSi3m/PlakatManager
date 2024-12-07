@@ -47,8 +47,8 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetElectionItemsByPri
                        Status = x.Status.Name,
                        Location =
                        {
-                           Latitude2 = x.Location.Latitude_2,
-                           Longitude2 = x.Location.Longitude_2,
+                           Latitude = x.Location.Latitude,
+                           Longitude = x.Location.Longitude,
                            District = x.Location.District,
                            Street = x.Location.Street,
                            Description = x.Location.Description

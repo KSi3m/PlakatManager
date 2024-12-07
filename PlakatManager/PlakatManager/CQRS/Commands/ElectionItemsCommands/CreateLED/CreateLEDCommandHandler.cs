@@ -48,17 +48,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                     return response;
                 }
 
-                var led = _mapper.Map<LED>(request);
-                led.AuthorId = currentUser.Id;
-
-                var location = _mapper.Map<Location>(request.Location);
-                if (location.District == null)
+                if (request.Location.District == null)
                 {
-                    if (_districtLocalizationService.GetDistrict(out string name, location.Longitude_2, location.Latitude_2))
-                        location.District = name;
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
                 }
 
-                led.Location = location;
+                var led = _mapper.Map<LED>(request);
+                led.AuthorId = currentUser.Id;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

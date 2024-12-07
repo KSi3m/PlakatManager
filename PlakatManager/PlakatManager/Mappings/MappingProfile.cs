@@ -30,12 +30,12 @@ namespace ElectionMaterialManager.Mappings
                  .ForMember(x => x.Tags, opt => opt.Ignore());
 
 
-            CreateMap<LocationDto, Location>()
-                .ForMember(x=>x.Latitude_2, opt=>opt.MapFrom(src=>src.Latitude2))
-                .ForMember(x=>x.Longitude_2, opt=>opt.MapFrom(src=>src.Longitude2));
-            CreateMap<Location, LocationDto>()
-                .ForMember(x => x.Latitude2, opt => opt.MapFrom(src => src.Latitude_2))
-                .ForMember(x => x.Longitude2, opt => opt.MapFrom(src => src.Longitude_2));
+            CreateMap<LocationDto, Location>();
+                //.ForMember(x=>x.Latitude_2, opt=>opt.MapFrom(src=>src.Latitude2))
+                //.ForMember(x=>x.Longitude_2, opt=>opt.MapFrom(src=>src.Longitude2));
+            CreateMap<Location, LocationDto>();
+                //.ForMember(x => x.Latitude2, opt => opt.MapFrom(src => src.Latitude_2))
+               // .ForMember(x => x.Longitude2, opt => opt.MapFrom(src => src.Longitude_2));
 
 
             CreateMap<ElectionItem, ElectionItemDto>()

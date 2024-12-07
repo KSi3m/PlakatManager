@@ -2,14 +2,16 @@
 using NetTopologySuite.Geometries.Prepared;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
+using System.Text.Json;
 
 namespace ElectionMaterialManager.Services
 {
     public class DistrictLocalizationService : IDistrictLocalizationService
     {
-        public bool GetDistrict(out string name, double longitude, double latitude)
+        public bool GetDistrict(out string district, out string city, double longitude, double latitude)
         {
-            name = "";
+            district = "";
+            city = "";
             string folderPath = ".\\DistrictsGeoJSON\\";
             string[] geoJsonFiles = Directory.GetFiles(folderPath, "*.geojson");
             var geoJsonReader = new GeoJsonReader();
@@ -18,11 +20,21 @@ namespace ElectionMaterialManager.Services
             foreach (var file in geoJsonFiles)
             {
                 string geoJsonContent = File.ReadAllText(file);
+             
                 Geometry geometry = geoJsonReader.Read<Geometry>(geoJsonContent);
                 var result = Contains(geometry, point);
                 if (result)
                 {
-                    name = Path.GetFileNameWithoutExtension(file);
+                    using JsonDocument doc = JsonDocument.Parse(geoJsonContent);
+                    JsonElement root = doc.RootElement;
+                    if (root.TryGetProperty("district", out var districtName))
+                    {
+                        district = districtName.GetString();
+                    }
+                    if (root.TryGetProperty("city", out var cityName))
+                    {
+                        city = cityName.GetString();
+                    }
                     return true;
                 }
             }

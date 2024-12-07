@@ -4,6 +4,7 @@ using ElectionMaterialManager.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ElectionMaterialManager.Migrations
 {
     [DbContext(typeof(ElectionMaterialManagerContext))]
-    partial class ElectionMaterialManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20241207183750_NamingAndCityFieldInLocation")]
+    partial class NamingAndCityFieldInLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

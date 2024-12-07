@@ -14,10 +14,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
            .MaximumLength(200);
 
 
-            RuleFor(command => command.Location.Latitude2)
+            RuleFor(command => command.Location.Latitude)
                  .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 
-            RuleFor(command => command.Location.Longitude2)
+            RuleFor(command => command.Location.Longitude)
                 .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
 
 
