@@ -7,10 +7,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
         public CreateBillboardCommandValidator()
         {
 
-            RuleFor(command => command.Area)
-            .NotEmpty().WithMessage("You must specify Area")
-            .MaximumLength(200);
-
+ 
             RuleFor(command => command.Location.Latitude)
                          .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 

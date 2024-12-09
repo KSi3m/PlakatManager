@@ -76,6 +76,7 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<IDistrictLocalizationService, DistrictLocalizationService>();
             //builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
            // builder.Services.AddScoped<AddRolesUtility>();
+           //builder.Services.AddScoped<UpdateAllLocationsUtility>();
          
 
             builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
@@ -116,12 +117,16 @@ namespace ElectionMaterialManager
 
             var dbContext = scope.ServiceProvider.GetService<ElectionMaterialManagerContext>();
 
-           // var userMigration = scope.ServiceProvider.GetRequiredService<UserToAspUsersMigrationUtility>();
-           //await userMigration.Migrate(dbContext, scope.ServiceProvider); //!!!!
+            // var userMigration = scope.ServiceProvider.GetRequiredService<UserToAspUsersMigrationUtility>();
+            //await userMigration.Migrate(dbContext, scope.ServiceProvider); //!!!!
 
             //var rolesUtil = scope.ServiceProvider.GetRequiredService<AddRolesUtility>();
             //await rolesUtil.AddRoles(dbContext, scope.ServiceProvider); //!!!!
-           
+
+
+           /* var util = scope.ServiceProvider.GetRequiredService<UpdateAllLocationsUtility>();
+            await util.Update(dbContext, scope.ServiceProvider); //!!!!*/
+
 
 
             var pendingMigrations = dbContext.Database.GetPendingMigrations();

@@ -9,11 +9,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
 
 
-
-            RuleFor(command => command.Area)
-                 .MaximumLength(200);
-
-
             RuleFor(command => command.Location.Latitude)
                 .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 

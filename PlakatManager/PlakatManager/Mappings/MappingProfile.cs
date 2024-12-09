@@ -31,12 +31,8 @@ namespace ElectionMaterialManager.Mappings
 
 
             CreateMap<LocationDto, Location>();
-                //.ForMember(x=>x.Latitude_2, opt=>opt.MapFrom(src=>src.Latitude2))
-                //.ForMember(x=>x.Longitude_2, opt=>opt.MapFrom(src=>src.Longitude2));
             CreateMap<Location, LocationDto>();
-                //.ForMember(x => x.Latitude2, opt => opt.MapFrom(src => src.Latitude_2))
-               // .ForMember(x => x.Longitude2, opt => opt.MapFrom(src => src.Longitude_2));
-
+        
 
             CreateMap<ElectionItem, ElectionItemDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
@@ -97,7 +93,6 @@ namespace ElectionMaterialManager.Mappings
            /*.ForAllMembers(opts => {
              * opts.Condition((src, dest, srcMember) => srcMember != null);
             });// nie działa z jakiegos powodu */
-           .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
            .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
            .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
            .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
@@ -108,7 +103,7 @@ namespace ElectionMaterialManager.Mappings
 
 
             CreateMap<UpdateElectionItemPartiallyCommand, Poster>()
-                .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
+  
                 .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
                 .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
                 .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
@@ -119,7 +114,7 @@ namespace ElectionMaterialManager.Mappings
                 .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
 
             CreateMap<UpdateElectionItemPartiallyCommand, LED>()
-             .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
+
             .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
             .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
             .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
@@ -127,19 +122,19 @@ namespace ElectionMaterialManager.Mappings
              .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
             .ForMember(dest => dest.Tags, opt => opt.Ignore())
             .ForMember(dest => dest.RefreshRate, opt => opt.Condition(src => src.RefreshRate != null))
-            .ForMember(dest => dest.Resolution, opt => opt.Condition(src => src.Area != null))
+            .ForMember(dest => dest.Resolution, opt => opt.Condition(src => src.Resolution != null))
                 .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
 
             CreateMap<UpdateElectionItemPartiallyCommand, Billboard>()
-             .ForMember(dest => dest.Area, opt => opt.Condition(src => src.Area != null))
+
             .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
             .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
             .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
             .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
             .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
             .ForMember(dest => dest.Tags, opt => opt.Ignore())
-            .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.Area != null))
-            .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.Area != null))
+            .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.StartDate != null))
+            .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.EndDate != null))
                 .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
         }
     }

@@ -11,8 +11,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         [JsonIgnore]
         public int Id { get; set; }
 
-        public string Area { get; set; }
-
         public LocationDto Location { get; set; }
 
         public int Priority { get; set; }

@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddCommentToElectionItem;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByDistrict;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -198,6 +199,17 @@ namespace ElectionMaterialManager.Controllers
                 return Created(response.Message, response.Data);
             return BadRequest(new { response.Message });
 
+        }
+
+        [HttpGet]
+        [Route("election-items/district/{district}")]
+        public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetElectionItemsByDistrictQuery query, string district)
+        {
+            var response = await _mediator.Send(query);
+
+            if (response.Success)
+                return Ok(new { district, electionItems = response.Data });
+            return BadRequest(new { response.Message });
         }
 
 

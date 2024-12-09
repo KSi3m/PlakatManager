@@ -52,7 +52,6 @@ namespace ElectionMaterialManager.Entities
 
             modelBuilder.Entity<ElectionItem>(eb =>
             {
-                eb.Property(x => x.Area).HasColumnType("nvarchar(200)");
                 eb.Property(x => x.Size).HasColumnType("nvarchar(20)");
                 eb.Property(x => x.Cost).HasPrecision(10,4);
 

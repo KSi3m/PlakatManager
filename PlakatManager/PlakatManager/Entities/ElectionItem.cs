@@ -23,7 +23,7 @@
 
         public Location Location { get; set; }
 
-        public string Area { get; set; }
+    
         public int Priority { get; set; }
         public string Size { get; set; }
 

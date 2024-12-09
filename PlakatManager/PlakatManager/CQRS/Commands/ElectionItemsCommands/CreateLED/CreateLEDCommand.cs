@@ -8,7 +8,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 {
     public class CreateLEDCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
-        public string Area { get; set; }
 
         public LocationDto Location { get; set; }
         public int Priority { get; set; }

@@ -9,7 +9,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
     public class CreateElectionItemCommand: IRequest<GenericResponse<ElectionItemDto>>
     {
         public string Type { get; set; }
-        public string Area { get; set; }
         public LocationDto Location { get; set; }
         public int Priority { get; set; }
         public string? Size { get; set; }

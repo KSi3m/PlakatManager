@@ -10,10 +10,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             RuleFor(command => command.Type)
                 .NotEmpty().Must(type => new[] { "Poster", "Led", "Billboard" }.Contains(type));
 
-            RuleFor(command => command.Area)
-                .NotEmpty().WithMessage("You must specify Area")
-                .MaximumLength(200);
-
             RuleFor(command => command.Location.Latitude)
                  .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 

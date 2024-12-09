@@ -43,13 +43,13 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetElectionItemsByPri
                    .Select(x => new ElectionItemDto()
                    {
                        Id = x.Id,
-                       Area = x.Area,
                        Status = x.Status.Name,
-                       Location =
+                       Location = new LocationDto()
                        {
                            Latitude = x.Location.Latitude,
                            Longitude = x.Location.Longitude,
                            District = x.Location.District,
+                           City = x.Location.City,
                            Street = x.Location.Street,
                            Description = x.Location.Description
                        },
