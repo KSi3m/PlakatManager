@@ -6,6 +6,7 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,13 +17,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
         public CreateBillboardCommandHandler(ElectionMaterialManagerContext db,
-            IMapper mapper, IUserContext userContext)
+            IMapper mapper, IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
         }
 
         public async Task<GenericResponse<ElectionItemDto>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
@@ -30,7 +33,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -44,11 +47,18 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                     response.Message = "Tags not specified/wrong ids. Process aborted";
                     return response;
                 }
-   
+
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
+                }
+
                 var billboard = _mapper.Map<Billboard>(request);
-                billboard.Author = currentUser;
-
-
+                billboard.AuthorId = currentUser.Id;
+          
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {
                     ElectionItem = billboard,

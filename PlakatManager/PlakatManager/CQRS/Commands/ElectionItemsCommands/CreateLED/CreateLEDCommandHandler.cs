@@ -3,6 +3,7 @@ using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,14 +15,16 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
 
         public CreateLEDCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
-            IUserContext userContext)
+            IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
 
         }
 
@@ -30,7 +33,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -45,8 +48,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                     return response;
                 }
 
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
+                }
+
                 var led = _mapper.Map<LED>(request);
-                led.Author = currentUser;
+                led.AuthorId = currentUser.Id;
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

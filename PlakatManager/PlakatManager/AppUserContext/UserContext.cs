@@ -1,5 +1,6 @@
 ﻿using ElectionMaterialManager.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace ElectionMaterialManager.AppUserContext
@@ -8,10 +9,13 @@ namespace ElectionMaterialManager.AppUserContext
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<User> _userManager;
-        public UserContext(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager)
+        private readonly ElectionMaterialManagerContext _db;
+        public UserContext(IHttpContextAccessor httpContextAccessor,
+            UserManager<User> userManager, ElectionMaterialManagerContext db)
         {
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
+            _db = db;
         }
 
         public async Task<User> GetCurrentIdentityUser()
@@ -47,12 +51,20 @@ namespace ElectionMaterialManager.AppUserContext
             }
 
             var username = user.FindFirst(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
-            var xd = await _userManager.FindByNameAsync(username);
-            var id = xd.Id;
-            var email = user.FindFirst(x => x.Type == ClaimTypes.Email)!.Value;
+
+            var userDb = await _db.Users
+                .Where(x => x.UserName.Equals(username))
+                .Select(x=> new
+                {
+                    x.Id,
+                    x.Email
+                })
+                .FirstOrDefaultAsync();
+
+            //var email = user.FindFirst(x => x.Type == ClaimTypes.Email)!.Value;
             var roles = user.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value);
 
-            return new CurrentUser(id, email, roles);
+            return new CurrentUser(userDb.Id, userDb.Email, roles);
         }
     }
 }

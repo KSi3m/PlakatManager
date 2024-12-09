@@ -23,15 +23,8 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             var response = new GenericResponse<ElectionItemDto>() { Success  = false };
             try
             {
-                var query =  _db.ElectionItems.Include(x => x.Status).AsQueryable();
-                if (request.Detailed)
-                {
-                    query = query.Include(x => x.Tags)
-                    .Include(x => x.Author);
-                    //.Include(x => x.Comments);
-                }
-
-                var electionItem = await query.FirstOrDefaultAsync(x => x.Id == request.Id);
+                var electionItem =  await _db.ElectionItems.Include(x => x.Status)
+                    .FirstOrDefaultAsync(x => x.Id == request.Id);
 
                 if (electionItem == null)
                 {
@@ -40,13 +33,8 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                 }
                 response.Message = $"Election item with id {request.Id} found";
                 response.Success = true;
-                if (request.Detailed)
-                {
-                    var xd = _mapper.Map<ElectionItemDetailDto>(electionItem);
-                    response.Data = xd;
-                    response.Message = $"Election item with id {request.Id} found XDD";
-                }
-                else response.Data = _mapper.Map<ElectionItemDto>(electionItem);
+                response.Data = _mapper.Map<ElectionItemDto>(electionItem);
+                response.Data.Type = electionItem.GetType().Name;
 
             }
             catch (Exception ex)

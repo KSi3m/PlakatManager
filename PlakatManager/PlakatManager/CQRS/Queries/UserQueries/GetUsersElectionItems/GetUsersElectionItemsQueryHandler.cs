@@ -27,9 +27,9 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
             var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
-                bool isEditable = currentUser != null;
-                if (!isEditable)
+                var currentUser = await _userContext.GetCurrentUser();
+                bool isEnterable= currentUser != null;
+                if (!isEnterable)
                 {
                     response.Message = "NOT AUTHORIZED";
                     return response;
@@ -41,21 +41,22 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
                     .Select(x => new  ElectionItemDto()
                     {
                        Id = x.Id,
-                       Area = x.Area,
                        Status = x.Status.Name,
-                       Latitude = x.Latitude,
-                       Longitude = x.Longitude,
-                       Priority = x.Priority 
-                      })
+                       Location = new LocationDto()
+                       {
+                           Latitude = x.Location.Latitude,
+                           Longitude = x.Location.Longitude,
+                           District = x.Location.District,
+                           City = x.Location.City,
+                           Street = x.Location.Street,
+                           Description = x.Location.Description
+                       },
+                        Priority = x.Priority,
+                       Type = EF.Property<string>(x, "Discriminator"),
+                    })
                     .ToListAsync();
 
-                /*if (electionItems == null)
-                {
-                    response.Message = "Items not found.";
-                    return response;
-                }*/
                 response.Success = true;
-                //response.Data = _mapper.Map<IEnumerable<ElectionItemDto>>(electionItems);
                 response.Data = electionItems;
             }
             catch (Exception ex)

@@ -3,6 +3,7 @@ using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Dtos;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,14 +14,16 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
 
         public CreatePosterCommandHandler(ElectionMaterialManagerContext db, IMapper mapper,
-            IUserContext userContext)
+            IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
         }
 
         public async Task<GenericResponse<ElectionItemDto>> Handle(CreatePosterCommand request, CancellationToken cancellationToken)
@@ -28,7 +31,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
             var response = new GenericResponse<ElectionItemDto>() { Success = false };
             try
             {
-                var currentUser = await _userContext.GetCurrentIdentityUser();
+                var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
@@ -42,8 +45,17 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                     return response;
                 }
 
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
+                }
+
                 var poster = _mapper.Map<Poster>(request);
-                poster.Author = currentUser;
+                poster.AuthorId = currentUser.Id;
+
 
                 var electionItemTags = tags.Select(tag => new ElectionItemTag
                 {

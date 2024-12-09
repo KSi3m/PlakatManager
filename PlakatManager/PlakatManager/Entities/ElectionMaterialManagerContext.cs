@@ -6,7 +6,7 @@ namespace ElectionMaterialManager.Entities
 {
     public class ElectionMaterialManagerContext: IdentityDbContext<IdentityUser>
     {
-        public DbSet<User> Users { get; set; }
+        public  DbSet<User> Users { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ElectionItem> ElectionItems { get; set; }
@@ -52,9 +52,15 @@ namespace ElectionMaterialManager.Entities
 
             modelBuilder.Entity<ElectionItem>(eb =>
             {
-                eb.Property(x => x.Area).HasColumnType("nvarchar(200)");
                 eb.Property(x => x.Size).HasColumnType("nvarchar(20)");
                 eb.Property(x => x.Cost).HasPrecision(10,4);
+
+                eb.OwnsOne(x => x.Location, cmb =>
+                {
+                    cmb.Property(x=>x.Latitude).HasPrecision(10,5);
+                    cmb.Property(x=>x.Longitude).HasPrecision(10,5);
+      
+                });
 
 
                 eb.HasOne(e => e.Status)
@@ -88,6 +94,8 @@ namespace ElectionMaterialManager.Entities
                            .HasDefaultValueSql("getutcdate()")
                            .HasColumnName("date_of_publication");
                      });
+
+                    
             });
 
             modelBuilder.Entity<Status>().Property(x => x.Name).IsRequired().HasMaxLength(30);

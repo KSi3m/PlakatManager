@@ -26,8 +26,24 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
             try
             {
                 var electionItems = await _db.ElectionItems
-                   .Include(x=>x.Status)
+                   .Include(x => x.Status)
                    .Where(x => x.Id >= request.IndexRangeStart && x.Id <= request.IndexRangeEnd)
+                   .Select(x => new ElectionItemDto()
+                   {
+                       Id = x.Id,
+                       Status = x.Status.Name,
+                       Location = new LocationDto()
+                       {
+                           Latitude = x.Location.Latitude,
+                           Longitude = x.Location.Longitude,
+                           District = x.Location.District,
+                           City = x.Location.City,
+                           Street = x.Location.Street,
+                           Description = x.Location.Description
+                       },
+                       Type =  EF.Property<string>(x, "Discriminator"),
+                       Priority = x.Priority
+                   })
                    .ToListAsync();
 
                 if (electionItems == null)
@@ -37,7 +53,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                 }
                 response.Message = "Election items within given range found.";
                 response.Success = true;
-                response.Data = _mapper.Map<IEnumerable<ElectionItemDto>>(electionItems);
+                response.Data = electionItems;
             }
             catch (Exception ex)
             {

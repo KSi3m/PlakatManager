@@ -3,8 +3,10 @@ using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemPartially;
 using ElectionMaterialManager.CQRS.Responses;
 using ElectionMaterialManager.Entities;
+using ElectionMaterialManager.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully
 {
@@ -13,12 +15,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
         private readonly IUserContext _userContext;
+        private readonly IDistrictLocalizationService _districtLocalizationService;
 
-        public UpdateElectionItemFullyCommandHandler(ElectionMaterialManagerContext db, IMapper mapper, IUserContext userContext)
+        public UpdateElectionItemFullyCommandHandler(ElectionMaterialManagerContext db, 
+            IMapper mapper, IUserContext userContext, IDistrictLocalizationService districtLocalizationService)
         {
             _db = db;
             _mapper = mapper;
             _userContext = userContext;
+            _districtLocalizationService = districtLocalizationService;
         }
 
         public async Task<Response> Handle(UpdateElectionItemFullyCommand request, CancellationToken cancellationToken)
@@ -33,13 +38,23 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     return response;
                 }
 
-                var currentUser = await _userContext.GetCurrentIdentityUser();
-                bool isEditable = currentUser != null && item.AuthorId == currentUser.Id;
+
+                var currentUser = await _userContext.GetCurrentUser();
+                bool isEditable = currentUser != null && 
+                    (item.AuthorId == currentUser.Id || currentUser.Roles.Contains("Admin"));
                 if (!isEditable)
                 {
                     response.Message = "NOT AUTHORIZED";
                     return response;
                 }
+
+                if (request.Location.District == null)
+                {
+                    if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
+                        request.Location.District = name;
+                    if (request.Location.City == null) request.Location.City = city;
+                }
+
                 _mapper.Map(request, item);
                 if (request.Tags != null && request.Tags.Any())
                 {

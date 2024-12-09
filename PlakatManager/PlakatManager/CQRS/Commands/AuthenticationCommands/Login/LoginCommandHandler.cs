@@ -34,7 +34,7 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login
                     response.Message = "Wrong login or password";
                     return response;
                 }
-                string token = _authService.CreateToken(user);
+                string token = await _authService.CreateToken(user);
                 response.Success = true;
                 response.Token = token;
                 response.Message = "Token generated successfully";

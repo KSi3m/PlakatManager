@@ -27,7 +27,8 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById
             var response = new GenericResponse<TagDto>() { Success = false };
             try
             {
-                var tag = await _db.Tags.Include(x=>x.ElectionItems).FirstOrDefaultAsync(x => x.Id == request.Id);
+                var tag = await _db.Tags.Include(x=>x.ElectionItems)
+                    .FirstOrDefaultAsync(x => x.Id == request.Id);
                 if (tag == null)
                 {
                     response.Message = $"Tag not found";

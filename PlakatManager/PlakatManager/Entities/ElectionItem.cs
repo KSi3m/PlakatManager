@@ -21,9 +21,9 @@
     {
         public int Id { get; set; }
 
-        public string Area { get; set; }
-        public double Latitude   { get; set; }
-        public double Longitude { get; set; }
+        public Location Location { get; set; }
+
+    
         public int Priority { get; set; }
         public string Size { get; set; }
 
@@ -43,4 +43,18 @@
         
 
     }
+
+    public class Location
+    {
+
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+        public string? District { get; set; }
+        public string? City { get; set; }
+        public string? Street { get; set; }
+        public string? Description { get; set; }
+
+    }
+
 }

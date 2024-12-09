@@ -9,14 +9,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
 
 
-            /*RuleFor(command => command.Area)
-            .NotEmpty();*/
-
-
-            RuleFor(command => command.Latitude)
+            RuleFor(command => command.Location.Latitude)
                 .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
 
-            RuleFor(command => command.Longitude)
+            RuleFor(command => command.Location.Longitude)
                 .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
 
 
@@ -25,11 +21,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                 .When(command => command.Priority.HasValue);
 
 
-            /*RuleFor(command => command.Size)
-                .NotEmpty();*/
-            
+
+            RuleFor(command => command.Size)
+               .MaximumLength(20);
+
             RuleFor(command => command.Cost)
-                .GreaterThanOrEqualTo(0);
+                .InclusiveBetween(0, 999999.9999m);
 
             RuleFor(command => command.StatusId)
                 .GreaterThan(0).WithMessage("StatusId must be greater than 0.");

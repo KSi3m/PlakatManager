@@ -8,8 +8,9 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
 {
     public class GetElectionItemsQuery : IRequest<GenericResponseWithList<ElectionItemDto>>
     {
-      
+        [DefaultValue(1)]
         public int? IndexRangeStart {  get; set; }
+        [DefaultValue(10)]
         public int? IndexRangeEnd { get; set; }
 
     }

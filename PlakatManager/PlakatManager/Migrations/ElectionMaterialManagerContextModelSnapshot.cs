@@ -110,10 +110,6 @@ namespace ElectionMaterialManager.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Area")
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("area");
-
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)")
                         .HasColumnName("authorid");
@@ -128,14 +124,6 @@ namespace ElectionMaterialManager.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)")
                         .HasColumnName("discriminator");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float")
-                        .HasColumnName("latitude");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float")
-                        .HasColumnName("longitude");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int")
@@ -564,7 +552,48 @@ namespace ElectionMaterialManager.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsOne("ElectionMaterialManager.Entities.Location", "Location", b1 =>
+                        {
+                            b1.Property<int>("ElectionItemId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("city");
+
+                            b1.Property<string>("Description")
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("description");
+
+                            b1.Property<string>("District")
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("district");
+
+                            b1.Property<double>("Latitude")
+                                .HasPrecision(10, 5)
+                                .HasColumnType("float(10)")
+                                .HasColumnName("latitude");
+
+                            b1.Property<double>("Longitude")
+                                .HasPrecision(10, 5)
+                                .HasColumnType("float(10)")
+                                .HasColumnName("longitude");
+
+                            b1.Property<string>("Street")
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("street");
+
+                            b1.HasKey("ElectionItemId");
+
+                            b1.ToTable("ElectionItems");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ElectionItemId");
+                        });
+
                     b.Navigation("Author");
+
+                    b.Navigation("Location");
 
                     b.Navigation("Status");
                 });

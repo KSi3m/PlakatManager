@@ -1,5 +1,7 @@
 ﻿using ElectionMaterialManager.CQRS.Responses;
+using ElectionMaterialManager.Dtos;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully
@@ -9,17 +11,13 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         [JsonIgnore]
         public int Id { get; set; }
 
-        public string Area { get; set; }
-
-        public double Latitude { get; set; }
-
-        public double Longitude { get; set; }
+        public LocationDto Location { get; set; }
 
         public int Priority { get; set; }
 
-        public string Size { get; set; }
+        public string? Size { get; set; }
 
-        public decimal Cost { get; set; }
+        public decimal? Cost { get; set; }
 
         public IEnumerable<int> Tags { get; set; }
         public int StatusId { get; set; }
