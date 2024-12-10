@@ -21,6 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddCommentToElectionItem;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByDistrict;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElectionItems;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -37,6 +38,15 @@ namespace ElectionMaterialManager.Controllers
         [HttpGet]
         [Route("election-items")]
         public async Task<IActionResult> GetElectionItems([FromQuery] GetElectionItemsQuery query)
+        {
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
+        [HttpGet]
+        [Route("election-items/nearby{latitude}-{longitude}-{radiusInKM}")]
+        public async Task<IActionResult> GetNearbyElectionItems([FromRoute] GetNearbyElectionItemsQuery query, double longitude, double latitude, double radiusInKM)
         {
             var response = await _mediator.Send(query);
             if (response.Success)
