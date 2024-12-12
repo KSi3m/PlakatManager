@@ -1,5 +1,8 @@
-﻿using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.GetSoonExpiringElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElectionItems;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetElectionItemsByPriority;
+using ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionItems;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems;
 using ElectionMaterialManager.NWM;
@@ -57,22 +60,47 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [HttpGet]
+        [Route("user/election-items/expired")]
+        public async Task<IActionResult> GetExpiredElectionItems([FromRoute] GetExpiredElectionItemsQuery query)
+        {
+            query.UserOnly = true;
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
 
-       /* [HttpGet]
-        [Route("test/{longitude}-{latitude}")]
-        public async Task<IActionResult> Testing(double longitude, double latitude)
+        [HttpGet]
+        [Route("user/election-items/expiring-soon/{days}")]
+        public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
         {
 
-            var helper = new Helper(longitude, latitude);
-           
-            if(helper.help(out string name))
-            {
-                return Ok(new { District = name } );
-            }
-            return Ok( new {Message = "District not found"});
+            query.UserOnly = true;
+            var response = await _mediator.Send(query);
 
-        }*/
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
 
-        
+
+
+        /* [HttpGet]
+         [Route("test/{longitude}-{latitude}")]
+         public async Task<IActionResult> Testing(double longitude, double latitude)
+         {
+
+             var helper = new Helper(longitude, latitude);
+
+             if(helper.help(out string name))
+             {
+                 return Ok(new { District = name } );
+             }
+             return Ok( new {Message = "District not found"});
+
+         }*/
+
+
     }
 }

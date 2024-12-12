@@ -22,6 +22,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddCommentToElectionItem;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByDistrict;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElectionItems;
+using ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionItems;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.GetSoonExpiringElectionItems;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -222,6 +224,30 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [HttpGet]
+        [Route("election-items/expired")]
+        public async Task<IActionResult> GetExpiredElectionItems([FromRoute]GetExpiredElectionItemsQuery query)
+        {
+            query.UserOnly = false ;
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
+
+        [HttpGet]
+        [Route("election-items/expiring-soon/{days}")]
+        public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
+        {
+
+            query.UserOnly = false; ;
+            var response = await _mediator.Send(query);
+
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
+        
 
     }
 }
