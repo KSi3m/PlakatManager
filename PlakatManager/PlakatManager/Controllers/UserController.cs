@@ -1,6 +1,6 @@
-﻿using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.GetSoonExpiringElectionItems;
-using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
+﻿using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItems;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiringElectionItems;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetElectionItemsByPriority;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionItems;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments;

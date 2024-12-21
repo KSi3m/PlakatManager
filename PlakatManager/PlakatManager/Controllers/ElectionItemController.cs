@@ -23,7 +23,8 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddCommentToEl
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByDistrict;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElectionItems;
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionItems;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.GetSoonExpiringElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiringElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemByIdDetail;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -73,7 +74,7 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpGet]
         [Route("election-item/{id}/detail")]
-        public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdQuery query,  int id)
+        public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdDetailQuery query,  int id)
         {
             var response = await _mediator.Send(query);
             if (response.Success)

@@ -21,7 +21,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
         public string? PaperType { get; set; }
         public int? RefreshRate { get; set; }
         public string? Resolution { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

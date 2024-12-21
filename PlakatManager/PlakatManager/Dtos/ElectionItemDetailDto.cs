@@ -14,6 +14,7 @@ namespace ElectionMaterialManager.Dtos
 
         public string? PaperType { get; set; }
         public int? RefreshRate { get; set; }
+        public int? Height { get; set; }
         public string? Resolution { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

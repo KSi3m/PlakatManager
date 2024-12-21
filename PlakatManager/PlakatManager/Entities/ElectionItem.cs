@@ -2,8 +2,7 @@
 {
     public class Billboard : ElectionItem
     {
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public int Height { get; set; }
     }
 
     public class Poster : ElectionItem { 
@@ -39,8 +38,9 @@
 
         public List<Tag> Tags { get; set; }
 
-       
-        
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+
 
     }
 

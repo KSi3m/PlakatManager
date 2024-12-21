@@ -15,9 +15,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
         public decimal? Cost { get; set; }
 
         public int StatusId { get; set; }
+        public int Height { get; set; }
         public IEnumerable<int> Tags {  get; set; }
 
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
 }

@@ -21,6 +21,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 
         public int? RefreshRate { get; set; }
         public string? Resolution { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
     }
 }

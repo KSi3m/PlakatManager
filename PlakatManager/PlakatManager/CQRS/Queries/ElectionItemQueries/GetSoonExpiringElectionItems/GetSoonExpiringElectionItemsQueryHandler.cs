@@ -5,7 +5,7 @@ using ElectionMaterialManager.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.GetSoonExpiringElectionItems
+namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiringElectionItems
 {
     public class GetSoonExpiringElectionItemsQueryHandler : IRequestHandler<GetSoonExpiringElectionItemsQuery, GenericResponseWithList<ElectionItemDto>>
     {

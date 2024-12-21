@@ -37,8 +37,7 @@ namespace ElectionMaterialManager.Entities
 
 
             modelBuilder.Entity<Billboard>(eb => {
-                eb.Property(x => x.StartDate).HasColumnName("start_date");
-                eb.Property(x => x.EndDate).HasColumnName("end_date");
+               
             }); 
 
             modelBuilder.Entity<Poster>(eb => {
@@ -54,6 +53,8 @@ namespace ElectionMaterialManager.Entities
             {
                 eb.Property(x => x.Size).HasColumnType("nvarchar(20)");
                 eb.Property(x => x.Cost).HasPrecision(10,4);
+                eb.Property(x => x.StartDate).HasColumnName("start_date");
+                eb.Property(x => x.EndDate).HasColumnName("end_date");
 
                 eb.OwnsOne(x => x.Location, cmb =>
                 {

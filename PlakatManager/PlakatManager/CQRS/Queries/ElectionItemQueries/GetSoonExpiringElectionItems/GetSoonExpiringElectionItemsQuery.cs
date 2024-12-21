@@ -3,11 +3,11 @@ using ElectionMaterialManager.Dtos;
 using MediatR;
 using System.Text.Json.Serialization;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.GetSoonExpiringElectionItems
+namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiringElectionItems
 {
     public class GetSoonExpiringElectionItemsQuery : IRequest<GenericResponseWithList<ElectionItemDto>>
     {
-        public int Days { get;set; }
+        public int Days { get; set; }
         [JsonIgnore]
         public bool UserOnly { get; set; }
     }
