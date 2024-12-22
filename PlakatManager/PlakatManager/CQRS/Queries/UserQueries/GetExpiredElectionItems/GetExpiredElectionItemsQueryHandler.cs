@@ -41,11 +41,12 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionIte
                     }
                     electionItemsQuery.Where(x => x.AuthorId == currentUser.Id);
                 }
-                /*
-                
 
+
+                var dateToday = DateTime.Today;
                 var electionItems = await
                     electionItemsQuery
+                  .Where(x => x.EndDate < dateToday)
                    .Select(x => new ElectionItemDto()
                    {
                        Id = x.Id,
@@ -63,7 +64,7 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionIte
                        Priority = x.Priority
                    })
                    .OrderByDescending(x => x.Priority)
-                   .ToListAsync();*/
+                   .ToListAsync();
 
                 /*if (electionItems == null)
                 {
@@ -72,7 +73,7 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionIte
                 }*/
                 response.Message = "Election items within given priority range found.";
                 response.Success = true;
-                //response.Data = electionItems;
+                response.Data = electionItems;
             }
             catch (Exception ex)
             {

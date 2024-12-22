@@ -129,12 +129,12 @@ namespace ElectionMaterialManager
 
 
 
-            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            /*var pendingMigrations = dbContext.Database.GetPendingMigrations();
 
             if(pendingMigrations.Any())
             {
                 dbContext.Database.Migrate();
-            }
+            }*/
 
 
                        
