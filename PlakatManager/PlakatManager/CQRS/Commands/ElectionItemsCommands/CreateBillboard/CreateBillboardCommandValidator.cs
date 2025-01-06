@@ -33,16 +33,16 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 .NotNull().WithMessage("Tags are required.")
                 .Must(tags => tags.Any()).WithMessage("At least one tag must be specified.");
 
-           /* RuleFor(command => command.AuthorId)
-                .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");*/
+            /* RuleFor(command => command.AuthorId)
+                 .GreaterThan(0).WithMessage("AuthorId must be greater than 0.");*/
 
             RuleFor(command => command.StartDate)
-                .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.")
-                .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
+                .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.");
+
 
             RuleFor(command => command.EndDate)
-                .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.")
-                .When(command => command.StartDate.HasValue && command.EndDate.HasValue);
+                .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.");
+
         }
 
 

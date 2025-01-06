@@ -19,6 +19,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
         public IEnumerable<int> Tags { get; set; }
 
         public string? PaperType { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
 
 
     }

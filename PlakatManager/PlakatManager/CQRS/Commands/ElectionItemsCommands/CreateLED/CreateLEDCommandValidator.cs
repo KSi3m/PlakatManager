@@ -34,6 +34,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                .Must(tags => tags.All(tag => tag != 0)).WithMessage("Tags must not contain zero.");
 
             RuleFor(command => command.RefreshRate).GreaterThan(24);
+
+            RuleFor(command => command.StartDate)
+               .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.");
+
+
+            RuleFor(command => command.EndDate)
+                .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.");
+          
         }
     }
 }

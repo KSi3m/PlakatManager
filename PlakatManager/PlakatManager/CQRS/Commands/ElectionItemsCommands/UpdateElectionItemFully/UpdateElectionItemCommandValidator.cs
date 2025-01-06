@@ -37,19 +37,18 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                 .Must(tags => tags != null && tags.All(tag => tag != 0)).WithMessage("Tags must not contain zero.");
 
 
-          /*  RuleFor(command => command.RefreshRate).GreaterThan(24)
-                .When(x => x.Type == "Poster");
+            /*  RuleFor(command => command.RefreshRate).GreaterThan(24)
+                  .When(x => x.Type == "Poster");*/
 
             RuleFor(command => command.StartDate)
-                .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.")
-                .When(command => command.StartDate.HasValue && command.EndDate.HasValue)
-                .When(x => x.Type == "Billboard"); ;
+                .LessThan(command => command.EndDate).WithMessage("StartDate must be earlier than EndDate.");
+
 
 
             RuleFor(command => command.EndDate)
-                .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.")
-                .When(command => command.StartDate.HasValue && command.EndDate.HasValue)
-                .When(x => x.Type == "Billboard");*/
+                .GreaterThan(command => command.StartDate).WithMessage("EndDate must be later than StartDate.");
+
+ 
 
 
         }

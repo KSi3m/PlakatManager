@@ -99,11 +99,12 @@ namespace ElectionMaterialManager.Mappings
            .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
            .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
            .ForMember(dest => dest.Tags, opt => opt.Ignore())
-           .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
-
+           .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null))
+            .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.StartDate != null))
+            .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.EndDate != null));
 
             CreateMap<UpdateElectionItemPartiallyCommand, Poster>()
-  
+
                 .ForMember(dest => dest.Priority, opt => opt.Condition(src => src.Priority != null))
                 .ForMember(dest => dest.Size, opt => opt.Condition(src => src.Size != null))
                 .ForMember(dest => dest.Cost, opt => opt.Condition(src => src.Cost != null))
@@ -111,7 +112,9 @@ namespace ElectionMaterialManager.Mappings
                 .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
                 .ForMember(dest => dest.Tags, opt => opt.Ignore())
                 .ForMember(dest => dest.PaperType, opt => opt.Condition(src => src.PaperType != null))
-                .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
+                .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null))
+                  .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.StartDate != null))
+            .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.EndDate != null));
 
             CreateMap<UpdateElectionItemPartiallyCommand, LED>()
 
@@ -123,7 +126,9 @@ namespace ElectionMaterialManager.Mappings
             .ForMember(dest => dest.Tags, opt => opt.Ignore())
             .ForMember(dest => dest.RefreshRate, opt => opt.Condition(src => src.RefreshRate != null))
             .ForMember(dest => dest.Resolution, opt => opt.Condition(src => src.Resolution != null))
-                .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
+                .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null))
+                  .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.StartDate != null))
+            .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.EndDate != null));
 
             CreateMap<UpdateElectionItemPartiallyCommand, Billboard>()
 
@@ -133,9 +138,10 @@ namespace ElectionMaterialManager.Mappings
             .ForMember(dest => dest.StatusId, opt => opt.Condition(src => src.StatusId != null))
             .ForMember(dest => dest.AuthorId, opt => opt.Ignore())
             .ForMember(dest => dest.Tags, opt => opt.Ignore())
-            .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.StartDate != null))
+              .ForMember(dest => dest.StartDate, opt => opt.Condition(src => src.StartDate != null))
             .ForMember(dest => dest.EndDate, opt => opt.Condition(src => src.EndDate != null))
-                .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null));
+                .ForMember(dest => dest.Location, opt => opt.Condition(src => src.Location != null))
+                .ForMember(dest => dest.Height, opt => opt.Condition(src => src.Location != null));
         }
     }
 }

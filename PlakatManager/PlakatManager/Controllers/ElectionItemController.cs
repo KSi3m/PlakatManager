@@ -21,6 +21,10 @@ using Microsoft.IdentityModel.Tokens;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddCommentToElectionItem;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemsByDistrict;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElectionItems;
+using ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiringElectionItems;
+using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemByIdDetail;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -37,6 +41,15 @@ namespace ElectionMaterialManager.Controllers
         [HttpGet]
         [Route("election-items")]
         public async Task<IActionResult> GetElectionItems([FromQuery] GetElectionItemsQuery query)
+        {
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
+        [HttpGet]
+        [Route("election-items/nearby{latitude}-{longitude}-{radiusInKM}")]
+        public async Task<IActionResult> GetNearbyElectionItems([FromRoute] GetNearbyElectionItemsQuery query, double longitude, double latitude, double radiusInKM)
         {
             var response = await _mediator.Send(query);
             if (response.Success)
@@ -61,7 +74,7 @@ namespace ElectionMaterialManager.Controllers
 
         [HttpGet]
         [Route("election-item/{id}/detail")]
-        public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdQuery query,  int id)
+        public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdDetailQuery query,  int id)
         {
             var response = await _mediator.Send(query);
             if (response.Success)
@@ -212,6 +225,30 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [HttpGet]
+        [Route("election-items/expired")]
+        public async Task<IActionResult> GetExpiredElectionItems([FromRoute]GetExpiredElectionItemsQuery query)
+        {
+            query.UserOnly = false ;
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
+
+        [HttpGet]
+        [Route("election-items/expiring-soon/{days}")]
+        public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
+        {
+
+            query.UserOnly = false; ;
+            var response = await _mediator.Send(query);
+
+            if (response.Success)
+                return Ok(response);
+            return BadRequest(new { response.Message });
+        }
+        
 
     }
 }
