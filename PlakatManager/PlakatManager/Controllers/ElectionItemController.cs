@@ -25,6 +25,7 @@ using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElection
 using ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionItems;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiringElectionItems;
 using ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionItemByIdDetail;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -38,6 +39,11 @@ namespace ElectionMaterialManager.Controllers
             _mediator = mediator;
        }
 
+        [SwaggerOperation(Summary = "Retrieve all Election Items",
+            Description = "This operation retrieves a list of all election items available in the system." +
+            "You can specify range in parameters. If no items are found, an empty list is returned.")]
+        [ProducesResponseType(200)]  
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("election-items")]
         public async Task<IActionResult> GetElectionItems([FromQuery] GetElectionItemsQuery query)
@@ -47,6 +53,13 @@ namespace ElectionMaterialManager.Controllers
                 return Ok(response);
             return BadRequest(new { response.Message });
         }
+
+
+        [SwaggerOperation(Summary = "Retrieve nearby election items",
+        Description = "This endpoint retrieves a list of election items that are within a specified radius (in kilometers) from a given latitude and longitude. " 
+        +"If no items are found, an empty list is returned.")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("election-items/nearby{latitude}-{longitude}-{radiusInKM}")]
         public async Task<IActionResult> GetNearbyElectionItems([FromRoute] GetNearbyElectionItemsQuery query, double longitude, double latitude, double radiusInKM)
@@ -57,6 +70,10 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Retrieve one Election Items",
+           Description = "This operation retrieves a election item with specified id")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("election-item/{id}")]
         public async Task<IActionResult> GetElectionItem([FromRoute] GetElectionItemByIdQuery query, int id)
@@ -72,6 +89,11 @@ namespace ElectionMaterialManager.Controllers
         
         }
 
+
+        [SwaggerOperation(Summary = "Retrieve one detailed Election Items",
+           Description = "This operation retrieves a more detailed election item by specified id. " )]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("election-item/{id}/detail")]
         public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdDetailQuery query,  int id)
@@ -84,6 +106,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
 
         }
+        [SwaggerOperation(Summary = "Delete an election item",
+        Description = "This endpoint allows authorized users to delete a specific election item by its id. " +
+                  "Only users with proper permissions can perform this action.")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpDelete]
         [Authorize]
         [Route("election-item/{id}")]
@@ -95,6 +123,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Partially update an election item",
+        Description = "This endpoint allows authorized users (that election item belongs to) and admins to update specific fields of an election item identified by its id " +
+                  "The request body should contain only the fields that need to be updated")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpPatch]
         [Authorize]
         [Route("election-item/{id}")]
@@ -108,7 +142,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
 
         }
-
+        [SwaggerOperation(Summary = "Fully update an election item",
+         Description = "This endpoint allows authorized users (that election item belongs to) and admins to replace all fields of an election item identified by its id " +
+                  "The request body must contain all the required fields to ensure a complete replacement of the resource.")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpPut]
         [Authorize]
         [Route("election-item/{id}")]
@@ -123,6 +162,12 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Create a new LED election item",
+         Description = "This endpoint allows authorized users to create a new LED election item. " +
+                  "The request body must contain all required fields for the LED item.")]
+        [ProducesResponseType(201)] 
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpPost]
         [Authorize]
         [Route("election-item/led")]
@@ -135,7 +180,12 @@ namespace ElectionMaterialManager.Controllers
 
 
         }
-
+        [SwaggerOperation(Summary = "Create a new Poster election item",
+         Description = "This endpoint allows authorized users to create a new Poster election item. " +
+                  "The request body must contain all required fields for the Poster item.")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [HttpPost]
         [Authorize]
         [Route("election-item/poster")]
@@ -147,7 +197,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
 
         }
-
+        [SwaggerOperation(Summary = "Create a new Billboard election item",
+        Description = "This endpoint allows authorized users to create a new Billboard election item. " +
+              "The request body must contain all required fields for the Billboard item.")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [HttpPost]
         [Authorize]
         [Route("election-item/billboard")]
@@ -160,6 +215,13 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Create a new election item",
+        Description = "This endpoint allows authorized users to create a new election item. The type of election item" +
+            "is specified in the body " +
+            "The request body must contain all required fields for the item.")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [HttpPost]
         [Authorize]
         [Route("election-item")]
@@ -173,6 +235,12 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Retrieve election items by tag",
+        Description = "This endpoint retrieves a list of election items that match a specific tag. " +
+                  "The tag is provided as a query parameter and is used to filter the results. " +
+                  "If no items match the provided tag, an empty list is returned.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)] 
         [HttpGet]
         [Route("election-items-by-tag")]
         public async Task<IActionResult> GetElectionItemsByTag(string tag)
@@ -187,8 +255,15 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+
+
+
+        [SwaggerOperation(Summary = "Retrieve comments for a specific election item",
+         Description = "This endpoint retrieves a list of comments associated with a specific election item. " +
+                  "The election item's unique ID is provided as a path parameter.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)]
         [HttpGet]
-      
         [Route("election-item/{id}/comments")]
         public async Task<IActionResult> GetElectionItemsComments([FromRoute] GetElectionItemCommentsQuery query,int id)
         {
@@ -200,6 +275,13 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+
+        [SwaggerOperation(Summary = "Add a comment to a specific election item",
+        Description = "This endpoint allows authorized users to add a comment to an election item. " +
+                  "The election item's unique ID is provided as a path parameter, and the comment content is included in the request body.")]
+        [ProducesResponseType(201)] 
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpPost]
         [Authorize]
         [Route("election-item/{id}/comment")]
@@ -214,6 +296,12 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Retrieve election items by district",
+         Description = "This endpoint retrieves a list of election items located in a specific district. " +
+                  "The district name is provided as a path parameter and is used to filter the results. " +
+                  "If no items are found in the specified district, an empty list is returned.")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("election-items/district/{district}")]
         public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetElectionItemsByDistrictQuery query, string district)
@@ -225,6 +313,11 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Retrieve expired election items",
+        Description = "This endpoint retrieves a list of election items that have expired. " +
+                  "An expired election item is one whose end date or validity period has passed.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)] 
         [HttpGet]
         [Route("election-items/expired")]
         public async Task<IActionResult> GetExpiredElectionItems([FromRoute]GetExpiredElectionItemsQuery query)
@@ -236,9 +329,15 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+
+        [SwaggerOperation(Summary = "Retrieve election items expiring soon",
+        Description = "This endpoint retrieves a list of election items that are set to expire within a specified number of days. " +
+                  "The number of days is provided as a path parameter.")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("election-items/expiring-soon/{days}")]
-        public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
+        public async Task<IActionResult> GetSoonExpiringElectionItems([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
         {
 
             query.UserOnly = false; ;

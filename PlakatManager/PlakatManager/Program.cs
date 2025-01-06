@@ -35,6 +35,7 @@ namespace ElectionMaterialManager
                     Title = "ElectionAssetManagerAPI",
                     Version = "v1"
                 });
+                c.EnableAnnotations();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
@@ -129,12 +130,12 @@ namespace ElectionMaterialManager
 
 
 
-            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            /*var pendingMigrations = dbContext.Database.GetPendingMigrations();
 
             if(pendingMigrations.Any())
             {
                 dbContext.Database.Migrate();
-            }
+            }*/
 
 
                        
