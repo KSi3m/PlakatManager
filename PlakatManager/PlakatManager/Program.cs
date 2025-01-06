@@ -35,6 +35,7 @@ namespace ElectionMaterialManager
                     Title = "ElectionAssetManagerAPI",
                     Version = "v1"
                 });
+                c.EnableAnnotations();
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
