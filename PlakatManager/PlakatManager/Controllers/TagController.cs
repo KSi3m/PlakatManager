@@ -12,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ElectionMaterialManager.Controllers
@@ -28,6 +29,10 @@ namespace ElectionMaterialManager.Controllers
             _mediator = mediator;
         }
 
+        [SwaggerOperation(Summary = "Get all tags",
+        Description = "This endpoint retrieves all available tags from the system. ")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)] 
         [HttpGet]
         [Route("tags")]
         public async Task<IActionResult> GetAllTags()
@@ -38,6 +43,10 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Get a tag by ID",
+        Description = "This endpoint retrieves a specific tag from the system by its unique ID.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)] 
         [HttpGet]
         [Route("tag/{id}")]
         public async Task<IActionResult> GetTag([FromRoute] GetTagByIdQuery query, int id)
@@ -50,9 +59,14 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Delete a tag by ID",
+        Description = "This endpoint allows authorized users to delete a tag by its unique ID. ")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)]
         [HttpDelete]
         [Authorize]
         [Route("tag/{id}")]
+        //usuwanie konflikty
         public async Task<IActionResult> DeleteTag([FromRoute] DeleteTagCommand command, int id)
         {
         
@@ -64,7 +78,10 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
-
+        [SwaggerOperation(Summary = "Create a new tag",
+        Description = "This endpoint allows authorized users to create a new tag in the system. ")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         [HttpPost]
         [Authorize]
         [Route("tag")]
@@ -77,6 +94,11 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Update an existing tag",
+        Description = "This endpoint allows updating an existing tag by its ID. Only authorized users can update tags.")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [HttpPut]
         [Authorize]
         [Route("tag/{id}")]

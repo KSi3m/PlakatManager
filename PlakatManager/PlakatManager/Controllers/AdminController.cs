@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -20,6 +21,11 @@ namespace ElectionMaterialManager.Controllers
             _mediator = mediator;
         }
 
+        [SwaggerOperation(Summary = "Assign Admin role to a user",
+        Description = "This endpoint allows an Admin to assign the 'Admin' role to a specified user. " +
+                  "The user's ID is provided as a path parameter.")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)] 
         [HttpPut]
         [Authorize(Roles = "Admin")]
         [Route("user/{userId}/assign-admin-role")]

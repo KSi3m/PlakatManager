@@ -9,6 +9,7 @@ using ElectionMaterialManager.NWM;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace ElectionMaterialManager.Controllers
 {
@@ -23,7 +24,12 @@ namespace ElectionMaterialManager.Controllers
         {
             _mediator = mediator;
         }
-
+        [SwaggerOperation(Summary = "Get election items for the authenticated user",
+         Description = "This endpoint returns the election items created by the authenticated user. " +
+                  "Only authorized users can access this information.")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)] 
         [HttpGet]
         [Authorize]
         [Route("user/election-items")]
@@ -37,6 +43,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Get comments for the authenticated user",
+        Description = "This endpoint returns all comments made by the authenticated user on election items. " +
+                  "Only authorized users can access this information.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(401)] 
+        [ProducesResponseType(400)] 
         [HttpGet]
         [Authorize]
         [Route("user/comments")]
@@ -49,6 +61,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Get election items with a priority range for the authenticated user",
+       Description = "This endpoint returns the election items for the authenticated user that fall within the specified priority range. " +
+                  "The priority range is defined by the minimum and maximum values. Only authorized users can access this information.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpGet]
         [Authorize]
         [Route("user/election-items/{minPriority}-{maxPriority}")]
@@ -60,6 +78,12 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Get expired election items for the authenticated user",
+        Description = "This endpoint returns the election items that have expired for the authenticated user. " +
+                  "Only authorized users can access this information.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(401)] 
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("user/election-items/expired")]
         public async Task<IActionResult> GetExpiredElectionItems([FromRoute] GetExpiredElectionItemsQuery query)
@@ -71,9 +95,15 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Get election items expiring soon for the authenticated user",
+        Description = "This endpoint returns the election items that will expire within the specified number of days for the authenticated user. " +
+                  "Only authorized users can access this information.")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpGet]
         [Route("user/election-items/expiring-soon/{days}")]
-        public async Task<IActionResult> GetElectionItemsByDistrict([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
+        public async Task<IActionResult> GetSoonExpiringElectionItems([FromRoute] GetSoonExpiringElectionItemsQuery query, int days)
         {
 
             query.UserOnly = true;

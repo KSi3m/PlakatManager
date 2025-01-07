@@ -17,6 +17,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Annotations;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ElectionMaterialManager.Controllers
@@ -33,6 +34,10 @@ namespace ElectionMaterialManager.Controllers
             _mediator = mediator;
         }
 
+        [SwaggerOperation(Summary = "Get all statuses",
+        Description = "This endpoint retrieves a list of all possible statuses that can be assigned to election items.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)]
         [HttpGet]
         [Route("statuses")]
         public async Task<IActionResult> GetAllStatuses()
@@ -43,6 +48,10 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
+        [SwaggerOperation(Summary = "Get status by ID",
+         Description = "This endpoint retrieves the details of a specific status by its unique identifier.")]
+        [ProducesResponseType(200)] 
+        [ProducesResponseType(400)] 
         [HttpGet]
         [Route("status/{id}")]
         public async Task<IActionResult> GetStatus([FromRoute] GetStatusByIdQuery query, int id)
@@ -55,8 +64,13 @@ namespace ElectionMaterialManager.Controllers
             return BadRequest(new { response.Message });
         }
 
-     
 
+        [SwaggerOperation(Summary = "Create a new status",
+        Description = "This endpoint allows authorized users to create a new status for election items. " +
+                  "The status name must be unique and non-empty.")]
+        [ProducesResponseType(201)] 
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         [HttpPost]
         [Authorize]
         [Route("status")]
@@ -69,6 +83,12 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Update an existing status",
+        Description = "This endpoint allows authorized users to update the name of an existing status. " +
+                  "The new name must be unique and non-empty.")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)] 
+        [ProducesResponseType(401)] 
         [HttpPut]
         [Authorize]
         [Route("status/{id}")]
@@ -83,9 +103,14 @@ namespace ElectionMaterialManager.Controllers
 
         }
 
+        [SwaggerOperation(Summary = "Delete a status by ID",
+        Description = "This endpoint allows authorized users to delete a status by its unique ID. ")]
+        [ProducesResponseType(204)] 
+        [ProducesResponseType(400)] 
         [HttpDelete]
         [Authorize]
         [Route("status/{id}")]
+        //konflikty
         public async Task<IActionResult> DeleteStatus([FromRoute] DeleteStatusCommand command, int id)
         {
        
