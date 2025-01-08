@@ -24,7 +24,7 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById
 
         public async Task<GenericResponse<TagDto>> Handle(GetTagByIdQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<TagDto>() { Success = false };
+            var response = new GenericResponse<TagDto>() { Success = false, StatusCode = 400 };
             try
             {
                 var tag = await _db.Tags.Include(x=>x.ElectionItems)
@@ -32,10 +32,12 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetTagById
                 if (tag == null)
                 {
                     response.Message = $"Tag not found";
+                    response.StatusCode = 404;
                     return response;
                 }
                 response.Message = $"Tag found";
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = _mapper.Map<TagDto>(tag);
             }
             catch (Exception ex)

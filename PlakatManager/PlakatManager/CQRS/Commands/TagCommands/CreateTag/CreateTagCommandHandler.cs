@@ -21,14 +21,21 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.CreateTag
 
         public async Task<GenericResponse<TagDto>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<TagDto>() { Success = false };
+            var response = new GenericResponse<TagDto>() { Success = false, StatusCode = 400 };
             try
             {
+                if (string.IsNullOrWhiteSpace(request.TagName))
+                {
+                    response.Message = "Tag name cannot be empty";
+                    return response;
+                }
+
                 var tagFromDb = await _db.Tags
                 .FirstOrDefaultAsync(x => x.Value.ToLower() == request.TagName.ToLower());
                 if (tagFromDb != null)
                 {
                     response.Message = "Tag already exists";
+                    response.StatusCode = 409;
                     return response;
                 }
 
@@ -41,6 +48,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.CreateTag
                 await _db.SaveChangesAsync();
 
                 response.Success = true;
+                response.StatusCode = 201;
                 response.Data = _mapper.Map<TagDto>(tag);
                 response.Message = $"/api/v1/tag/{tag.Id}";
             }

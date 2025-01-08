@@ -32,7 +32,8 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Get all tags",
         Description = "This endpoint retrieves all available tags from the system. ")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)] 
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)] 
         [HttpGet]
         [Route("tags")]
         public async Task<IActionResult> GetAllTags()
@@ -40,13 +41,14 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(new GetAllTagsQuery());
             if (response.Success)
                 return Ok(response.Data);
-            return BadRequest(new { response.Message });
+            return StatusCode(response.StatusCode,new { response.Message });
         }
 
         [SwaggerOperation(Summary = "Get a tag by ID",
         Description = "This endpoint retrieves a specific tag from the system by its unique ID.")]
         [ProducesResponseType(200)] 
-        [ProducesResponseType(400)] 
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)] 
         [HttpGet]
         [Route("tag/{id}")]
         public async Task<IActionResult> GetTag([FromRoute] GetTagByIdQuery query, int id)
@@ -56,13 +58,16 @@ namespace ElectionMaterialManager.Controllers
             {
                 return Ok(response.Data);
             }
-            return BadRequest(new { response.Message });
+            return StatusCode(response.StatusCode,new { response.Message });
         }
 
         [SwaggerOperation(Summary = "Delete a tag by ID",
         Description = "This endpoint allows authorized users to delete a tag by its unique ID. ")]
         [ProducesResponseType(204)] 
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)] 
+        [ProducesResponseType(409)] 
         [HttpDelete]
         [Authorize]
         [Route("tag/{id}")]
@@ -75,13 +80,15 @@ namespace ElectionMaterialManager.Controllers
             {
                 return NoContent();
             }
-            return BadRequest(new { response.Message });
+            return StatusCode(response.StatusCode, new { response.Message });
         }
 
         [SwaggerOperation(Summary = "Create a new tag",
         Description = "This endpoint allows authorized users to create a new tag in the system. ")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(409)]
         [HttpPost]
         [Authorize]
         [Route("tag")]
@@ -90,7 +97,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if (response.Success)
                 return Created(response.Message, response.Data);
-            return BadRequest(new { response.Message });
+            return StatusCode(response.StatusCode, new { response.Message });
 
         }
 
@@ -99,6 +106,8 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(204)] 
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         [HttpPut]
         [Authorize]
         [Route("tag/{id}")]
@@ -109,7 +118,7 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if (response.Success)
                 return NoContent();
-            return BadRequest(new { response.Message });
+            return StatusCode(response.StatusCode, new { response.Message });
 
         }
 
