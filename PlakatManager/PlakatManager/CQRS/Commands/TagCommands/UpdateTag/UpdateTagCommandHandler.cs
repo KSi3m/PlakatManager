@@ -31,7 +31,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                 bool isEditable = currentUser != null && currentUser.Roles.Contains("Admin");
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
                     response.StatusCode = 401;
                     return response;
                 }
@@ -61,7 +61,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                 response.Success = true;
                 response.StatusCode = 204;
                 response.Data = _mapper.Map<TagDto>(tagFromDb);
-                response.Message = $"/api/v1/tag/{tagFromDb.Id}";
+                response.Message = $"\"Tag updated successfully! Resource can be found at /api/v1/tag/{tagFromDb.Id}";
             }
             catch (Exception ex)
             {

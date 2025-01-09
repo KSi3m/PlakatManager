@@ -34,6 +34,7 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetAllTags
                 }
                 response.Success = true;
                 response.StatusCode = 200;
+                response.Message = "Tags found.";
                 response.Data = _mapper.Map<IEnumerable<TagDto>>(tags);
             }
             catch (Exception ex)

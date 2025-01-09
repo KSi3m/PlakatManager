@@ -19,14 +19,15 @@ namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.DeleteStatus
 
         public async Task<Response> Handle(DeleteStatusCommand request, CancellationToken cancellationToken)
         {
-            var response = new Response() { Success = false };
+            var response = new Response() { Success = false,StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null && currentUser.Roles.Contains("Admin");
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -36,12 +37,14 @@ namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.DeleteStatus
                 if (status == null)
                 {
                     response.Message = "Status with given id not found.";
+                    response.StatusCode = 404;
                     return response;
                 }
 
                 _db.Remove(status);
                 await _db.SaveChangesAsync();
                 response.Success = true;
+                response.StatusCode = 204;
                 response.Message = "Status deleted.";
 
             }

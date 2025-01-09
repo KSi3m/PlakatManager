@@ -40,8 +40,8 @@ namespace ElectionMaterialManager.Controllers
         {
             var response = await _mediator.Send(new GetAllTagsQuery());
             if (response.Success)
-                return Ok(response.Data);
-            return StatusCode(response.StatusCode,new { response.Message });
+                return Ok(new { response.StatusCode, response.Message,response.Data });
+            return StatusCode(response.StatusCode,new { response.StatusCode, response.Message });
         }
 
         [SwaggerOperation(Summary = "Get a tag by ID",
@@ -56,9 +56,9 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(query);
             if (response.Success)
             {
-                return Ok(response.Data);
+                return Ok(new { response.StatusCode, response.Message, response.Data });
             }
-            return StatusCode(response.StatusCode,new { response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
         }
 
         [SwaggerOperation(Summary = "Delete a tag by ID",
@@ -78,9 +78,9 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(command);
             if (response.Success)
             {
-                return NoContent();
+                return StatusCode(204,new { response.StatusCode, response.Message });
             }
-            return StatusCode(response.StatusCode, new { response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
         }
 
         [SwaggerOperation(Summary = "Create a new tag",
@@ -96,8 +96,8 @@ namespace ElectionMaterialManager.Controllers
         {
             var response = await _mediator.Send(command);
             if (response.Success)
-                return Created(response.Message, response.Data);
-            return StatusCode(response.StatusCode, new { response.Message });
+                return StatusCode(201,new { response.StatusCode, response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
 
         }
 
@@ -113,12 +113,12 @@ namespace ElectionMaterialManager.Controllers
         [Route("tag/{id}")]
         public async Task<IActionResult> UpdateTag(UpdateTagCommand command, int id)
         {
-            if(id<=0) return BadRequest(new { Message="BAD ID" });
+            if(id<=0) return StatusCode(400,new {StatusCode = 400, Message="Wrong Id supplied" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)
-                return NoContent();
-            return StatusCode(response.StatusCode, new { response.Message });
+                return StatusCode(204, new { response.StatusCode, response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
 
         }
 

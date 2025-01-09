@@ -24,14 +24,14 @@ namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.UpdateStatus
 
         public async Task<GenericResponse<StatusDto>> Handle(UpdateStatusCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<StatusDto>() { Success = false };
+            var response = new GenericResponse<StatusDto>() { Success = false,StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null && currentUser.Roles.Contains("Admin");
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
                     return response;
                 }
 
@@ -42,20 +42,23 @@ namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.UpdateStatus
                 if (statusFromDb == null)
                 {
                     response.Message = "Status was not found!";
+                    response.StatusCode = 404;
                     return response;
                 }
                 var check = statuses.Find(x => x.Name == request.NewStatusName);
                 if (check != null)
                 {
                     response.Message = "Status with the same name already exist!";
+                    response.StatusCode = 409;
                     return response;
                 }
                 statusFromDb.Name = request.NewStatusName;
                 await _db.SaveChangesAsync();
 
                 response.Success = true;
+                response.StatusCode = 204;
                 response.Data = _mapper.Map<StatusDto>(statusFromDb);
-                response.Message = $"/api/v1/status/{statusFromDb.Id}";
+                response.Message = $"Status updated successfully. Resource can be found at /api/v1/status/{statusFromDb.Id}";
             }
             catch (Exception ex)
             {

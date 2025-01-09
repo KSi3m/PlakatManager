@@ -19,7 +19,7 @@ namespace ElectionMaterialManager.CQRS.Queries.StatusQueries.GetStatusById
 
         public async Task<GenericResponse<StatusDto>> Handle(GetStatusByIdQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<StatusDto>() { Success = false };
+            var response = new GenericResponse<StatusDto>() { Success = false, StatusCode = 400 };
             try
             {
                 var status = await _db.Statuses
@@ -34,11 +34,14 @@ namespace ElectionMaterialManager.CQRS.Queries.StatusQueries.GetStatusById
                 if (status == null)
                 {
                     response.Message = $"Status not found";
+                    response.StatusCode = 404;
                     return response;
                 }
 
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = status;
+                response.Message = $"Status with id {status.Id} found";
             }
             catch (Exception ex)
             {

@@ -25,7 +25,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag
                 bool isEditable = currentUser != null && currentUser.Roles.Contains("Admin");
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
                     response.StatusCode = 401;
                     return response;
                 }

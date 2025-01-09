@@ -44,14 +44,17 @@ namespace ElectionMaterialManager.Controllers
         {
             var response = await _mediator.Send(new GetAllStatusesQuery());
             if (response.Success)
-                return Ok(response.Data);
-            return BadRequest(new { response.Message });
+            {
+                return Ok(new { response.StatusCode, response.Message, response.Data });
+            }
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
         }
 
         [SwaggerOperation(Summary = "Get status by ID",
          Description = "This endpoint retrieves the details of a specific status by its unique identifier.")]
         [ProducesResponseType(200)] 
-        [ProducesResponseType(400)] 
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         [HttpGet]
         [Route("status/{id}")]
         public async Task<IActionResult> GetStatus([FromRoute] GetStatusByIdQuery query, int id)
@@ -59,9 +62,9 @@ namespace ElectionMaterialManager.Controllers
             var response = await _mediator.Send(query);
             if (response.Success)
             {
-                return Ok(response.Data);
+                return Ok(new { response.StatusCode, response.Message, response.Data });
             }
-            return BadRequest(new { response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
         }
 
 
@@ -78,8 +81,8 @@ namespace ElectionMaterialManager.Controllers
         {
             var response = await _mediator.Send(command);
             if (response.Success)
-                return Created(response.Message, response.Data);
-            return BadRequest(new { response.Message });
+                return StatusCode(201, new { response.StatusCode, response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
 
         }
 
@@ -94,12 +97,12 @@ namespace ElectionMaterialManager.Controllers
         [Route("status/{id}")]
         public async Task<IActionResult> UpdateStatus(UpdateStatusCommand command, int id)
         {
-            if (id <= 0) return BadRequest(new { Message = "BAD ID" });
+            if (id <= 0) return StatusCode(400,new { StatusCode = 400, Message = "Wrong Id supplied" });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)
-                return NoContent();
-            return BadRequest(new { response.Message });
+                return StatusCode(204, new { response.StatusCode, response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
 
         }
 
@@ -116,10 +119,8 @@ namespace ElectionMaterialManager.Controllers
        
             var response = await _mediator.Send(command);
             if (response.Success)
-            {
-                return NoContent();
-            }
-            return BadRequest(new { response.Message });
+                return StatusCode(204, new { response.StatusCode, response.Message });
+            return StatusCode(response.StatusCode, new { response.StatusCode, response.Message });
         }
 
 
