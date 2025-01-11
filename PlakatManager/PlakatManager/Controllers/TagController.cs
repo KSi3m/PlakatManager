@@ -71,7 +71,7 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),404)] 
         [ProducesResponseType(typeof(Response),409)] 
         [HttpDelete]
-        [Authorize]
+        //[Authorize]
         [Route("tag/{id}")]
         //usuwanie konflikty
         public async Task<IActionResult> DeleteTag([FromRoute] DeleteTagCommand command, int id)
@@ -92,7 +92,7 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),401)]
         [ProducesResponseType(typeof(Response),409)]
         [HttpPost]
-        [Authorize]
+       // [Authorize]
         [Route("tag")]
         public async Task<IActionResult> CreateTag(CreateTagCommand command)
         {
@@ -111,11 +111,17 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),404)]
         [ProducesResponseType(typeof(Response),409)]
         [HttpPut]
-        [Authorize]
+       // [Authorize]
         [Route("tag/{id}")]
         public async Task<IActionResult> UpdateTag(UpdateTagCommand command, int id)
         {
-            if(id<=0) return StatusCode(400,new {StatusCode = 400, Message="Wrong Id supplied" });
+            if (id <= 0) return StatusCode(400, new Response
+            {
+                Success = false,
+                StatusCode = 400,
+                Message = "One or more validation errors has occurred",
+                Errors = new List<string>() { "Wrong Id supplied" }
+            }); 
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)

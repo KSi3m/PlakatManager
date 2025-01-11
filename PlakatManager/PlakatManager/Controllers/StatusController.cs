@@ -76,7 +76,7 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),400)]
         [ProducesResponseType(typeof(Response),401)]
         [HttpPost]
-        [Authorize]
+       // [Authorize]
         [Route("status")]
         public async Task<IActionResult> CreateStatus(CreateStatusCommand command)
         {
@@ -94,11 +94,17 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),400)] 
         [ProducesResponseType(typeof(Response),401)] 
         [HttpPut]
-        [Authorize]
+      //  [Authorize]
         [Route("status/{id}")]
         public async Task<IActionResult> UpdateStatus(UpdateStatusCommand command, int id)
         {
-            if (id <= 0) return StatusCode(400,new { StatusCode = 400, Message = "Wrong Id supplied" });
+            if (id <= 0) return StatusCode(400, new Response
+            {
+                Success = false,
+                StatusCode = 400,
+                Message = "One or more validation errors has occurred",
+                Errors = new List<string>() { "Wrong Id supplied" }
+            });
             command.Id = id;
             var response = await _mediator.Send(command);
             if (response.Success)
@@ -112,7 +118,7 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),204)] 
         [ProducesResponseType(typeof(Response),400)] 
         [HttpDelete]
-        [Authorize]
+      //  [Authorize]
         [Route("status/{id}")]
         //konflikty
         public async Task<IActionResult> DeleteStatus([FromRoute] DeleteStatusCommand command, int id)

@@ -24,14 +24,15 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
 
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetUsersElectionItemsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
-                bool isEnterable= currentUser != null;
+                bool isEnterable = currentUser != null;
                 if (!isEnterable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -58,6 +59,8 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUsersElectionItems
 
                 response.Success = true;
                 response.Data = electionItems;
+                response.Message = "Users election items found";
+                response.StatusCode = 200;
             }
             catch (Exception ex)
             {

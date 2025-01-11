@@ -21,7 +21,7 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionIte
 
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetExpiredElectionItemsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
 
@@ -31,12 +31,12 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionIte
               
                 if (request.UserOnly)
                 {
-
                     var currentUser = await _userContext.GetCurrentUser();
                     bool isEnterable = currentUser != null;
                     if (!isEnterable)
                     {
-                        response.Message = "NOT AUTHORIZED";
+                        response.Message = "User is not authorized to access";
+                        response.StatusCode = 401;
                         return response;
                     }
                     electionItemsQuery.Where(x => x.AuthorId == currentUser.Id);
@@ -73,6 +73,7 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetExpiredElectionIte
                 }*/
                 response.Message = "Election items within given priority range found.";
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = electionItems;
             }
             catch (Exception ex)
