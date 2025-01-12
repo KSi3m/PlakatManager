@@ -32,6 +32,8 @@ namespace ElectionMaterialManager.Mappings
 
             CreateMap<LocationDto, Location>();
             CreateMap<Location, LocationDto>();
+
+     
         
 
             CreateMap<ElectionItem, ElectionItemDto>()

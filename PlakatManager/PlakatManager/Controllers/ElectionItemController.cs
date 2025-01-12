@@ -45,7 +45,7 @@ namespace ElectionMaterialManager.Controllers
             Description = "This operation retrieves a list of all election items available in the system." +
             "You can specify range in parameters. If no items are found, an empty list is returned.")]
         [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDto>), 200)]
-        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDto>), 400)]
         [HttpGet]
         [Route("election-items")]
         public async Task<IActionResult> GetElectionItems([FromQuery] GetElectionItemsQuery query)
@@ -61,7 +61,7 @@ namespace ElectionMaterialManager.Controllers
         Description = "This endpoint retrieves a list of election items that are within a specified radius (in kilometers) from a given latitude and longitude. " 
         +"If no items are found, an empty list is returned.")]
         [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDto>), 200)]
-        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDto>), 400)]
         [HttpGet]
         [Route("election-items/nearby{latitude}-{longitude}-{radiusInKM}")]
         public async Task<IActionResult> GetNearbyElectionItems([FromRoute] GetNearbyElectionItemsQuery query, double longitude, double latitude, double radiusInKM)
@@ -75,7 +75,7 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Retrieve one Election Items",
            Description = "This operation retrieves a election item with specified id")]
         [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDetailDto>), 200)]
-        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDetailDto>), 400)]
         [HttpGet]
         [Route("election-item/{id}")]
         public async Task<IActionResult> GetElectionItem([FromRoute] GetElectionItemByIdQuery query, int id)
@@ -92,7 +92,7 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Retrieve one detailed Election Items",
            Description = "This operation retrieves a more detailed election item by specified id. " )]
         [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDetailDto>), 200)]
-        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDetailDto>), 400)]
         [HttpGet]
         [Route("election-item/{id}/detail")]
         public async Task<IActionResult> GetElectionItemWithDetails([FromRoute] GetElectionItemByIdDetailQuery query,  int id)
@@ -274,7 +274,7 @@ namespace ElectionMaterialManager.Controllers
          Description = "This endpoint retrieves a list of comments associated with a specific election item. " +
                   "The election item's unique ID is provided as a path parameter.")]
         [ProducesResponseType(typeof(GenericResponseWithList<CommentDto>), 200)]
-        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<CommentDto>), 400)]
        // [ProducesResponseType(typeof(Response), 404)]
         [HttpGet]
         [Route("election-item/{id}/comments")]

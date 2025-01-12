@@ -33,8 +33,8 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Get all tags",
         Description = "This endpoint retrieves all available tags from the system. ")]
         [ProducesResponseType(typeof(GenericResponseWithList<TagDto>),200)]
-        [ProducesResponseType(typeof(Response),400)]
-        [ProducesResponseType(typeof(Response),404)] 
+        [ProducesResponseType(typeof(GenericResponseWithList<TagDto>),400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<TagDto>),404)] 
         [HttpGet]
         [Route("tags")]
         public async Task<IActionResult> GetAllTags()
@@ -48,8 +48,8 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Get a tag by ID",
         Description = "This endpoint retrieves a specific tag from the system by its unique ID.")]
         [ProducesResponseType(typeof(GenericResponse<TagDto>),200)] 
-        [ProducesResponseType(typeof(Response),400)]
-        [ProducesResponseType(typeof(Response),404)] 
+        [ProducesResponseType(typeof(GenericResponse<TagDto>),400)]
+        [ProducesResponseType(typeof(GenericResponse<TagDto>),404)] 
         [HttpGet]
         [Route("tag/{id}")]
         public async Task<IActionResult> GetTag([FromRoute] GetTagByIdQuery query, int id)

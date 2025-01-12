@@ -38,7 +38,7 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Get all statuses",
         Description = "This endpoint retrieves a list of all possible statuses that can be assigned to election items.")]
         [ProducesResponseType(typeof(GenericResponseWithList<StatusDto>),200)] 
-        [ProducesResponseType(typeof(Response),400)]
+        [ProducesResponseType(typeof(GenericResponseWithList<StatusDto>),400)]
         [HttpGet]
         [Route("statuses")]
         public async Task<IActionResult> GetAllStatuses()
@@ -54,8 +54,8 @@ namespace ElectionMaterialManager.Controllers
         [SwaggerOperation(Summary = "Get status by ID",
          Description = "This endpoint retrieves the details of a specific status by its unique identifier.")]
         [ProducesResponseType(typeof(GenericResponse<StatusDto>),200)] 
-        [ProducesResponseType(typeof(Response),400)]
-        [ProducesResponseType(typeof(Response),404)]
+        [ProducesResponseType(typeof(GenericResponse<StatusDto>),400)]
+        [ProducesResponseType(typeof(GenericResponse<StatusDto>),404)]
         [HttpGet]
         [Route("status/{id}")]
         public async Task<IActionResult> GetStatus([FromRoute] GetStatusByIdQuery query, int id)
