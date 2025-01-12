@@ -22,7 +22,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
 
         public async Task<GenericResponseWithList<CommentDto>> Handle(GetElectionItemCommentsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<CommentDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<CommentDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
                 var comments = await _db.Comments
@@ -40,13 +40,14 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                     })
                     .ToListAsync();
 
-                if (comments == null)// || !comments.Any())
+                /*if (comments == null)// || !comments.Any())
                 {
                     response.Message = "Error";
                     return response;
-                }
+                }*/
                 response.Message = $"Comments for  elcetion item with id {request.Id} found ";
                 response.Success = true;
+                response.StatusCode = 200;
 
                 //response.Data = _mapper.Map<IEnumerable<CommentDto>>(comments);
                 response.Data = comments;

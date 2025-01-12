@@ -21,7 +21,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiri
 
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetSoonExpiringElectionItemsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
 
@@ -36,7 +36,8 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiri
                     bool isEnterable = currentUser != null;
                     if (!isEnterable)
                     {
-                        response.Message = "NOT AUTHORIZED";
+                        response.Message = "User is not authorized to access";
+                        response.StatusCode = 401;
                         return response;
                     }
                     electionItemsQuery.Where(x => x.AuthorId == currentUser.Id);
@@ -74,6 +75,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetSoonExpiri
                 }*/
                 response.Message = "Election items within given priority range found.";
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = electionItems;
             }
             catch (Exception ex)

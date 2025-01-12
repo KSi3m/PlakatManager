@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem
 {
-    public class CreateElectionItemCommand: IRequest<GenericResponse<ElectionItemDto>>
+    public class CreateElectionItemCommand: IRequest<Response>
     {
         public string Type { get; set; }
         public LocationDto Location { get; set; }

@@ -23,14 +23,15 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments
 
         public async Task<GenericResponseWithList<UserCommentDto>> Handle(GetUserCommentsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<UserCommentDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<UserCommentDto>() { Data = [], Success = false , StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEnterable = currentUser != null;
                 if (!isEnterable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -53,6 +54,7 @@ namespace ElectionMaterialManager.CQRS.Queries.UserQueries.GetUserComments
                 }*/
                 response.Message = $"Comments by user found ";
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = comments;
             }
             catch (Exception ex)

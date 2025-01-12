@@ -21,7 +21,7 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetAllTags
 
         public async Task<GenericResponseWithList<TagDto>> Handle(GetAllTagsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<TagDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<TagDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
                 var tags = await _db.Tags.ToListAsync();
@@ -29,9 +29,12 @@ namespace ElectionMaterialManager.CQRS.Queries.TagQueries.GetAllTags
                 if (tags == null)
                 {
                     response.Message = "Tags not found.";
+                    response.StatusCode = 404;
                     return response;
                 }
                 response.Success = true;
+                response.StatusCode = 200;
+                response.Message = "Tags found.";
                 response.Data = _mapper.Map<IEnumerable<TagDto>>(tags);
             }
             catch (Exception ex)

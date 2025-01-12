@@ -23,7 +23,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetElectionItemsByTagQuery query, CancellationToken cancellationToken)
         {
 
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
                 var electionItems = await _db.Tags.Include(x => x.ElectionItems)
@@ -55,6 +55,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                 }*/
                 response.Message = "Election items with given tag found";
                 response.Success = true;
+                response.StatusCode = 200;
               
                 //response.Data = _mapper.Map<IEnumerable<ElectionItemDto>>(electionItems);
                 response.Data = electionItems;

@@ -24,14 +24,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddComment
 
         public async Task<GenericResponse<UserCommentDto>> Handle(AddCommentToElectionItemCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<UserCommentDto>() { Success = false };
+            var response = new GenericResponse<UserCommentDto>() { Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access"; 
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -43,6 +44,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddComment
                 if (electionItemId == 0)
                 {
                     response.Message = "Election item not found";
+                    response.StatusCode = 404;
                     return response;
                 }
 
@@ -59,6 +61,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.AddComment
                 await _db.SaveChangesAsync();
                 response.Success = true;
                 response.Data = _mapper.Map<UserCommentDto>(comment);
+                response.StatusCode = 201;
                 response.Message = $"/api/v1/election-item/{electionItemId}/comments";
             }
             catch (Exception ex)

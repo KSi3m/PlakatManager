@@ -14,6 +14,7 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElection
 using FluentValidation.AspNetCore;
 using ElectionMaterialManager.Services;
 using ElectionMaterialManager.AppUserContext;
+using MediatR;
 
 namespace ElectionMaterialManager
 {
@@ -75,16 +76,24 @@ namespace ElectionMaterialManager
             builder.Services.AddScoped<Seeder>();
             builder.Services.AddScoped<IUserContext, UserContext>();
             builder.Services.AddScoped<IDistrictLocalizationService, DistrictLocalizationService>();
+
+
             //builder.Services.AddScoped<UserToAspUsersMigrationUtility>();
            // builder.Services.AddScoped<AddRolesUtility>();
            //builder.Services.AddScoped<UpdateAllLocationsUtility>();
          
 
-            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+            builder.Services.AddMediatR(cfg =>
+            { 
+                  cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+                  cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            });
 
-            builder.Services.AddValidatorsFromAssemblyContaining<UpdateElectionItemPartiallyCommand>()
-                .AddFluentValidationAutoValidation()
-                .AddFluentValidationClientsideAdapters();
+            builder.Services.AddValidatorsFromAssemblyContaining<UpdateElectionItemPartiallyCommand>();
+                //.AddFluentValidationAutoValidation()
+                //.AddFluentValidationClientsideAdapters();
+
+            //builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             /*builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddFluentValidationClientsideAdapters();
             builder.Services.AddValidatorsFromAssembly(typeof(SignUpRequestModelValidator).Assembly);*/
@@ -92,12 +101,15 @@ namespace ElectionMaterialManager
             builder.Services.AddAuthorization();
 
             var app = builder.Build();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-        
             //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+
+
             app.MapControllers();
+     
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

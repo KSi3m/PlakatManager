@@ -20,7 +20,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
         public async Task<Response> Handle(DeleteElectionItemCommand request, CancellationToken cancellationToken)
         {
 
-            var response = new Response() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400 };
             try
             {
 
@@ -30,6 +30,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
                 if (electionItem == null)
                 {
                     response.Message = "Election item with given id not found.";
+                    response.StatusCode = 404;
                     return response;
                 }
          
@@ -38,7 +39,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
                     (electionItem.AuthorId == currentUser.Id || currentUser.Roles.Contains("Admin"));
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -46,6 +48,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.DeleteElec
                 _db.Remove(electionItem);
                 await _db.SaveChangesAsync();
                 response.Success = true;
+                response.StatusCode = 204;
                 response.Message = "Election item deleted.";
 
             }

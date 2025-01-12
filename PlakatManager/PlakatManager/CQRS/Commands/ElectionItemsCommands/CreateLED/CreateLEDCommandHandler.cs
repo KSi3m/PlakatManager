@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 {
-    public class CreateLEDCommandHandler : IRequestHandler<CreateLEDCommand, GenericResponse<ElectionItemDto>>
+    public class CreateLEDCommandHandler : IRequestHandler<CreateLEDCommand, Response>
     {
 
         private readonly ElectionMaterialManagerContext _db;
@@ -28,16 +28,17 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 
         }
 
-        public async Task<GenericResponse<ElectionItemDto>> Handle(CreateLEDCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreateLEDCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<ElectionItemDto>() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400};
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -45,6 +46,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                 if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
                     response.Message = "Tags not specified/wrong ids. Process aborted";
+                    response.StatusCode = 400;
                     return response;
                 }
 
@@ -68,7 +70,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
                 await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Data = _mapper.Map<ElectionItemDto>(led);
+                response.StatusCode = 201;
+                //response.Data = _mapper.Map<ElectionItemDto>(led);
                 response.Message = $"/api/v1/election-item/{led.Id}";
             }
             catch(Exception ex)

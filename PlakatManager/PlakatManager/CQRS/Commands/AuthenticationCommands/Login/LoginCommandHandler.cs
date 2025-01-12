@@ -19,24 +19,27 @@ namespace ElectionMaterialManager.CQRS.Commands.AuthenticationCommands.Login
 
         public async Task<TokenResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var response = new TokenResponse() { Success = false };
+            var response = new TokenResponse() { Success = false, StatusCode = 400 };
             try
             {
                 var user = await _userManager.FindByNameAsync(request.Login);
                 if (user == null)
                 {
                     response.Message = "Wrong login or password ";
+                    response.StatusCode = 401;
                     return response;
                 }
                 var passwordValid = await _userManager.CheckPasswordAsync(user, request.Password);
                 if (!passwordValid)
                 {
                     response.Message = "Wrong login or password";
+                    response.StatusCode = 401;
                     return response;
                 }
                 string token = await _authService.CreateToken(user);
                 response.Success = true;
                 response.Token = token;
+                response.StatusCode = 200;
                 response.Message = "Token generated successfully";
             }
             catch (Exception ex)

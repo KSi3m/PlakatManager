@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard
 {
-    public class CreateBillboardCommand: IRequest<GenericResponse<ElectionItemDto>>
+    public class CreateBillboardCommand: IRequest<Response>
     {
         public LocationDto Location { get; set; }
         public int Priority { get; set; }

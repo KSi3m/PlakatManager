@@ -18,9 +18,10 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
 
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetElectionItemsByDistrictQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false,StatusCode = 400 };
             try
             {
+
                 var electionItems = await _db.ElectionItems
                     .Include(x => x.Status)
                     .Where(x => x.Location.District == request.District)
@@ -44,6 +45,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
 
                 response.Message = "Election items from within given district tag found";
                 response.Success = true;
+                response.StatusCode = 200;
 
                 response.Data = electionItems;
             }

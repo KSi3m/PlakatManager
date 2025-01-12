@@ -24,14 +24,15 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
 
         public async Task<GenericResponse<TagDto>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<TagDto>() { Success = false };
+            var response = new GenericResponse<TagDto>() { Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null && currentUser.Roles.Contains("Admin");
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -41,6 +42,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                 if (tagFromDb == null)
                 {
                     response.Message = "Tag was not found";
+                    response.StatusCode = 404;
                     return response;
                 }
 
@@ -48,6 +50,7 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                 if (check != null)
                 {
                     response.Message = "Tag with the same name already exist!";
+                    response.StatusCode = 409;
                     return response;
                 }
 
@@ -56,8 +59,9 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.UpdateTag
                 await _db.SaveChangesAsync();
 
                 response.Success = true;
+                response.StatusCode = 204;
                 response.Data = _mapper.Map<TagDto>(tagFromDb);
-                response.Message = $"/api/v1/tag/{tagFromDb.Id}";
+                response.Message = $"\"Tag updated successfully! Resource can be found at /api/v1/tag/{tagFromDb.Id}";
             }
             catch (Exception ex)
             {

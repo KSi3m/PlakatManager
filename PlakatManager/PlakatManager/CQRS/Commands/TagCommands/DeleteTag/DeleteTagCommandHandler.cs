@@ -18,14 +18,15 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag
 
         public async Task<Response> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
-            var response = new Response() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null && currentUser.Roles.Contains("Admin");
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -34,11 +35,22 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag
                 if (tag == null)
                 {
                     response.Message = "Tag with given id not found.";
+                    response.StatusCode = 404;
                     return response;
                 }
+
+                var check = _db.ElectionItems.Where(x=>x.Tags.Contains(tag)).Count() > 0;
+                if (check)
+                {
+                    response.Message = "Tag is being used. Use different endpoint (to do)";
+                    response.StatusCode = 409;
+                    return response;
+                }
+
                 _db.Remove(tag);
                 await _db.SaveChangesAsync();
                 response.Success = true;
+                response.StatusCode = 204;
                 response.Message = "Tag deleted.";
             }
             catch (Exception ex)
