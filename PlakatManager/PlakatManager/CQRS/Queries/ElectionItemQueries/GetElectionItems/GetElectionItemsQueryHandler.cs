@@ -22,7 +22,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
 
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetElectionItemsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
                 var electionItems = await _db.ElectionItems
@@ -46,13 +46,14 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                    })
                    .ToListAsync();
 
-                if (electionItems == null)
+               /* if (electionItems == null)
                 {
                     response.Message = "Election items within given range not found.";
                     return response;
-                }
+                }*/
                 response.Message = "Election items within given range found.";
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = electionItems;
             }
             catch (Exception ex)

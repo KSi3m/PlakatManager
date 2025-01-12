@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster
 {
-    public class CreatePosterCommandHandler : IRequestHandler<CreatePosterCommand, GenericResponse<ElectionItemDto>>
+    public class CreatePosterCommandHandler : IRequestHandler<CreatePosterCommand, Response>
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
@@ -26,22 +26,24 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
             _districtLocalizationService = districtLocalizationService;
         }
 
-        public async Task<GenericResponse<ElectionItemDto>> Handle(CreatePosterCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreatePosterCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<ElectionItemDto>() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
                 if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
                     response.Message = "Tags not specified/wrong ids. Process aborted";
+                    response.StatusCode = 400;
                     return response;
                 }
 
@@ -67,7 +69,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePost
                 await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
                 response.Success = true;
-                response.Data = _mapper.Map<ElectionItemDto>(poster);
+                response.StatusCode = 201;
+                // response.Data = _mapper.Map<ElectionItemDto>(poster);
                 response.Message = $"/api/v1/election-item/{poster.Id}";
             }
             catch (Exception ex)

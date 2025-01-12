@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+
 using ElectionMaterialManager.AppUserContext;
 using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard;
 using ElectionMaterialManager.CQRS.Responses;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem
 {
-    public class CreateElectionItemCommandHandler : IRequestHandler<CreateElectionItemCommand, GenericResponse<ElectionItemDto>>
+    public class CreateElectionItemCommandHandler : IRequestHandler<CreateElectionItemCommand, Response>
     {
 
         private readonly ElectionMaterialManagerContext _db;
@@ -32,16 +33,17 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             _districtLocalizationService = districtLocalizationService;
         }
 
-        public async Task<GenericResponse<ElectionItemDto>> Handle(CreateElectionItemCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreateElectionItemCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<ElectionItemDto>() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
                 var tags = await _db.Tags.Where(x => request.Tags.Contains(x.Id)).ToListAsync();
@@ -49,6 +51,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 if (!tags.Any() || tags.Count() != request.Tags.Count())
                 {
                     response.Message = "Tags not specified/wrong ids. Process aborted";
+                    response.StatusCode = 400;
                     return response;
                 }
 
@@ -76,7 +79,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
                 await _db.SaveChangesAsync();
 
                 response.Success = true;
-                response.Data = _mapper.Map<ElectionItemDto>(electionItem);
+                response.StatusCode = 201;
+               // response.Data = _mapper.Map<ElectionItemDto>(electionItem);
                 response.Message = $"/api/v1/election-item/{electionItem.Id}";
             }
             catch (Exception ex)

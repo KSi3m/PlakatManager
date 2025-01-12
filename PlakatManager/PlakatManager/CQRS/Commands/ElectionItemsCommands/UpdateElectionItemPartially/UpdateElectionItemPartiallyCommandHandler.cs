@@ -29,13 +29,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
         public async Task<Response> Handle(UpdateElectionItemPartiallyCommand request, CancellationToken cancellationToken)
         {
-            var response = new Response() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400 };
             try
             {
                 var item = await _db.ElectionItems.FirstOrDefaultAsync(x => x.Id == request.Id);
                 if (item == null)
                 {
                     response.Message = "Item not found";
+                    response.StatusCode = 404;
                     return response;
                 }
 
@@ -44,7 +45,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     (item.AuthorId == currentUser.Id || currentUser.Roles.Contains("Admin"));
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -63,6 +65,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     if (!tags.Any() || tags.Count != request.Tags.Count())
                     {
                         response.Message = "Tags not specified/wrong ids. Process aborted";
+                        response.StatusCode = 400;
                         return response;
                     }
 
@@ -81,6 +84,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                 _db.ElectionItems.Update(item);
                 await _db.SaveChangesAsync();
                 response.Success = true;
+                response.StatusCode = 204;
                 response.Message = "Updated succesfully";
             }
             catch(Exception ex)

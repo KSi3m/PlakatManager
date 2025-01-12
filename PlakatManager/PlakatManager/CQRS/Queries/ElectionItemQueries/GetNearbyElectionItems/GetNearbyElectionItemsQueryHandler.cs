@@ -17,7 +17,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElec
 
         public async Task<GenericResponseWithList<ElectionItemDto>> Handle(GetNearbyElectionItemsQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false };
+            var response = new GenericResponseWithList<ElectionItemDto>() { Data = [], Success = false, StatusCode = 400 };
             try
             {
                 const double EarthRadiusKm = 6371.0;
@@ -54,13 +54,15 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetNearbyElec
                    })
                    .ToListAsync();
 
-                if (electionItems == null)
+                /*if (electionItems == null)
                 {
                     response.Message = "Election items within given range not found.";
+                    
                     return response;
-                }
+                }*/
                 response.Message = "Election items within given range found.";
                 response.Success = true;
+                response.StatusCode = 200;
                 response.Data = electionItems;
             }
             catch (Exception ex)

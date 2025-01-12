@@ -21,7 +21,7 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
 
         public async Task<GenericResponse<ElectionItemDetailDto>> Handle(GetElectionItemByIdDetailQuery request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<ElectionItemDetailDto>() { Success = false };
+            var response = new GenericResponse<ElectionItemDetailDto>() { Success = false, StatusCode = 400 };
             try
             {
                 var electionItem = await _db.ElectionItems
@@ -33,11 +33,13 @@ namespace ElectionMaterialManager.CQRS.Queries.ElectionItemQueries.GetElectionIt
                 if (electionItem == null)
                 {
                     response.Message = $"Election item with id {request.Id} not found";
+                    response.StatusCode = 404;
                     return response;
                 }
                 response.Message = $"Election item with id {request.Id} found";
                 response.Success = true;
                 response.Data = _mapper.Map<ElectionItemDetailDto>(electionItem);
+                response.StatusCode = 200;
                 response.Data.Type = electionItem.GetType().Name;
 
             }

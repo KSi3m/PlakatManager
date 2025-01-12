@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboard
 {
-    public class CreateBillboardCommandHandler: IRequestHandler<CreateBillboardCommand, GenericResponse<ElectionItemDto>>
+    public class CreateBillboardCommandHandler: IRequestHandler<CreateBillboardCommand, Response>
     {
         private readonly ElectionMaterialManagerContext _db;
         private readonly IMapper _mapper;
@@ -28,16 +28,17 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
             _districtLocalizationService = districtLocalizationService;
         }
 
-        public async Task<GenericResponse<ElectionItemDto>> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(CreateBillboardCommand request, CancellationToken cancellationToken)
         {
-            var response = new GenericResponse<ElectionItemDto>() { Success = false };
+            var response = new Response() { Success = false, StatusCode = 400 };
             try
             {
                 var currentUser = await _userContext.GetCurrentUser();
                 bool isEditable = currentUser != null;
                 if (!isEditable)
                 {
-                    response.Message = "NOT AUTHORIZED";
+                    response.Message = "User is not authorized to access";
+                    response.StatusCode = 401;
                     return response;
                 }
 
@@ -45,6 +46,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 if(!tags.Any() || tags.Count() != request.Tags.Count())
                 {
                     response.Message = "Tags not specified/wrong ids. Process aborted";
+                    response.StatusCode = 400;
                     return response;
                 }
 
@@ -68,8 +70,9 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
 
                 await _db.AddRangeAsync(electionItemTags);
                 await _db.SaveChangesAsync();
-                response.Success = true;    
-                response.Data = _mapper.Map<ElectionItemDto>(billboard);
+                response.Success = true;
+                response.StatusCode = 201;
+                //response.Data = _mapper.Map<ElectionItemDto>(billboard);
                 response.Message = $"/api/v1/election-item/{billboard.Id}";
             }
             catch (Exception ex)

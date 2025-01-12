@@ -41,6 +41,23 @@ namespace ElectionMaterialManager.Utilities
 
                 await context.Response.WriteAsJsonAsync(response);
             }
+            catch (Exception exception)
+            {
+                var response = new Response
+                {
+                    Success = false,
+                    StatusCode = 500,
+                    Message = "Internal Server Error"
+                };
+               /* if (exception.Errors != null)
+                {
+                    response.Errors = exception.Errors.Select(x => x.ErrorMessage).AsEnumerable();
+                }*/
+
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+                await context.Response.WriteAsJsonAsync(response);
+            }
         }
        
     }

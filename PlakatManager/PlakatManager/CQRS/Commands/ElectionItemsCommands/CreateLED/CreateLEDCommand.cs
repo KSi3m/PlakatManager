@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED
 {
-    public class CreateLEDCommand: IRequest<GenericResponse<ElectionItemDto>>
+    public class CreateLEDCommand: IRequest<Response>
     {
 
         public LocationDto Location { get; set; }

@@ -6,7 +6,7 @@ using System.ComponentModel;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreatePoster
 {
-    public class CreatePosterCommand: IRequest<GenericResponse<ElectionItemDto>>
+    public class CreatePosterCommand: IRequest<Response>
     {
         public LocationDto Location { get; set; }
         public int Priority { get; set; }
