@@ -39,12 +39,17 @@ namespace ElectionMaterialManager.CQRS.Commands.TagCommands.DeleteTag
                     return response;
                 }
 
-                var check = _db.ElectionItems.Where(x=>x.Tags.Contains(tag)).Count() > 0;
-                if (check)
+                var items = await _db.ElectionItems.Include(x=>x.Tags).Where(x=>x.Tags.Contains(tag)).ToListAsync();
+
+                if (items.Count() > 0)
                 {
-                    response.Message = "Tag is being used. Use different endpoint (to do)";
+                    foreach (var item in items)
+                    {
+                        item.Tags.Remove(tag);
+                    }
+                   /* response.Message = "Tag is being used. Use different endpoint (to do)";
                     response.StatusCode = 409;
-                    return response;
+                    return response;*/
                 }
 
                 _db.Remove(tag);

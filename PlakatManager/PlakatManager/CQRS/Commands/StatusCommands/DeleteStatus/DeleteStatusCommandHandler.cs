@@ -41,12 +41,16 @@ namespace ElectionMaterialManager.CQRS.Commands.StatusCommands.DeleteStatus
                     return response;
                 }
 
-                var check = _db.ElectionItems.Where(x => x.Status.Id == request.Id).Count() > 0;
-                if (check)
+                var items = await _db.ElectionItems.Include(x=>x.Status).Where(x => x.Status.Id == request.Id).ToListAsync();
+                if (items.Count > 0)
                 {
-                    response.Message = "Status is being used. Use different endpoint (to do)";
+                    foreach (var item in items)
+                    {
+                        item.Status = null;
+                    }
+                    /*response.Message = "Status is being used. Use different endpoint (to do)";
                     response.StatusCode = 409;
-                    return response;
+                    return response;*/
                 }
 
                 _db.Remove(status);
