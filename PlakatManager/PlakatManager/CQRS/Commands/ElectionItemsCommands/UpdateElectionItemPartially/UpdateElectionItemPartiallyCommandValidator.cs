@@ -8,12 +8,15 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
         {
 
 
+            RuleFor(command => command.Location)
+                     .Must(location => location == null || (location.Latitude >= -90 && location.Latitude <= 90))
+                     .WithMessage("Latitude must be between -90 and 90 if specified.")
+                     .When(command => command.Location != null);
 
-            RuleFor(command => command.Location.Latitude)
-                .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
-
-            RuleFor(command => command.Location.Longitude)
-                .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
+            RuleFor(command => command.Location)
+                .Must(location => location == null || (location.Longitude >= -180 && location.Longitude <= 180))
+                .WithMessage("Longitude must be between -180 and 180 if specified.")
+                .When(command => command.Location != null);
 
 
             RuleFor(command => command.Priority)
