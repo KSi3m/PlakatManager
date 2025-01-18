@@ -22,44 +22,72 @@ namespace ElectionMaterialManager.AppUserContext.Tests
         public async Task GetCurrentUserTest_WithAuthenticatedUser_ShouldReturnCurrentUser()
         {
 
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier,"1"),
-                new Claim(ClaimTypes.Email,"test@test.com"),
-                new Claim(ClaimTypes.Role,"Admin"),
-            };
+            var options = new DbContextOptionsBuilder<ElectionMaterialManagerContext>()
+            .UseInMemoryDatabase(databaseName: "TestDatabase")
+            .Options;
 
-            var user = new ClaimsPrincipal(new ClaimsIdentity(claims,"Test"));
+            using (var context = new ElectionMaterialManagerContext(options))
+            {
+                context.Users.Add(new User { Id = "1", UserName = "testUser", Email = "test@test.com" });
+                context.SaveChanges();
+            }
+
+            var claims = new List<Claim>
+            {
+                 new Claim(ClaimTypes.NameIdentifier, "testUser"),
+                 new Claim(ClaimTypes.Email, "test@test.com"),
+                 new Claim(ClaimTypes.Role, "Admin")
+            };
+            var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "TestAuth"));
 
             var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-
-            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext()
+            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext
             {
                 User = user
             });
 
+            using (var context = new ElectionMaterialManagerContext(options))
+            {
+                var userContext = new UserContext(httpContextAccessorMock.Object, null, context);
+
+               
+                var currentUser = await userContext.GetCurrentUser()!;
+
+                currentUser.Should().NotBeNull();
+                currentUser.Id.Should().Be("1");
+                currentUser.Email.Should().Be("test@example.com");
+                currentUser.Roles.Should().Contain("Admin");
+
+            }
+        }
+        [Fact()]
+        public async Task GetCurrentUserTest_WithoutAuthenticatedUser_ShouldReturnNull()
+        {
+
             var options = new DbContextOptionsBuilder<ElectionMaterialManagerContext>()
             .UseInMemoryDatabase(databaseName: "TestDatabase")
             .Options;
-            /*
+
+            using (var context = new ElectionMaterialManagerContext(options))
+            { 
+                context.SaveChanges();
+            }
+
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+            httpContextAccessorMock.Setup(x => x.HttpContext).Returns(new DefaultHttpContext
+            {
+                User = null
+            });
+
             using (var context = new ElectionMaterialManagerContext(options))
             {
-                context.Users.Add(new User { Id = "1", Email = "test1@test.com" });
-                context.Users.Add(new User { Id = "2", Email = "test2@test.com" });
-                await context.SaveChangesAsync();
-            }*/
-            var context = new ElectionMaterialManagerContext(options);
-            var userManager = new Mock<UserManager<User>>();
-            var userContext = new UserContext(httpContextAccessorMock.Object, userManager.Object,context);
+                var userContext = new UserContext(httpContextAccessorMock.Object, null, context);
 
-            var currentUser = await userContext.GetCurrentUser()!;
+                
+                var currentUser = await userContext.GetCurrentUser()!;
 
-            currentUser.Should().NotBeNull();
-            currentUser.Id.Should().Be("1");
-            currentUser.Email.Should().Be("test@test.com");
-            currentUser.Roles.Should().Contain("Admin");
-
-
+                currentUser.Should().BeNull();
+            }
         }
     }
 }
