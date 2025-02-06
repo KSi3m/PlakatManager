@@ -18,7 +18,6 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
 
             RuleFor(command => command.Priority)
                 .InclusiveBetween(1, 10).WithMessage("Priority must be between 1 and 10.");
-            //.When(command => command.Priority.HasValue);
 
 
             RuleFor(command => command.Size)

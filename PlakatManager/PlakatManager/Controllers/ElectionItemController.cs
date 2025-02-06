@@ -254,8 +254,8 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDto>),400)] 
        // [ProducesResponseType(typeof(GenericResponseWithList<ElectionItemDto>),404)] 
         [HttpGet]
-        [Route("election-items-by-tag/{tag}")]
-        public async Task<IActionResult> GetElectionItemsByTag([FromRoute] GetElectionItemsByTagQuery query, string tag)
+        [Route("election-items-by-tag/{tagName}")]
+        public async Task<IActionResult> GetElectionItemsByTag([FromRoute] GetElectionItemsByTagQuery query, string tagName)
         {
            // if (tag.IsNullOrEmpty()) return BadRequest();
 

@@ -134,7 +134,23 @@ namespace ElectionMaterialManager.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+       /* [SwaggerOperation(
+         Summary = " ",
+          Description = " "
+      )]
+        [ProducesResponseType(typeof(Response), 200)]
+        [ProducesResponseType(typeof(Response), 400)]
+        [ProducesResponseType(typeof(Response), 401)]
+        [HttpGet]
+        [Route("user/stats")]
+        public async Task<IActionResult> Statistics(GetUserStatisticsQuery query)
+        {
 
+            var response = await _mediator.Send(query);
+            if (response.Success)
+                return StatusCode(201, response);
+            return StatusCode(response.StatusCode, response);
+        }*/
 
         /* [HttpGet]
          [Route("test/{longitude}-{latitude}")]

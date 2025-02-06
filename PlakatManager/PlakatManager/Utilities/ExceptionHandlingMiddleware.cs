@@ -54,7 +54,7 @@ namespace ElectionMaterialManager.Utilities
                     response.Errors = exception.Errors.Select(x => x.ErrorMessage).AsEnumerable();
                 }*/
 
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                //context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
                 await context.Response.WriteAsJsonAsync(response);
             }

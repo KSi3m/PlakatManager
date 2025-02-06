@@ -90,7 +90,7 @@ namespace ElectionMaterialManager
             });
 
             builder.Services.AddValidatorsFromAssemblyContaining<UpdateElectionItemPartiallyCommand>();
-                //.AddFluentValidationAutoValidation()
+                //.AddFluentValidationAutoValidation();
                 //.AddFluentValidationClientsideAdapters();
 
             //builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

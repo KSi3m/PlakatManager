@@ -69,11 +69,10 @@ namespace ElectionMaterialManager.Controllers
         [ProducesResponseType(typeof(Response),400)]
         [ProducesResponseType(typeof(Response),401)]
         [ProducesResponseType(typeof(Response),404)] 
-        [ProducesResponseType(typeof(Response),409)] 
+        //[ProducesResponseType(typeof(Response),409)] 
         [HttpDelete]
         //[Authorize]
         [Route("tag/{id}")]
-        //usuwanie konflikty
         public async Task<IActionResult> DeleteTag([FromRoute] DeleteTagCommand command, int id)
         {
         
@@ -84,6 +83,7 @@ namespace ElectionMaterialManager.Controllers
             }
             return StatusCode(response.StatusCode, response);
         }
+        
 
         [SwaggerOperation(Summary = "Create a new tag",
         Description = "This endpoint allows authorized users to create a new tag in the system. ")]

@@ -42,7 +42,8 @@ namespace ElectionMaterialManager.AppUserContext
             var user = _httpContextAccessor?.HttpContext?.User;
             if (user == null)
             {
-                throw new InvalidOperationException("Context user not present");
+                //throw new InvalidOperationException("Context user not present");
+                return null;
             }
 
             if (user.Identity == null || !user.Identity.IsAuthenticated)
