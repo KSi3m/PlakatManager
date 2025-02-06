@@ -72,7 +72,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 await _db.SaveChangesAsync();
                 response.Success = true;
                 response.StatusCode = 201;
-                //response.Data = _mapper.Map<ElectionItemDto>(billboard);
+               // response.Data = _mapper.Map<ElectionItemDto>(billboard);
                 response.Message = $"/api/v1/election-item/{billboard.Id}";
             }
             catch (Exception ex)

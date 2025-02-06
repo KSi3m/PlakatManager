@@ -21,22 +21,31 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
 {
     public class CreateBillboardCommandHandlerTests
     {
+        private readonly DbContextOptions<ElectionMaterialManagerContext> options;
+        private readonly Mock<IUserContext> _userContextMock;
+        private readonly ElectionMaterialManagerContext _dbContextMock;
+        private readonly Mock<IDistrictLocalizationService> _districtLocalizationServiceMock;
+        private readonly Mock<IMapper> _mapperMock;
+        public CreateBillboardCommandHandlerTests()
+        {
+           options = new DbContextOptionsBuilder<ElectionMaterialManagerContext>()
+          .UseInMemoryDatabase(databaseName: "TestDatabase")
+          .Options;
+
+            _userContextMock = new Mock<IUserContext>();
+            _dbContextMock = new ElectionMaterialManagerContext(options);
+            _districtLocalizationServiceMock = new Mock<IDistrictLocalizationService>();
+            _mapperMock = new Mock<IMapper>();
+
+        }
 
         [Fact()]
         public async Task Handle_ShouldReturnUnauthorized_WhenUserIsNull()
         {
-            var options = new DbContextOptionsBuilder<ElectionMaterialManagerContext>()
-          .UseInMemoryDatabase(databaseName: "TestDatabase")
-          .Options;
 
-
-            var _userContextMock = new Mock<IUserContext>();
-            var _dbContextMock = new Mock<ElectionMaterialManagerContext>(options);
-            var _districtLocalizationServiceMock = new Mock<IDistrictLocalizationService>();
-            var _mapperMock = new Mock<IMapper>();
 
             var _handler = new CreateBillboardCommandHandler(
-                _dbContextMock.Object,
+                _dbContextMock,
                 _mapperMock.Object,
                 _userContextMock.Object,
                 _districtLocalizationServiceMock.Object
@@ -55,19 +64,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
 
         }
 
-        [Fact()]
+       [Fact()]
         public async Task Handle_ShouldReturnBadRequest_WhenTagsAreInvalid()
         {
-            var options = new DbContextOptionsBuilder<ElectionMaterialManagerContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
-
-
-            var _userContextMock = new Mock<IUserContext>();
-            var _dbContextMock = new ElectionMaterialManagerContext(options);
-            var _districtLocalizationServiceMock = new Mock<IDistrictLocalizationService>();
-            var _mapperMock = new Mock<IMapper>();
-
+ 
             var _handler = new CreateBillboardCommandHandler(
                 _dbContextMock,
                 _mapperMock.Object,
@@ -75,19 +75,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 _districtLocalizationServiceMock.Object
             );
 
-           
-          
-
+    
             _userContextMock.Setup(x => x.GetCurrentUser())
                 .ReturnsAsync(new CurrentUser("1", "test@test.com", ["Admin"]));
-            var tags = new List<Tag>
-            {
-                new Tag { Id = 1 },
-                new Tag { Id = 2 }
-            };
-
-            await _dbContextMock.Tags.AddRangeAsync(tags);
-            await _dbContextMock.SaveChangesAsync();
+           
             var request = new CreateBillboardCommand { Tags = new List<int> { 1, 2, 3 } };
 
         
@@ -101,16 +92,14 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
         [Fact]
         public async Task Handle_ShouldCreateBillboard_WhenDataIsValid()
         {
+            var tags = new List<Tag>
+            {
+                new Tag { Id = 3 },
+                new Tag { Id = 4 }
+            };
 
-            var options = new DbContextOptionsBuilder<ElectionMaterialManagerContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
-
-
-            var _userContextMock = new Mock<IUserContext>();
-            var _dbContextMock = new ElectionMaterialManagerContext(options);
-            var _districtLocalizationServiceMock = new Mock<IDistrictLocalizationService>();
-            var _mapperMock = new Mock<IMapper>();
+            _dbContextMock.Tags.AddRange(tags);
+            _dbContextMock.SaveChanges();
 
             var _handler = new CreateBillboardCommandHandler(
                 _dbContextMock,
@@ -121,16 +110,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
 
             _userContextMock.Setup(x => x.GetCurrentUser())
                 .ReturnsAsync(new CurrentUser("1", "test@test.com", ["Admin"]));
-            var tags = new List<Tag>
-            {
-                new Tag { Id = 1 },
-                new Tag { Id = 2 }
-            };
-
-            await _dbContextMock.Tags.AddRangeAsync(tags);
-            await _dbContextMock.SaveChangesAsync();
-
-    
+ 
             var command = new CreateBillboardCommand()
             {
                 Location = new LocationDto() { Latitude = 22.2, Longitude = 52.2 },
@@ -139,14 +119,13 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                 Cost = 125.5m,
                 StatusId = 1,
                 Height = 10,
-                Tags = new List<int>() { 1, 2 },
+                Tags = new List<int>() { 3, 4 },
                 StartDate = DateTime.Parse("2025-01-28 14:30:00"),
                 EndDate = DateTime.Parse("2025-02-28 14:30:00")
 
             };
-        
 
-             _mapperMock.Setup(x => x.Map<Billboard>(command))
+            _mapperMock.Setup(x => x.Map<Billboard>(command))
                 .Returns(new Billboard { Id = 1, 
                     AuthorId = "1",
                     Location = new Location() { Latitude = 22.2, Longitude = 52.2 },
@@ -155,12 +134,13 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBill
                     Cost = 125.5m,
                     StatusId = 1,
                     Height = 10,
-                    Tags = new List<Tag>() { new Tag { Id = 1 } , new Tag { Id = 2 } },
                     StartDate = DateTime.Parse("2025-01-28 14:30:00"),
                     EndDate = DateTime.Parse("2025-02-28 14:30:00")
                 });
  
             var result = await _handler.Handle(command, CancellationToken.None);
+
+
 
             result.Success.Should().BeTrue();
             result.StatusCode.Should().Be(201);
