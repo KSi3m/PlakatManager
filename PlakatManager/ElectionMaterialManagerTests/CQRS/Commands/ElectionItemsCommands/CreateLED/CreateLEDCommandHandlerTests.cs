@@ -28,12 +28,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED.
 
 
             var _userContextMock = new Mock<IUserContext>();
-            var _dbContextMock = new Mock<ElectionMaterialManagerContext>(options);
+            var _dbContextMock = new ElectionMaterialManagerContext(options);
             var _districtLocalizationServiceMock = new Mock<IDistrictLocalizationService>();
             var _mapperMock = new Mock<IMapper>();
 
             var _handler = new CreateLEDCommandHandler(
-                _dbContextMock.Object,
+                _dbContextMock,
                 _mapperMock.Object,
                 _userContextMock.Object,
                 _districtLocalizationServiceMock.Object

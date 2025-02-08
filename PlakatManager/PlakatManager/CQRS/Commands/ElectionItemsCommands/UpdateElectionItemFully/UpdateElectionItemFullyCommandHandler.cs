@@ -50,7 +50,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     return response;
                 }
 
-                if (request.Location.District == null)
+                if (request.Location != null && request.Location.District == null)
                 {
                     if (_districtLocalizationService.GetDistrict(out string name, out string city, request.Location.Longitude, request.Location.Latitude))
                         request.Location.District = name;
