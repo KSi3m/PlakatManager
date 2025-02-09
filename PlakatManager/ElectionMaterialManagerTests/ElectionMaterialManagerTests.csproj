@@ -7,9 +7,12 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+
   </PropertyGroup>
 
-  <ItemGroup>
+
+
+	<ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.1" />
