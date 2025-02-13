@@ -3,17 +3,25 @@ using FluentValidation;
 
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElectionItemFully
 {
-    public class UpdateElectionItemCommandValidator: AbstractValidator<UpdateElectionItemFullyCommand>
+    public class UpdateElectionItemFullyCommandValidator: AbstractValidator<UpdateElectionItemFullyCommand>
     {
-        public UpdateElectionItemCommandValidator()
+        public UpdateElectionItemFullyCommandValidator()
         {
 
+   
 
-            RuleFor(command => command.Location.Latitude)
-                 .InclusiveBetween(-90, 90).WithMessage("Latitude must be between -90 and 90.");
+            RuleFor(command => command.Location)
+                .NotNull()
+                .ChildRules(location =>
+                {
+                    location.RuleFor(l => l.Latitude)
+                        .InclusiveBetween(-90, 90)
+                        .WithMessage("Latitude must be between -90 and 90.");
 
-            RuleFor(command => command.Location.Longitude)
-                .InclusiveBetween(-180, 180).WithMessage("Longitude must be between -180 and 180.");
+                    location.RuleFor(l => l.Longitude)
+                        .InclusiveBetween(-180, 180)
+                        .WithMessage("Longitude must be between -180 and 180.");
+                });
 
 
             RuleFor(command => command.Priority)
