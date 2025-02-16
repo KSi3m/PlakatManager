@@ -221,7 +221,8 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
             {
                 Id = 2,
                 Location = new LocationDto() { Latitude = 22.2, Longitude = 52.2 },
-                Priority = 8
+                Priority = 8,
+                PaperType = "Satin2"
             };
 
             /*  _mapperMock.Setup(x => x.Map<Poster>(command))
@@ -233,7 +234,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                       if (cmd.Size != null) item.Size = cmd.Size;
                       if (cmd.Cost != null) item.Cost = cmd.Cost.Value;
                       if (cmd.StatusId != null) item.StatusId = cmd.StatusId.Value;
-                      // (cmd.StatusId != null) item.PaperType = cmd.PaperType;
+                      if (item is Poster poster)
+                      {
+                          if (cmd.PaperType != null) poster.PaperType = cmd.PaperType;
+                      }
                       if (cmd.Location != null) item.Location = new Location
                       {
                           Longitude = cmd.Location.Longitude,
@@ -252,6 +256,7 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
             result.Success.Should().BeTrue();
             result.StatusCode.Should().Be(204);
             poster.Priority.Should().Be(8);
+            poster.PaperType.Should().Be("Satin2");
             _dbContextMock.Tags.RemoveRange(tags);
             _dbContextMock.ElectionItems.Remove(poster);
             await _dbContextMock.SaveChangesAsync();
@@ -319,7 +324,10 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.UpdateElec
                     if (cmd.Size != null) item.Size = cmd.Size;
                     if (cmd.Cost != null) item.Cost = cmd.Cost.Value;
                     if (cmd.StatusId != null) item.StatusId = cmd.StatusId.Value;
-                    //if (cmd.StatusId != null) item.PaperType = cmd.PaperType;
+                    if (item is Poster poster)
+                    {
+                        if (cmd.PaperType != null) poster.PaperType = cmd.PaperType;
+                    }
                     if (cmd.Location != null) item.Location = new Location
                     {
                         Longitude = cmd.Location.Longitude,
