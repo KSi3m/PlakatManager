@@ -14,7 +14,7 @@ using ElectionMaterialManager.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using FluentAssertions;
-
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED.Tests
 {
     public class CreateLEDCommandHandlerTests
@@ -28,12 +28,12 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED.
 
 
             var _userContextMock = new Mock<IUserContext>();
-            var _dbContextMock = new Mock<ElectionMaterialManagerContext>(options);
+            var _dbContextMock = new ElectionMaterialManagerContext(options);
             var _districtLocalizationServiceMock = new Mock<IDistrictLocalizationService>();
             var _mapperMock = new Mock<IMapper>();
 
             var _handler = new CreateLEDCommandHandler(
-                _dbContextMock.Object,
+                _dbContextMock,
                 _mapperMock.Object,
                 _userContextMock.Object,
                 _districtLocalizationServiceMock.Object
@@ -145,29 +145,30 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED.
 
             };
 
-
+            var led = new LED
+            {
+                Id = 1,
+                AuthorId = "1",
+                Location = new Location() { Latitude = 22.2, Longitude = 52.2 },
+                Priority = 5,
+                Size = "15x2m",
+                Cost = 125.5m,
+                StatusId = 1,
+                RefreshRate = 28,
+                Resolution = "1024x786",
+                //Tags = new List<Tag>() { new Tag { Id = 1 }, new Tag { Id = 2 } },
+                StartDate = DateTime.Parse("2025-01-28 14:30:00"),
+                EndDate = DateTime.Parse("2025-02-28 14:30:00")
+            };
             _mapperMock.Setup(x => x.Map<LED>(command))
-               .Returns(new LED
-               {
-                   Id = 1,
-                   AuthorId = "1",
-                   Location = new Location() { Latitude = 22.2, Longitude = 52.2 },
-                   Priority = 5,
-                   Size = "15x2m",
-                   Cost = 125.5m,
-                   StatusId = 1,
-                   RefreshRate = 28,
-                   Resolution = "1024x786",
-                   //Tags = new List<Tag>() { new Tag { Id = 1 }, new Tag { Id = 2 } },
-                   StartDate = DateTime.Parse("2025-01-28 14:30:00"),
-                   EndDate = DateTime.Parse("2025-02-28 14:30:00")
-               });
+               .Returns(led);
 
             var result = await _handler.Handle(command, CancellationToken.None);
 
             result.Success.Should().BeTrue();
             result.StatusCode.Should().Be(201);
             _dbContextMock.Tags.RemoveRange(tags);
+            _dbContextMock.ElectionItems.Remove(led);
             await _dbContextMock.SaveChangesAsync();
         }
 

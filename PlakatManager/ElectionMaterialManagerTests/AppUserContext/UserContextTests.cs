@@ -55,7 +55,7 @@ namespace ElectionMaterialManager.AppUserContext.Tests
 
                 currentUser.Should().NotBeNull();
                 currentUser.Id.Should().Be("1");
-                currentUser.Email.Should().Be("test@example.com");
+                currentUser.Email.Should().Be("test@test.com");
                 currentUser.Roles.Should().Contain("Admin");
 
             }

@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem;
+using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,24 +9,23 @@ using ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateBillboar
 using ElectionMaterialManager.Dtos;
 using FluentValidation.TestHelper;
 
-namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElectionItem.Tests
+namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateLED.Tests
 {
-    public class CreateElectionItemCommandValidatorTests
+    public class CreateLEDCommandValidatorTests
     {
         [Fact()]
-        public void ValidateCreateElectionItemCommandValidator_WithCorrectDataForLED_ShouldNotHaveAnyValidationErrors()
+        public void ValidateCreateLedCommandValidator_WithCorrectData_ShouldNotHaveAnyValidationErrors()
         {
 
-            var validator = new CreateElectionItemCommandValidator();
-            var command = new CreateElectionItemCommand()
+            var validator = new CreateLEDCommandValidator();
+            var command = new CreateLEDCommand()
             {
-                Type = "Led",
                 Location = new LocationDto() { Latitude = 22.2, Longitude = 52.2 },
                 Priority = 5,
                 Size = "15x2m",
                 Cost = 125.5m,
                 StatusId = 1,
-                RefreshRate = 25,
+                RefreshRate = 32,
                 Tags = new List<int>() { 1, 2 },
                 StartDate = DateTime.Parse("2025-01-28 14:30:00"),
                 EndDate = DateTime.Parse("2025-02-28 14:30:00")
@@ -38,20 +37,19 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             result.ShouldNotHaveAnyValidationErrors();
         }
         [Fact()]
-        public void ValidateCreateElectionItemCommandValidator_WithInCorrectDataForLED_ShouldHaveValidationErrors()
+        public void ValidateCreateLEDCommandValidator_WithInCorrectData_ShouldHaveValidationErrors()
         {
 
-            var validator = new CreateElectionItemCommandValidator();
-            var command = new CreateElectionItemCommand()
+            var validator = new CreateLEDCommandValidator();
+            var command = new CreateLEDCommand()
             {
-                Type = "Led",
                 Location = new LocationDto() { Latitude = -91, Longitude = 189 },
                 Priority = 11,
                 Size = "15x200000000000000000000000000m",
                 Cost = 1999999.5m,
                 StatusId = 0,
                 RefreshRate = 22,
-                Tags = new List<int>() { 0, 0, 1, 1 },
+                Tags = new List<int>() { 0},
                 StartDate = DateTime.Parse("2025-02-28 14:30:00"),
                 EndDate = DateTime.Parse("2025-01-28 14:30:00")
 
@@ -65,13 +63,11 @@ namespace ElectionMaterialManager.CQRS.Commands.ElectionItemsCommands.CreateElec
             result.ShouldHaveValidationErrorFor(x => x.Size);
             result.ShouldHaveValidationErrorFor(x => x.Cost);
             result.ShouldHaveValidationErrorFor(x => x.StatusId);
-            result.ShouldHaveValidationErrorFor(x => x.Tags);
             result.ShouldHaveValidationErrorFor(x => x.RefreshRate);
+            result.ShouldHaveValidationErrorFor(x => x.Tags);
             result.ShouldHaveValidationErrorFor(x => x.StartDate);
             result.ShouldHaveValidationErrorFor(x => x.EndDate);
 
         }
-
-       
     }
 }
